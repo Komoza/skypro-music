@@ -1,23 +1,30 @@
-import { useState } from 'react';
+import { Bar } from './components/bar/bar';
+import { Footer } from './components/footer/footer';
+import { Sidebar } from './components/sidebar/sidebar';
+import { Nav } from './components/navigation/nav';
+import { Songs } from './components/songs/songs';
+import { Search } from './components/search/search';
+import { Filter } from './components/filter/filter';
 
 function App() {
-    const [theme, setTheme] = useState<string>('dark');
-
-    const handleClickSwitchTheme = () => {
-        setTheme(theme === 'dark' ? 'light' : 'dark');
-    };
     return (
-        <>
-            <button
-                onClick={handleClickSwitchTheme}
-                className={`switch-theme ${theme === 'dark' ? '--dark' : ''}`}
-            >
-                Сменить тему
-            </button>
-            <div className={`container  ${theme === 'dark' ? '--dark' : ''}`}>
-                <h1>Здесь скоро будет Skypro.Music</h1>
+        <div className="wrapper">
+            <div className="container">
+                <main className="main">
+                    <Nav />
+                    <div className="main__centerblock centerblock">
+                        <Search />
+                        <h2 className="centerblock__h2">Треки</h2>
+                        <Filter />
+                        <Songs />
+                    </div>
+                    <Sidebar />
+                </main>
+
+                <Bar />
+                <Footer />
             </div>
-        </>
+        </div>
     );
 }
 

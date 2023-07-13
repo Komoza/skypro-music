@@ -1,0 +1,136 @@
+.playlist {
+    &__item {
+        width: 100%;
+        display: block;
+        margin-bottom: 12px;
+    }
+
+    &__track {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+.track {
+    &__title {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: 447px;
+    }
+
+    &__title-image {
+        width: 51px;
+        height: 51px;
+        padding: 16px;
+        background: #313131;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 17px;
+    }
+
+    &__title-svg {
+        width: 18px;
+        height: 17px;
+        fill: transparent;
+        stroke: #4e4e4e;
+    }
+
+    &__title-link {
+        font-style: normal;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 24px;
+        color: #ffffff;
+    }
+
+    &__title-span {
+        font-style: normal;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 24px;
+        color: #4e4e4e;
+    }
+
+    &__author {
+        width: 321px;
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    &__author-link {
+        font-style: normal;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 24px;
+        color: #ffffff;
+        text-align: left;
+    }
+
+    &__album {
+        width: 245px;
+    }
+
+    &__album-link {
+        font-style: normal;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 24px;
+        color: #696969;
+    }
+
+    &__time-svg {
+        width: 14px;
+        height: 12px;
+        margin-right: 17px;
+        fill: transparent;
+        stroke: #696969;
+    }
+
+    &__time-text {
+        font-style: normal;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 24px;
+        text-align: right;
+        color: #696969;
+    }
+}
+
+.playlist-title {
+    &__col {
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 24px;
+        letter-spacing: 2px;
+        color: #696969;
+        text-transform: uppercase;
+    }
+
+    &__svg {
+        width: 12px;
+        height: 12px;
+        fill: transparent;
+        stroke: #696969;
+    }
+}
+
+.col01 {
+    width: 447px;
+}
+
+.col02 {
+    width: 321px;
+}
+
+.col03 {
+    width: 245px;
+}
+.col04 {
+    width: 60px;
+    text-align: end;
+}

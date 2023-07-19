@@ -1,19 +1,30 @@
 .nav {
+    position: absolute;
+    z-index: 100;
+    top: 0;
+    height: 100vw;
+    animation: slideIn 0.5s forwards;
+
     &__logo {
-        width: 113.33px;
-        height: 43px;
-        padding: 13px 0 13px 0;
+        padding: 13px 20px 13px 0;
         background-color: transparent;
         margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    &__close {
+        width: 36px;
+        cursor: pointer;
     }
 
     &__burger {
-        width: 20px;
-        height: 36px;
-        padding: 13px 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+        width: 36px;
+        position: absolute;
+        left: 28px;
+        top: 28px;
+
+        cursor: pointer;
     }
 
     &__menu {
@@ -27,15 +38,6 @@
         width: 113.33px;
         height: 17px;
         color: #181818;
-    }
-}
-
-.burger {
-    &__line {
-        display: inline-block;
-        width: 100%;
-        height: 1px;
-        background-color: #d3d3d3;
     }
 }
 
@@ -54,5 +56,27 @@
         font-weight: 400;
         font-size: 16px;
         line-height: 24px;
+    }
+}
+
+.slide-out {
+    animation: slideOut 0.5s forwards;
+}
+
+@keyframes slideIn {
+    0% {
+        left: -302px;
+    }
+    100% {
+        left: 0;
+    }
+}
+
+@keyframes slideOut {
+    0% {
+        left: 0;
+    }
+    100% {
+        left: -302px;
     }
 }

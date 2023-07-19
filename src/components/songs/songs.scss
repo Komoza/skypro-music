@@ -21,6 +21,12 @@
         width: 447px;
     }
 
+    &__title-text {
+        &--loading {
+            width: 356px;
+        }
+    }
+
     &__title-image {
         width: 51px;
         height: 51px;
@@ -30,6 +36,9 @@
         align-items: center;
         justify-content: center;
         margin-right: 17px;
+        &--loading {
+            animation: skeleton-loading 1s linear infinite alternate;
+        }
     }
 
     &__title-svg {
@@ -59,6 +68,9 @@
         width: 321px;
         display: flex;
         justify-content: flex-start;
+        &--loading {
+            width: 324px;
+        }
     }
 
     &__author-link {
@@ -72,6 +84,9 @@
 
     &__album {
         width: 245px;
+        &--loading {
+            width: 400px;
+        }
     }
 
     &__album-link {
@@ -97,6 +112,11 @@
         line-height: 24px;
         text-align: right;
         color: #696969;
+    }
+    &__loading {
+        animation: skeleton-loading 1s linear infinite alternate;
+        height: 19px;
+        background-color: #313131;
     }
 }
 
@@ -133,4 +153,13 @@
 .col04 {
     width: 60px;
     text-align: end;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-color: #313131;
+    }
+    100% {
+        background-color: #464646;
+    }
 }

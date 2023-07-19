@@ -1,4 +1,8 @@
-export const Bar = () => {
+interface BarProps {
+    isAppLoad: Boolean;
+}
+
+export const Bar: React.FC<BarProps> = ({ isAppLoad }) => {
     return (
         <div className="bar">
             <div className="bar__content">
@@ -50,29 +54,53 @@ export const Bar = () => {
 
                         <div className="player__track-play track-play">
                             <div className="track-play__contain">
-                                <div className="track-play__image">
-                                    <svg
-                                        className="track-play__svg"
-                                        aria-label="music"
-                                    >
-                                        <use xlinkHref="./src/img/icon/sprite.svg#icon-note"></use>
-                                    </svg>
+                                <div
+                                    className={`track-play__image ${
+                                        isAppLoad
+                                            ? ''
+                                            : 'track-play__image--loading'
+                                    }`}
+                                >
+                                    {isAppLoad && (
+                                        <svg
+                                            className="track-play__svg"
+                                            aria-label="music"
+                                        >
+                                            <use xlinkHref="./src/img/icon/sprite.svg#icon-note"></use>
+                                        </svg>
+                                    )}
                                 </div>
-                                <div className="track-play__author">
-                                    <a
-                                        className="track-play__author-link"
-                                        href="http://"
-                                    >
-                                        Lonely day
-                                    </a>
+                                <div
+                                    className={`track-play__author ${
+                                        isAppLoad
+                                            ? ''
+                                            : 'track-play__author--loading '
+                                    }`}
+                                >
+                                    {isAppLoad && (
+                                        <a
+                                            className="track-play__author-link"
+                                            href="http://"
+                                        >
+                                            Lonely day
+                                        </a>
+                                    )}
                                 </div>
-                                <div className="track-play__album">
-                                    <a
-                                        className="track-play__album-link"
-                                        href="http://"
-                                    >
-                                        RHCP
-                                    </a>
+                                <div
+                                    className={`track-play__album ${
+                                        isAppLoad
+                                            ? ''
+                                            : 'track-play__album--loading'
+                                    }`}
+                                >
+                                    {isAppLoad && (
+                                        <a
+                                            className="track-play__album-link"
+                                            href="http://"
+                                        >
+                                            RHCP
+                                        </a>
+                                    )}
                                 </div>
                             </div>
 

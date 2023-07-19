@@ -40,6 +40,10 @@
     &__item {
         width: 250px;
         height: 150px;
+        &--loading {
+            background: #313131;
+            animation: skeleton-loading 1s linear infinite alternate;
+        }
 
         &:not(:last-child) {
             margin-bottom: 30px;

@@ -1,3 +1,9 @@
+import React from 'react';
+
+interface SongsProps {
+    isLoadApp: Boolean;
+}
+
 const songs = [
     {
         title: './src/img/icon/sprite.svg#icon-note',
@@ -126,7 +132,26 @@ const Playlist = () => {
     });
 };
 
-export const Songs = () => {
+const PlaylistSkeleton = () => {
+    const playlistSkeleton = [];
+    for (let i = 0; i < 10; i++) {
+        playlistSkeleton.push(
+            <div key={i} className="playlist__item">
+                <div className="playlist__track track">
+                    <div className="track__title">
+                        <div className="track__title-image track__title-image--loading"></div>
+                        <div className="track__title-text track__loading track__title-text--loading"></div>
+                    </div>
+                    <div className="track__author track__loading track__author--loading"></div>
+                    <div className="track__album track__loading track__album--loading"></div>
+                </div>
+            </div>
+        );
+    }
+
+    return playlistSkeleton;
+};
+export const Songs: React.FC<SongsProps> = ({ isLoadApp }) => {
     return (
         <div className="centerblock__content">
             <div className="content__title playlist-title">
@@ -140,7 +165,7 @@ export const Songs = () => {
                 </div>
             </div>
             <div className="content__playlist playlist">
-                <Playlist />
+                {isLoadApp ? <Playlist /> : <PlaylistSkeleton />}
             </div>
         </div>
     );

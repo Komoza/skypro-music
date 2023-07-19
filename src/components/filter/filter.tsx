@@ -69,21 +69,27 @@ export const Filter: React.FC<FilterProps> = ({ filter, setFilter }) => {
             <div className="filter__title">Искать по:</div>
             <div
                 onClick={(event) => handleClickFilter(event, 'authors')}
-                className="filter__button button-author _btn-text"
+                className={`filter__button button-author _btn-text ${
+                    filter === 'authors' ? 'filter__button--active' : ''
+                }`}
             >
                 исполнителю
                 {filter === 'authors' && <AllAuthors />}
             </div>
             <div
                 onClick={(event) => handleClickFilter(event, 'years')}
-                className="filter__button button-year _btn-text"
+                className={`filter__button button-year _btn-text ${
+                    filter === 'years' ? 'filter__button--active' : ''
+                }`}
             >
                 году выпуска
                 {filter === 'years' && <AllYears />}
             </div>
             <div
                 onClick={(event) => handleClickFilter(event, 'genres')}
-                className="filter__button button-genre _btn-text"
+                className={`filter__button button-genre _btn-text ${
+                    filter === 'genres' ? 'filter__button--active' : ''
+                }`}
             >
                 жанру
                 {filter === 'genres' && <AllGenre />}

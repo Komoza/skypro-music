@@ -17,6 +17,14 @@
         border-radius: 60px;
         padding: 6px 20px;
 
+        &--active {
+            color: #b672ff;
+            border: 1px solid #9a48f1;
+            &:hover {
+                color: #b672ff;
+                border: 1px solid #9a48f1;
+            }
+        }
         &:not(:last-child) {
             margin-right: 10px;
         }
@@ -30,7 +38,7 @@
     position: absolute;
     top: 50px;
     left: 0;
-    padding: 34px;
+    padding: 34px 0 34px 34px;
     border-radius: 12px;
     background: #313131;
 

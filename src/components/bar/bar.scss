@@ -135,6 +135,10 @@
         justify-content: center;
         margin-right: 12px;
         grid-area: image;
+        &--loading {
+            background: #313131;
+            animation: skeleton-loading 1s linear infinite alternate;
+        }
     }
 
     &__svg {
@@ -147,6 +151,12 @@
     &__author {
         grid-area: author;
         min-width: 49px;
+        &--loading {
+            width: 60px;
+            height: 16px;
+            background: #313131;
+            animation: skeleton-loading 1s linear infinite alternate;
+        }
     }
 
     &__author-link {
@@ -161,6 +171,12 @@
     &__album {
         grid-area: album;
         min-width: 49px;
+        &--loading {
+            width: 60px;
+            height: 16px;
+            background: #313131;
+            animation: skeleton-loading 1s linear infinite alternate;
+        }
     }
 
     &__album-link {

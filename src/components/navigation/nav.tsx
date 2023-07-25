@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
+import * as S from './nav.style';
 
 interface navProps {
-    refNav: React.RefObject<HTMLDivElement>;
+    isOpenNavAnimation: boolean;
+    setIsOpenNavAnumation: (value: boolean) => void;
     setIsNavOpen: (value: boolean) => void;
 }
 
-export const Nav: React.FC<navProps> = ({ refNav, setIsNavOpen }) => {
-
+export const Nav: React.FC<navProps> = ({
+    isOpenNavAnimation,
+    setIsOpenNavAnumation,
+    setIsNavOpen,
+}) => {
     // остановка закрытия окна при клике на панель навигация
     const handleClickNav = (
         event: React.MouseEvent<HTMLElement, MouseEvent>
@@ -16,50 +21,38 @@ export const Nav: React.FC<navProps> = ({ refNav, setIsNavOpen }) => {
 
     // закрытие на иконку крестика
     const handleCloseClick = () => {
-        if (refNav.current) refNav.current.classList.add('slide-out');
+        setIsOpenNavAnumation(false);
 
         setTimeout(() => {
             setIsNavOpen(false);
         }, 500);
     };
     return (
-        <nav
+        <S.nav
+            $isOpen={isOpenNavAnimation}
             onClick={(event) => handleClickNav(event)}
-            ref={refNav}
-            className="main__nav nav"
         >
-            <div className="nav__logo logo">
-                <img
-                    className="logo__image"
-                    src="./src/img/logo.png"
-                    alt="logo"
-                />
-                <img
+            <S.navLogo>
+                <S.logoImage src="./src/img/logo.png" alt="logo" />
+                <S.navClose
                     onClick={handleCloseClick}
                     src="./src/img/icon/close.svg"
-                    className="nav__close"
                     alt="Закрыть"
                 />
-            </div>
-            <div className="nav__menu menu">
-                <ul className="menu__list">
-                    <li className="menu__item">
-                        <a href="http://" className="menu__link">
-                            Главное
-                        </a>
-                    </li>
-                    <li className="menu__item">
-                        <a href="http://" className="menu__link">
-                            Мой плейлист
-                        </a>
-                    </li>
-                    <li className="menu__item">
-                        <a href="http://" className="menu__link">
-                            Войти
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+            </S.navLogo>
+            <S.menu>
+                <S.menuList>
+                    <S.menuItem>
+                        <S.menuLink href="http://">Главное</S.menuLink>
+                    </S.menuItem>
+                    <S.menuItem>
+                        <S.menuLink href="http://">Мой плейлист</S.menuLink>
+                    </S.menuItem>
+                    <S.menuItem>
+                        <S.menuLink href="http://">Войти</S.menuLink>
+                    </S.menuItem>
+                </S.menuList>
+            </S.menu>
+        </S.nav>
     );
 };

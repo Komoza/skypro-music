@@ -1,150 +1,101 @@
+import * as S from './bar.styles';
+
 interface BarProps {
     isAppLoad: Boolean;
 }
 
 export const Bar: React.FC<BarProps> = ({ isAppLoad }) => {
     return (
-        <div className="bar">
-            <div className="bar__content">
-                <div className="bar__player-progress"></div>
-                <div className="bar__player-block">
-                    <div className="bar__player player">
-                        <div className="player__controls">
-                            <div className="player__btn-prev">
-                                <svg
-                                    className="player__btn-prev-svg"
-                                    aria-label="prev"
-                                >
+        <S.bar>
+            <S.barContent>
+                <S.barPlayerProgress></S.barPlayerProgress>
+                <S.barPlayerBlock>
+                    <S.player>
+                        <S.playerControls>
+                            <S.playerBtnPrev>
+                                <S.playerBtnPrevSvg aria-label="prev">
                                     <use xlinkHref="./src/img/icon/sprite.svg#icon-prev"></use>
-                                </svg>
-                            </div>
-                            <div className="player__btn-play _btn">
-                                <svg
-                                    className="player__btn-play-svg"
-                                    aria-label="play"
-                                >
+                                </S.playerBtnPrevSvg>
+                            </S.playerBtnPrev>
+                            <S.playerBtnPlay>
+                                <S.playerBtnPlaySvg aria-label="play">
                                     <use xlinkHref="./src/img/icon/sprite.svg#icon-play"></use>
-                                </svg>
-                            </div>
-                            <div className="player__btn-next">
-                                <svg
-                                    className="player__btn-next-svg"
-                                    aria-label="next"
-                                >
+                                </S.playerBtnPlaySvg>
+                            </S.playerBtnPlay>
+                            <S.playerBtnNext>
+                                <S.playerBtnNextSvg aria-label="next">
                                     <use xlinkHref="./src/img/icon/sprite.svg#icon-next"></use>
-                                </svg>
-                            </div>
-                            <div className="player__btn-repeat _btn-icon">
-                                <svg
-                                    className="player__btn-repeat-svg"
-                                    aria-label="repeat"
-                                >
+                                </S.playerBtnNextSvg>
+                            </S.playerBtnNext>
+                            <S.playerBtnRepeat className="_btn-icon">
+                                <S.playerBtnRepeatSvg aria-label="repeat">
                                     <use xlinkHref="./src/img/icon/sprite.svg#icon-repeat"></use>
-                                </svg>
-                            </div>
-                            <div className="player__btn-shuffle _btn-icon">
-                                <svg
-                                    className="player__btn-shuffle-svg"
-                                    aria-label="shuffle"
-                                >
+                                </S.playerBtnRepeatSvg>
+                            </S.playerBtnRepeat>
+                            <S.playerBtnShuffle className="_btn-icon">
+                                <S.playerBtnShuffleSvg aria-label="shuffle">
                                     <use xlinkHref="./src/img/icon/sprite.svg#icon-shuffle"></use>
-                                </svg>
-                            </div>
-                        </div>
+                                </S.playerBtnShuffleSvg>
+                            </S.playerBtnShuffle>
+                        </S.playerControls>
 
-                        <div className="player__track-play track-play">
-                            <div className="track-play__contain">
-                                <div
-                                    className={`track-play__image ${
-                                        isAppLoad
-                                            ? ''
-                                            : 'track-play__image--loading'
-                                    }`}
-                                >
+                        <S.trackPlay>
+                            <S.trackPlayContain>
+                                <S.trackPlayImage $isAppLoad={isAppLoad}>
                                     {isAppLoad && (
-                                        <svg
-                                            className="track-play__svg"
-                                            aria-label="music"
-                                        >
+                                        <S.trackPlaySvg aria-label="music">
                                             <use xlinkHref="./src/img/icon/sprite.svg#icon-note"></use>
-                                        </svg>
+                                        </S.trackPlaySvg>
                                     )}
-                                </div>
-                                <div
-                                    className={`track-play__author ${
-                                        isAppLoad
-                                            ? ''
-                                            : 'track-play__author--loading '
-                                    }`}
-                                >
-                                    {isAppLoad && (
-                                        <a
-                                            className="track-play__author-link"
-                                            href="http://"
-                                        >
-                                            Lonely day
-                                        </a>
-                                    )}
-                                </div>
-                                <div
-                                    className={`track-play__album ${
-                                        isAppLoad
-                                            ? ''
-                                            : 'track-play__album--loading'
-                                    }`}
-                                >
-                                    {isAppLoad && (
-                                        <a
-                                            className="track-play__album-link"
-                                            href="http://"
-                                        >
-                                            RHCP
-                                        </a>
-                                    )}
-                                </div>
-                            </div>
+                                </S.trackPlayImage>
 
-                            <div className="track-play__like-dis">
-                                <div className="track-play__like _btn-icon">
-                                    <svg
-                                        className="track-play__like-svg"
-                                        aria-label="like"
-                                    >
+                                <S.trackPlayAuthor $isAppLoad={isAppLoad}>
+                                    {isAppLoad && (
+                                        <S.trackPlayAuthorLink href="http://">
+                                            Lonely day
+                                        </S.trackPlayAuthorLink>
+                                    )}
+                                </S.trackPlayAuthor>
+                                <S.trackPlayAlbum $isAppLoad={isAppLoad}>
+                                    {isAppLoad && (
+                                        <S.trackPlayAlbumLink href="http://">
+                                            RHCP
+                                        </S.trackPlayAlbumLink>
+                                    )}
+                                </S.trackPlayAlbum>
+                            </S.trackPlayContain>
+
+                            <S.trackPlayLikeDis>
+                                <S.trackPlayLike className="_btn-icon">
+                                    <S.trackPlayLikeSvg aria-label="like">
                                         <use xlinkHref="./src/img/icon/sprite.svg#icon-like"></use>
-                                    </svg>
-                                </div>
-                                <div className="track-play__dislike _btn-icon">
-                                    <svg
-                                        className="track-play__dislike-svg"
-                                        aria-label="dislike"
-                                    >
+                                    </S.trackPlayLikeSvg>
+                                </S.trackPlayLike>
+                                <S.trackPlayDislike className="_btn-icon">
+                                    <S.trackPlayDislikeSvg aria-label="dislike">
                                         <use xlinkHref="./src/img/icon/sprite.svg#icon-dislike"></use>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="bar__volume-block volume">
-                        <div className="volume__content">
-                            <div className="volume__image">
-                                <svg
-                                    className="volume__svg"
-                                    aria-label="volume"
-                                >
+                                    </S.trackPlayDislikeSvg>
+                                </S.trackPlayDislike>
+                            </S.trackPlayLikeDis>
+                        </S.trackPlay>
+                    </S.player>
+                    <S.barVolumeBlock>
+                        <S.volumeContent>
+                            <S.volumeImage>
+                                <S.volumeSvg aria-label="volume">
                                     <use xlinkHref="./src/img/icon/sprite.svg#icon-volume"></use>
-                                </svg>
-                            </div>
-                            <div className="volume__progress _btn">
-                                <input
-                                    className="volume__progress-line _btn"
+                                </S.volumeSvg>
+                            </S.volumeImage>
+                            <S.volumeProgress>
+                                <S.volumeProgressLine
                                     type="range"
                                     name="range"
                                 />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                            </S.volumeProgress>
+                        </S.volumeContent>
+                    </S.barVolumeBlock>
+                </S.barPlayerBlock>
+            </S.barContent>
+        </S.bar>
     );
 };

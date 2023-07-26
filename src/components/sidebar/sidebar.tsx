@@ -1,63 +1,50 @@
+import * as S from './sidebar.style';
+
 interface SidebarProps {
     isLoadApp: Boolean;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ isLoadApp }) => {
     return (
-        <div className="main__sidebar sidebar">
-            <div className="sidebar__personal">
-                <p className="sidebar__personal-name">Sergey.Ivanov</p>
-                <div className="sidebar__avatar"></div>
-            </div>
-            <div className="sidebar__block">
-                <div className="sidebar__list">
-                    <div
-                        className={`sidebar__item ${
-                            isLoadApp ? '' : 'sidebar__item--loading'
-                        }`}
-                    >
+        <S.sidebar>
+            <S.sidebarPersonal>
+                <S.sidebarPersonalName>Sergey.Ivanov</S.sidebarPersonalName>
+                <S.sidebarAvatar className="sidebar__avatar"></S.sidebarAvatar>
+            </S.sidebarPersonal>
+            <S.sidebarBlock>
+                <S.sidebarList>
+                    <S.sidebarItem $isLoadApp={isLoadApp}>
                         {isLoadApp && (
-                            <a className="sidebar__link" href="#">
-                                <img
-                                    className="sidebar__img"
+                            <S.sidebarLink href="#">
+                                <S.sidebarImg
                                     src="./src/img/playlist01.png"
                                     alt="day's playlist"
                                 />
-                            </a>
+                            </S.sidebarLink>
                         )}
-                    </div>
-                    <div
-                        className={`sidebar__item ${
-                            isLoadApp ? '' : 'sidebar__item--loading'
-                        }`}
-                    >
+                    </S.sidebarItem>
+                    <S.sidebarItem $isLoadApp={isLoadApp}>
                         {isLoadApp && (
-                            <a className="sidebar__link" href="#">
-                                <img
-                                    className="sidebar__img"
+                            <S.sidebarLink href="#">
+                                <S.sidebarImg
                                     src="./src/img/playlist02.png"
                                     alt="day's playlist"
                                 />
-                            </a>
+                            </S.sidebarLink>
                         )}
-                    </div>
-                    <div
-                        className={`sidebar__item ${
-                            isLoadApp ? '' : 'sidebar__item--loading'
-                        }`}
-                    >
+                    </S.sidebarItem>
+                    <S.sidebarItem $isLoadApp={isLoadApp}>
                         {isLoadApp && (
-                            <a className="sidebar__link" href="#">
-                                <img
-                                    className="sidebar__img"
+                            <S.sidebarLink href="#">
+                                <S.sidebarImg
                                     src="./src/img/playlist03.png"
                                     alt="day's playlist"
                                 />
-                            </a>
+                            </S.sidebarLink>
                         )}
-                    </div>
-                </div>
-            </div>
-        </div>
+                    </S.sidebarItem>
+                </S.sidebarList>
+            </S.sidebarBlock>
+        </S.sidebar>
     );
 };

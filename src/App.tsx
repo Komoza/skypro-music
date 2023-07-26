@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import { Bar } from './components/bar/bar';
 import { Footer } from './components/footer/footer';
@@ -8,12 +8,14 @@ import { Songs } from './components/songs/songs';
 import { Search } from './components/search/search';
 import { Filter } from './components/filter/filter';
 
+import { GlobalStyle } from './index.style';
+import * as S from './App.style';
+
 function App() {
     const [isNavOpen, setIsNavOpen] = useState<Boolean>(false);
+    const [isOpenNavAnimation, setIsOpenNavAnimation] = useState(true);
     const [isLoadApp, setIsLoadApp] = useState<Boolean>(false);
     const [filter, setFilter] = useState<string | null>(null);
-
-    const refNav = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -27,6 +29,7 @@ function App() {
     ) => {
         // остановка срабатывания закрытия окна при клике на контейнер
         event.stopPropagation();
+        setIsOpenNavAnimation(true);
         setIsNavOpen(true);
     };
 
@@ -34,38 +37,44 @@ function App() {
     const handleClickContainer = () => {
         setFilter(null);
         // Сначала отработка анимации закрытия, потом переопределние состояния
-        if (refNav.current) refNav.current.classList.add('slide-out');
+        setIsOpenNavAnimation(false);
 
         setTimeout(() => {
             setIsNavOpen(false);
         }, 500);
     };
     return (
-        <div onClick={handleClickContainer} className="wrapper">
-            <div className="container">
-                <main className="main">
-                    <img
-                        onClick={(event) => handleClickBurger(event)}
-                        className="nav__burger burger"
-                        src="./src/img/icon/burger.svg"
-                        alt="открыть меню"
-                    />
-                    {isNavOpen && (
-                        <Nav refNav={refNav} setIsNavOpen={setIsNavOpen} />
-                    )}
-                    <div className="main__centerblock centerblock">
-                        <Search />
-                        <h2 className="centerblock__h2">Треки</h2>
-                        <Filter filter={filter} setFilter={setFilter} />
-                        <Songs isLoadApp={isLoadApp} />
-                    </div>
-                    <Sidebar isLoadApp={isLoadApp} />
-                </main>
+        <>
+            <GlobalStyle />
+            <S.wrapper onClick={handleClickContainer}>
+                <S.container>
+                    <S.main>
+                        <S.burger
+                            onClick={(event) => handleClickBurger(event)}
+                            src="./src/img/icon/burger.svg"
+                            alt="открыть меню"
+                        />
+                        {isNavOpen && (
+                            <Nav
+                                isOpenNavAnimation={isOpenNavAnimation}
+                                setIsOpenNavAnumation={setIsOpenNavAnimation}
+                                setIsNavOpen={setIsNavOpen}
+                            />
+                        )}
+                        <S.centerblock>
+                            <Search />
+                            <S.centerblockH2>Треки</S.centerblockH2>
+                            <Filter filter={filter} setFilter={setFilter} />
+                            <Songs isLoadApp={isLoadApp} />
+                        </S.centerblock>
+                        <Sidebar isLoadApp={isLoadApp} />
+                    </S.main>
 
-                <Bar isAppLoad={isLoadApp} />
-                <Footer />
-            </div>
-        </div>
+                    <Bar isAppLoad={isLoadApp} />
+                    <Footer />
+                </S.container>
+            </S.wrapper>
+        </>
     );
 }
 

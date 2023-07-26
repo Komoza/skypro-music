@@ -1,4 +1,5 @@
 import React from 'react';
+import * as S from './songs.style';
 
 interface SongsProps {
     isLoadApp: Boolean;
@@ -90,44 +91,44 @@ const songs = [
 const Playlist = () => {
     return songs.map((song, index) => {
         return (
-            <div key={index} className="playlist__item">
-                <div className="playlist__track track">
-                    <div className="track__title">
-                        <div className="track__title-image">
-                            <svg
-                                className="track__title-svg"
-                                aria-label="music"
-                            >
+            <S.playlistItem key={index}>
+                <S.track>
+                    <S.trackTitle>
+                        <S.trackTitleImage>
+                            <S.trackTitleSvg aria-label="music">
                                 <use xlinkHref={song.title}></use>
-                            </svg>
-                        </div>
-                        <div className="track__title-text">
-                            <a className="track__title-link" href="http://">
+                            </S.trackTitleSvg>
+                        </S.trackTitleImage>
+                        <S.trackTitleText>
+                            <S.trackTitleLink href="http://">
                                 {song.name}
-                                <span className="track__title-span">
+                                <S.trackTitleSpan>
                                     &nbsp;{song.description}
-                                </span>
-                            </a>
-                        </div>
-                    </div>
-                    <div className="track__author">
-                        <a className="track__author-link" href="http://">
+                                </S.trackTitleSpan>
+                            </S.trackTitleLink>
+                        </S.trackTitleText>
+                    </S.trackTitle>
+
+                    <S.trackAuthor>
+                        <S.trackAuthorLink href="http://">
                             {song.author}
-                        </a>
-                    </div>
-                    <div className="track__album">
-                        <a className="track__album-link" href="http://">
+                        </S.trackAuthorLink>
+                    </S.trackAuthor>
+
+                    <S.trackAlbum>
+                        <S.trackAlbumLink href="http://">
                             {song.album}
-                        </a>
-                    </div>
-                    <div className="track__time">
-                        <svg className="track__time-svg" aria-label="time">
+                        </S.trackAlbumLink>
+                    </S.trackAlbum>
+
+                    <S.trackTime>
+                        <S.trackTimeSvg aria-label="time">
                             <use xlinkHref="./src/img/icon/sprite.svg#icon-like"></use>
-                        </svg>
-                        <span className="track__time-text">{song.time}</span>
-                    </div>
-                </div>
-            </div>
+                        </S.trackTimeSvg>
+                        <S.trackTimeText>{song.time}</S.trackTimeText>
+                    </S.trackTime>
+                </S.track>
+            </S.playlistItem>
         );
     });
 };
@@ -136,37 +137,38 @@ const PlaylistSkeleton = () => {
     const playlistSkeleton = [];
     for (let i = 0; i < 10; i++) {
         playlistSkeleton.push(
-            <div key={i} className="playlist__item">
-                <div className="playlist__track track">
-                    <div className="track__title">
-                        <div className="track__title-image track__title-image--loading"></div>
-                        <div className="track__title-text track__loading track__title-text--loading"></div>
-                    </div>
-                    <div className="track__author track__loading track__author--loading"></div>
-                    <div className="track__album track__loading track__album--loading"></div>
-                </div>
-            </div>
+            <S.playlistItem key={i}>
+                <S.track>
+                    <S.trackTitle>
+                        <S.trackTitleImageLoading></S.trackTitleImageLoading>
+                        <S.trackTitleTextLoading></S.trackTitleTextLoading>
+                    </S.trackTitle>
+                    <S.trackAuthorLoading></S.trackAuthorLoading>
+                    <S.trackAlbumLoading></S.trackAlbumLoading>
+                </S.track>
+            </S.playlistItem>
         );
     }
 
     return playlistSkeleton;
 };
+
 export const Songs: React.FC<SongsProps> = ({ isLoadApp }) => {
     return (
-        <div className="centerblock__content">
-            <div className="content__title playlist-title">
-                <div className="playlist-title__col col01">Трек</div>
-                <div className="playlist-title__col col02">ИСПОЛНИТЕЛЬ</div>
-                <div className="playlist-title__col col03">АЛЬБОМ</div>
-                <div className="playlist-title__col col04">
-                    <svg className="playlist-title__svg" aria-label="time">
+        <S.centerblockContent>
+            <S.playlistTitle>
+                <S.playlistTitleCol01>Трек</S.playlistTitleCol01>
+                <S.playlistTitleCol02>ИСПОЛНИТЕЛЬ</S.playlistTitleCol02>
+                <S.playlistTitleCol03>АЛЬБОМ</S.playlistTitleCol03>
+                <S.playlistTitleCol04>
+                    <S.playlistTitleSvg aria-label="time">
                         <use xlinkHref="./src/img/icon/sprite.svg#icon-watch"></use>
-                    </svg>
-                </div>
-            </div>
-            <div className="content__playlist playlist">
+                    </S.playlistTitleSvg>
+                </S.playlistTitleCol04>
+            </S.playlistTitle>
+            <S.playlist>
                 {isLoadApp ? <Playlist /> : <PlaylistSkeleton />}
-            </div>
-        </div>
+            </S.playlist>
+        </S.centerblockContent>
     );
 };

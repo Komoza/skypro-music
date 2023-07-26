@@ -1,3 +1,5 @@
+import * as S from './filter.style';
+
 interface FilterProps {
     filter: string | null;
     setFilter: (value: string | null) => void;
@@ -5,49 +7,49 @@ interface FilterProps {
 
 const AllAuthors = () => {
     return (
-        <div className="authors">
-            <div className="authors__wrap">
-                <p className="authors__text">Michael Jackson</p>
-                <p className="authors__text">Frank Sinatra</p>
-                <p className="authors__text">Calvin Harris</p>
-                <p className="authors__text">Zhu</p>
-                <p className="authors__text">Arctic Monkeys</p>
-                <p className="authors__text">Imaging Dragons</p>
-            </div>
-        </div>
+        <S.authors>
+            <S.authorsWrap>
+                <S.authorsText>Michael Jackson</S.authorsText>
+                <S.authorsText>Frank Sinatra</S.authorsText>
+                <S.authorsText>Calvin Harris</S.authorsText>
+                <S.authorsText>Zhu</S.authorsText>
+                <S.authorsText>Arctic Monkeys</S.authorsText>
+                <S.authorsText>Imaging Dragons</S.authorsText>
+            </S.authorsWrap>
+        </S.authors>
     );
 };
 
 const AllYears = () => {
     return (
-        <div className="years">
-            <div className="years__new">
-                <div className="years__point">
-                    <div className="years__point--active"></div>
-                </div>
+        <S.years>
+            <S.yearsNew>
+                <S.yearsPoint>
+                    <S.yearsPointActive></S.yearsPointActive>
+                </S.yearsPoint>
                 <p>Более новые</p>
-            </div>
-            <div className="years__old">
-                <div className="years__point"></div>
+            </S.yearsNew>
+            <S.yearsOld>
+                <S.yearsPoint></S.yearsPoint>
                 <p>Более старые</p>
-            </div>
-        </div>
+            </S.yearsOld>
+        </S.years>
     );
 };
 
 const AllGenre = () => {
     return (
-        <div className="genre">
-            <div className="genre__wrap">
-                <p className="genre__text genre__text--active">Рок</p>
-                <p className="genre__text">Хип-хоп</p>
-                <p className="genre__text">Поп-музыка</p>
-                <p className="genre__text">Техно</p>
-                <p className="genre__text">Инди</p>
-                <p className="genre__text">Кантри</p>
-                <p className="genre__text">Классика</p>
-            </div>
-        </div>
+        <S.genre>
+            <S.genreWrap>
+                <S.genreText>Рок</S.genreText>
+                <S.genreText>Хип-хоп</S.genreText>
+                <S.genreText>Поп-музыка</S.genreText>
+                <S.genreText>Техно</S.genreText>
+                <S.genreText>Инди</S.genreText>
+                <S.genreText>Кантри</S.genreText>
+                <S.genreText>Классика</S.genreText>
+            </S.genreWrap>
+        </S.genre>
     );
 };
 
@@ -56,7 +58,6 @@ export const Filter: React.FC<FilterProps> = ({ filter, setFilter }) => {
         event: React.MouseEvent<HTMLDivElement, MouseEvent>,
         status: string | null
     ) => {
-        console.log(1);
         event.stopPropagation();
         if (status === filter) {
             setFilter(null);
@@ -65,35 +66,32 @@ export const Filter: React.FC<FilterProps> = ({ filter, setFilter }) => {
         }
     };
     return (
-        <div className="centerblock__filter filter">
-            <div className="filter__title">Искать по:</div>
-            <div
+        <S.filter>
+            <S.filterTitle>Искать по:</S.filterTitle>
+            <S.filterButton
+                className="_btn-text"
+                $active={filter === 'authors' ? true : false}
                 onClick={(event) => handleClickFilter(event, 'authors')}
-                className={`filter__button button-author _btn-text ${
-                    filter === 'authors' ? 'filter__button--active' : ''
-                }`}
             >
                 исполнителю
                 {filter === 'authors' && <AllAuthors />}
-            </div>
-            <div
+            </S.filterButton>
+            <S.filterButton
+                className="_btn-text"
+                $active={filter === 'years' ? true : false}
                 onClick={(event) => handleClickFilter(event, 'years')}
-                className={`filter__button button-year _btn-text ${
-                    filter === 'years' ? 'filter__button--active' : ''
-                }`}
             >
                 году выпуска
                 {filter === 'years' && <AllYears />}
-            </div>
-            <div
+            </S.filterButton>
+            <S.filterButton
+                className="_btn-text"
+                $active={filter === 'genres' ? true : false}
                 onClick={(event) => handleClickFilter(event, 'genres')}
-                className={`filter__button button-genre _btn-text ${
-                    filter === 'genres' ? 'filter__button--active' : ''
-                }`}
             >
                 жанру
                 {filter === 'genres' && <AllGenre />}
-            </div>
-        </div>
+            </S.filterButton>
+        </S.filter>
     );
 };

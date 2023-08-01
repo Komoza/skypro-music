@@ -1,5 +1,6 @@
 import React from 'react';
 import * as S from './nav.style';
+import { removeUserFromLocalStorage } from '../../../../helper';
 
 interface navProps {
     isOpenNavAnimation: boolean;
@@ -27,6 +28,11 @@ export const Nav: React.FC<navProps> = ({
             setIsNavOpen(false);
         }, 500);
     };
+
+    const handleClickLogout = () => {
+        removeUserFromLocalStorage();
+    };
+
     return (
         <S.nav
             $isOpen={isOpenNavAnimation}
@@ -49,7 +55,9 @@ export const Nav: React.FC<navProps> = ({
                         <S.menuLink to="/playlist">Мой плейлист</S.menuLink>
                     </S.menuItem>
                     <S.menuItem>
-                        <S.menuLink to="/login">Войти</S.menuLink>
+                        <S.menuLink onClick={handleClickLogout} to="/login">
+                            Выйти
+                        </S.menuLink>
                     </S.menuItem>
                 </S.menuList>
             </S.menu>

@@ -1,4 +1,5 @@
 import { styled } from 'styled-components';
+import { Link } from 'react-router-dom';
 
 export const login = styled.div`
     height: 100vh;
@@ -70,6 +71,9 @@ export const loginLogin = styled.div`
     }
 `;
 
+export const registrationLink = styled(Link)`
+    width: 100%;
+`;
 export const loginRegistration = styled.div`
     ${loginButton}
     color: #000;

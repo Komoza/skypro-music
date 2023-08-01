@@ -43,13 +43,13 @@ export const Nav: React.FC<navProps> = ({
             <S.menu>
                 <S.menuList>
                     <S.menuItem>
-                        <S.menuLink href="http://">Главное</S.menuLink>
+                        <S.menuLink to="/">Главная</S.menuLink>
                     </S.menuItem>
                     <S.menuItem>
-                        <S.menuLink href="http://">Мой плейлист</S.menuLink>
+                        <S.menuLink to="/playlist">Мой плейлист</S.menuLink>
                     </S.menuItem>
                     <S.menuItem>
-                        <S.menuLink href="http://">Войти</S.menuLink>
+                        <S.menuLink to="/login">Войти</S.menuLink>
                     </S.menuItem>
                 </S.menuList>
             </S.menu>

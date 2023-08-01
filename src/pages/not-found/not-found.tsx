@@ -1,4 +1,5 @@
 import * as S from './not-found.style';
+import { Link } from 'react-router-dom';
 
 export const NotFoundPage = () => {
     return (
@@ -14,8 +15,9 @@ export const NotFoundPage = () => {
             <S.notFoundDescription>
                 Возможно, она была удалена или перенесена на другой адрес
             </S.notFoundDescription>
-
-            <S.notFoundButton>Вернуться на главную</S.notFoundButton>
+            <Link to="/">
+                <S.notFoundButton>Вернуться на главную</S.notFoundButton>
+            </Link>
         </S.notFound>
     );
 };

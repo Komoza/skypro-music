@@ -1,4 +1,5 @@
 import * as S from './sidebar.style';
+import { PLAYLIST } from '../../../../cosntant';
 
 interface SidebarProps {
     isLoadApp: Boolean;
@@ -13,36 +14,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ isLoadApp }) => {
             </S.sidebarPersonal>
             <S.sidebarBlock>
                 <S.sidebarList>
-                    <S.sidebarItem $isLoadApp={isLoadApp}>
-                        {isLoadApp && (
-                            <S.sidebarLink href="#">
-                                <S.sidebarImg
-                                    src="./src/img/playlist01.png"
-                                    alt="day's playlist"
-                                />
-                            </S.sidebarLink>
-                        )}
-                    </S.sidebarItem>
-                    <S.sidebarItem $isLoadApp={isLoadApp}>
-                        {isLoadApp && (
-                            <S.sidebarLink href="#">
-                                <S.sidebarImg
-                                    src="./src/img/playlist02.png"
-                                    alt="day's playlist"
-                                />
-                            </S.sidebarLink>
-                        )}
-                    </S.sidebarItem>
-                    <S.sidebarItem $isLoadApp={isLoadApp}>
-                        {isLoadApp && (
-                            <S.sidebarLink href="#">
-                                <S.sidebarImg
-                                    src="./src/img/playlist03.png"
-                                    alt="day's playlist"
-                                />
-                            </S.sidebarLink>
-                        )}
-                    </S.sidebarItem>
+                    {PLAYLIST.map((item) => {
+                        return (
+                            <S.sidebarItem key={item.id} $isLoadApp={isLoadApp}>
+                                {isLoadApp && (
+                                    <S.sidebarLink
+                                        to={`/compilation/${item.id}`}
+                                    >
+                                        <S.sidebarImg
+                                            src={item.img}
+                                            alt={item.alt}
+                                        />
+                                    </S.sidebarLink>
+                                )}
+                            </S.sidebarItem>
+                        );
+                    })}
                 </S.sidebarList>
             </S.sidebarBlock>
         </S.sidebar>

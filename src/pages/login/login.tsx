@@ -8,7 +8,11 @@ export const Login = () => {
                 <S.loginName type="text" placeholder="Почта" />
                 <S.loginPassword type="text" placeholder="Пароль" />
                 <S.loginLogin>Войти</S.loginLogin>
-                <S.loginRegistration>Зарегистрироваться</S.loginRegistration>
+                <S.registrationLink to="/registration">
+                    <S.loginRegistration>
+                        Зарегистрироваться
+                    </S.loginRegistration>
+                </S.registrationLink>
             </S.loginWrap>
         </S.login>
     );

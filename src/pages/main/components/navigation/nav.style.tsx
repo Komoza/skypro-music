@@ -1,4 +1,5 @@
 import { styled, keyframes } from 'styled-components';
+import { Link } from 'react-router-dom';
 
 interface NavProps {
     $isOpen: boolean;
@@ -60,7 +61,7 @@ export const menuItem = styled.li`
     padding: 5px 0;
     margin-bottom: 16px;
 `;
-export const menuLink = styled.a`
+export const menuLink = styled(Link)`
     color: #ffffff;
     font-weight: 400;
     font-size: 16px;

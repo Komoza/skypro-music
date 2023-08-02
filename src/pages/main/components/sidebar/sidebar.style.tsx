@@ -1,4 +1,5 @@
 import { styled } from 'styled-components';
+import { Link } from 'react-router-dom';
 
 interface Props {
     $isLoadApp: Boolean;
@@ -59,7 +60,7 @@ export const sidebarItem = styled.div<Props>`
         animation: skeleton-loading 1s linear infinite alternate;
         `}
 `;
-export const sidebarLink = styled.a`
+export const sidebarLink = styled(Link)`
     width: 100%;
     height: 100%;
 `;

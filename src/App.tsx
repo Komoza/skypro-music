@@ -24,12 +24,22 @@ function App() {
     const [isLoadApp, setIsLoadApp] = useState<boolean>(false);
     const [songs, setSongs] = useState<Song[] | null>(null);
     const [currentSong, setCurrentSong] = useState<Song | null>(null);
+    const [isErrorGetAllSong, setIsErrorGetAllSong] = useState<boolean>(false);
 
     useEffect(() => {
-        getAllSongs().then((data) => {
-            setSongs(data);
-            setIsLoadApp(true);
-        });
+        const fetchData = async () => {
+            try {
+                const data = await getAllSongs();
+                setSongs(data);
+            } catch (error) {
+                console.log(1);
+                setIsErrorGetAllSong(true);
+            } finally {
+                setIsLoadApp(true);
+            }
+        };
+
+        fetchData();
     }, []);
     return (
         <>
@@ -42,6 +52,7 @@ function App() {
                         songs={songs}
                         currentSong={currentSong}
                         setCurrentSong={setCurrentSong}
+                        isErrorGetAllSong={isErrorGetAllSong}
                     />
                 </S.container>
             </S.wrapper>

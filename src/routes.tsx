@@ -17,6 +17,7 @@ interface AppRoutesProps {
     songs: Song[] | null;
     currentSong: Song | null;
     setCurrentSong: (value: Song | null) => void;
+    isErrorGetAllSong: boolean;
 }
 
 export const AppRoutes: React.FC<AppRoutesProps> = ({
@@ -25,6 +26,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({
     songs,
     currentSong,
     setCurrentSong,
+    isErrorGetAllSong,
 }) => {
     return (
         <Routes>
@@ -47,6 +49,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({
                             songs={songs}
                             currentSong={currentSong}
                             setCurrentSong={setCurrentSong}
+                            isErrorGetAllSong={isErrorGetAllSong}
                         />
                     }
                 />

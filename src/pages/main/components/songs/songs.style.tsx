@@ -192,3 +192,8 @@ export const trackTimeLoading = styled.div`
     height: 19px;
     background-color: #313131;
 `;
+
+export const errorGetSongs = styled.p`
+    font-size: 32px;
+    margin-top: 40px;
+`;

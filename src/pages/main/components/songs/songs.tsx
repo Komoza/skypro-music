@@ -5,10 +5,12 @@ interface SongsProps {
     isLoadApp: Boolean;
     songs: Song[] | null;
     setCurrentSong: (value: Song | null) => void;
+    isErrorGetAllSong: boolean;
 }
 interface PlaylistProps {
     songs: Song[] | null;
     setCurrentSong: (value: Song | null) => void;
+    isErrorGetAllSong: boolean;
 }
 
 function formatTime(seconds: number) {
@@ -21,58 +23,67 @@ function formatTime(seconds: number) {
     return `${formattedMinutes}:${formattedSeconds}`;
 }
 
-const Playlist: React.FC<PlaylistProps> = ({ songs, setCurrentSong }) => {
-    if (songs)
-        return songs.map((song) => {
-            return (
-                <S.playlistItem key={song.id}>
-                    <S.track onClick={() => setCurrentSong(song)}>
-                        <S.trackTitle>
-                            <S.trackTitleImage>
-                                <S.trackTitleSvg aria-label="music">
-                                    <use
-                                        xlinkHref={
-                                            song.logo
-                                                ? song.logo
-                                                : './src/img/icon/sprite.svg#icon-note'
-                                        }
-                                    ></use>
-                                </S.trackTitleSvg>
-                            </S.trackTitleImage>
-                            <S.trackTitleText>
-                                <S.trackTitleLink href="http://">
-                                    {song.name}
-                                    <S.trackTitleSpan>
-                                        {/* &nbsp;{song.description} */}
-                                    </S.trackTitleSpan>
-                                </S.trackTitleLink>
-                            </S.trackTitleText>
-                        </S.trackTitle>
+const Playlist: React.FC<PlaylistProps> = ({
+    songs,
+    setCurrentSong,
+    isErrorGetAllSong,
+}) => {
+    if (isErrorGetAllSong) {
+        return <S.errorGetSongs>Не удалось загрузить песни...</S.errorGetSongs>;
+    } else {
+        if (songs) {
+            return songs.map((song) => {
+                return (
+                    <S.playlistItem key={song.id}>
+                        <S.track onClick={() => setCurrentSong(song)}>
+                            <S.trackTitle>
+                                <S.trackTitleImage>
+                                    <S.trackTitleSvg aria-label="music">
+                                        <use
+                                            xlinkHref={
+                                                song.logo
+                                                    ? song.logo
+                                                    : './src/img/icon/sprite.svg#icon-note'
+                                            }
+                                        ></use>
+                                    </S.trackTitleSvg>
+                                </S.trackTitleImage>
+                                <S.trackTitleText>
+                                    <S.trackTitleLink href="http://">
+                                        {song.name}
+                                        <S.trackTitleSpan>
+                                            {/* &nbsp;{song.description} */}
+                                        </S.trackTitleSpan>
+                                    </S.trackTitleLink>
+                                </S.trackTitleText>
+                            </S.trackTitle>
 
-                        <S.trackAuthor>
-                            <S.trackAuthorLink href="http://">
-                                {song.author}
-                            </S.trackAuthorLink>
-                        </S.trackAuthor>
+                            <S.trackAuthor>
+                                <S.trackAuthorLink href="http://">
+                                    {song.author}
+                                </S.trackAuthorLink>
+                            </S.trackAuthor>
 
-                        <S.trackAlbum>
-                            <S.trackAlbumLink href="http://">
-                                {song.album}
-                            </S.trackAlbumLink>
-                        </S.trackAlbum>
+                            <S.trackAlbum>
+                                <S.trackAlbumLink href="http://">
+                                    {song.album}
+                                </S.trackAlbumLink>
+                            </S.trackAlbum>
 
-                        <S.trackTime>
-                            <S.trackTimeSvg aria-label="time">
-                                <use xlinkHref="./src/img/icon/sprite.svg#icon-like"></use>
-                            </S.trackTimeSvg>
-                            <S.trackTimeText>
-                                {formatTime(song.duration_in_seconds)}
-                            </S.trackTimeText>
-                        </S.trackTime>
-                    </S.track>
-                </S.playlistItem>
-            );
-        });
+                            <S.trackTime>
+                                <S.trackTimeSvg aria-label="time">
+                                    <use xlinkHref="./src/img/icon/sprite.svg#icon-like"></use>
+                                </S.trackTimeSvg>
+                                <S.trackTimeText>
+                                    {formatTime(song.duration_in_seconds)}
+                                </S.trackTimeText>
+                            </S.trackTime>
+                        </S.track>
+                    </S.playlistItem>
+                );
+            });
+        }
+    }
 };
 
 const PlaylistSkeleton = () => {
@@ -99,6 +110,7 @@ export const Songs: React.FC<SongsProps> = ({
     isLoadApp,
     songs,
     setCurrentSong,
+    isErrorGetAllSong,
 }) => {
     return (
         <S.centerblockContent>
@@ -114,7 +126,11 @@ export const Songs: React.FC<SongsProps> = ({
             </S.playlistTitle>
             <S.playlist>
                 {isLoadApp ? (
-                    <Playlist songs={songs} setCurrentSong={setCurrentSong} />
+                    <Playlist
+                        songs={songs}
+                        setCurrentSong={setCurrentSong}
+                        isErrorGetAllSong={isErrorGetAllSong}
+                    />
                 ) : (
                     <PlaylistSkeleton />
                 )}

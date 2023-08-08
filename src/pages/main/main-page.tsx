@@ -16,6 +16,7 @@ interface MainProps {
     songs: Song[] | null;
     currentSong: Song | null;
     setCurrentSong: (value: Song | null) => void;
+    isErrorGetAllSong: boolean;
 }
 
 export const Main: React.FC<MainProps> = ({
@@ -23,6 +24,7 @@ export const Main: React.FC<MainProps> = ({
     songs,
     currentSong,
     setCurrentSong,
+    isErrorGetAllSong,
 }) => {
     const [isNavOpen, setIsNavOpen] = useState<Boolean>(false);
     const [isOpenNavAnimation, setIsOpenNavAnimation] = useState(true);
@@ -69,6 +71,7 @@ export const Main: React.FC<MainProps> = ({
                         isLoadApp={isLoadApp}
                         songs={songs}
                         setCurrentSong={setCurrentSong}
+                        isErrorGetAllSong={isErrorGetAllSong}
                     />
                 </S.centerblock>
                 <Sidebar isLoadApp={isLoadApp} />

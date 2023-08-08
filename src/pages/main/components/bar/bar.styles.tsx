@@ -1,8 +1,17 @@
-import { styled } from 'styled-components';
+import { keyframes, styled } from 'styled-components';
 
 interface Props {
     $isAppLoad: Boolean;
 }
+
+const slideInBar = keyframes`
+    0% {
+        bottom: -78px;
+    }
+    100% {
+        bottom: 0;
+    }
+`;
 
 const btn = `
     cursor: pointer;
@@ -14,6 +23,7 @@ export const bar = styled.div`
     left: 0;
     width: 100%;
     background: rgba(28, 28, 28, 0.5);
+    animation: ${slideInBar} 0.3s forwards;
 `;
 
 export const barContent = styled.div`

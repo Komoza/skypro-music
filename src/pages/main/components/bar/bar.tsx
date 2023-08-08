@@ -1,10 +1,12 @@
+import { Song } from '../../../../App';
 import * as S from './bar.styles';
 
 interface BarProps {
     isAppLoad: Boolean;
+    currentSong: Song | null;
 }
 
-export const Bar: React.FC<BarProps> = ({ isAppLoad }) => {
+export const Bar: React.FC<BarProps> = ({ isAppLoad, currentSong }) => {
     return (
         <S.bar>
             <S.barContent>
@@ -52,14 +54,14 @@ export const Bar: React.FC<BarProps> = ({ isAppLoad }) => {
                                 <S.trackPlayAuthor $isAppLoad={isAppLoad}>
                                     {isAppLoad && (
                                         <S.trackPlayAuthorLink href="http://">
-                                            Lonely day
+                                            {currentSong && currentSong.name}
                                         </S.trackPlayAuthorLink>
                                     )}
                                 </S.trackPlayAuthor>
                                 <S.trackPlayAlbum $isAppLoad={isAppLoad}>
                                     {isAppLoad && (
                                         <S.trackPlayAlbumLink href="http://">
-                                            RHCP
+                                            {currentSong && currentSong.author}
                                         </S.trackPlayAlbumLink>
                                     )}
                                 </S.trackPlayAlbum>

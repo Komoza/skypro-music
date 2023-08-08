@@ -7,6 +7,7 @@ export const Login = () => {
 
     const handleClickLogin = () => {
         saveUserToLocalStorage({ isAllowed: true });
+        console.log(1);
         navigate('/', { replace: true });
     };
     return (

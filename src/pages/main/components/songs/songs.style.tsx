@@ -69,6 +69,12 @@ export const track = styled.div`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+
+    cursor: pointer;
+
+    &:hover {
+        background-color: #222;
+    }
 `;
 
 export const trackTitle = styled.div`

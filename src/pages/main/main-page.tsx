@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import { Bar } from './components/bar/bar';
 import { Footer } from './components/footer/footer';
@@ -9,19 +9,24 @@ import { Search } from './components/search/search';
 import { Filter } from './components/filter/filter';
 
 import * as S from '../../App.style';
+import { Song } from '../../App';
 
-export const Main = () => {
+interface MainProps {
+    isLoadApp: boolean;
+    songs: Song[] | null;
+    currentSong: Song | null;
+    setCurrentSong: (value: Song | null) => void;
+}
+
+export const Main: React.FC<MainProps> = ({
+    isLoadApp,
+    songs,
+    currentSong,
+    setCurrentSong,
+}) => {
     const [isNavOpen, setIsNavOpen] = useState<Boolean>(false);
     const [isOpenNavAnimation, setIsOpenNavAnimation] = useState(true);
-    const [isLoadApp, setIsLoadApp] = useState<Boolean>(false);
     const [filter, setFilter] = useState<string | null>(null);
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsLoadApp(true);
-        }, 3000);
-        return () => clearTimeout(timer);
-    }, []);
 
     // зарытие окон при клике на любое место
     const handleClickContainer = () => {
@@ -60,12 +65,16 @@ export const Main = () => {
                     <Search />
                     <S.centerblockH2>Треки</S.centerblockH2>
                     <Filter filter={filter} setFilter={setFilter} />
-                    <Songs isLoadApp={isLoadApp} />
+                    <Songs
+                        isLoadApp={isLoadApp}
+                        songs={songs}
+                        setCurrentSong={setCurrentSong}
+                    />
                 </S.centerblock>
                 <Sidebar isLoadApp={isLoadApp} />
             </S.main>
 
-            <Bar isAppLoad={isLoadApp} />
+            <Bar isAppLoad={isLoadApp} currentSong={currentSong} />
             <Footer />
         </>
     );

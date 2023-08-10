@@ -26,7 +26,7 @@ export const Main: React.FC<MainProps> = ({
     setCurrentSong,
     isErrorGetAllSong,
 }) => {
-    const [isNavOpen, setIsNavOpen] = useState<Boolean>(false);
+    const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
     const [isOpenNavAnimation, setIsOpenNavAnimation] = useState(true);
     const [filter, setFilter] = useState<string | null>(null);
 

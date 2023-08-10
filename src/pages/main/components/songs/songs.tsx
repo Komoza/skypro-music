@@ -2,7 +2,7 @@ import { Song } from '../../../../App';
 import * as S from './songs.style';
 
 interface SongsProps {
-    isLoadApp: Boolean;
+    isLoadApp: boolean;
     songs: Song[] | null;
     setCurrentSong: (value: Song | null) => void;
     isErrorGetAllSong: boolean;

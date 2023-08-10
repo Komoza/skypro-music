@@ -2,7 +2,7 @@ import { Song } from '../../../../App';
 import * as S from './bar.styles';
 
 interface BarProps {
-    isAppLoad: Boolean;
+    isAppLoad: boolean;
     currentSong: Song | null;
 }
 

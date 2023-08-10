@@ -17,8 +17,12 @@ export interface Song {
     track_file: string;
 }
 
-const isUser = getUserFromLocalStorage();
-const user = isUser ? isUser : { isAllowed: false };
+export interface User {
+    isAllowed: boolean;
+}
+
+const isUser: User | null = getUserFromLocalStorage();
+const user: User = isUser ? isUser : { isAllowed: false };
 
 function App() {
     const [isLoadApp, setIsLoadApp] = useState<boolean>(false);
@@ -29,17 +33,16 @@ function App() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await getAllSongs();
+                const data: Song[] = await getAllSongs();
                 setSongs(data);
             } catch (error) {
-                console.log(1);
                 setIsErrorGetAllSong(true);
             } finally {
                 setIsLoadApp(true);
             }
         };
 
-        fetchData();
+        void fetchData();
     }, []);
     return (
         <>

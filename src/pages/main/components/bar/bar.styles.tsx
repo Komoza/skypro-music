@@ -1,7 +1,7 @@
 import { keyframes, styled } from 'styled-components';
 
 interface Props {
-    $isAppLoad: Boolean;
+    $isAppLoad: boolean;
 }
 
 const slideInBar = keyframes`

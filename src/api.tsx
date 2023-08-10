@@ -1,9 +1,11 @@
-const HOST = 'https://painassasin.online/';
-let URL = '';
+import { Song } from './App';
 
-export const getAllSongs = () => {
-    URL = 'catalog/track/all/';
-    return fetch(HOST + URL, {
+const host = 'https://painassasin.online/';
+let url = '';
+
+export const getAllSongs = async () => {
+    url = 'catalog/track/all/';
+    return fetch(host + url, {
         method: 'GET',
     })
         .then((response) => {
@@ -11,5 +13,5 @@ export const getAllSongs = () => {
                 return response.json();
             } else throw Error;
         })
-        .then((json) => json);
+        .then((json) => json as Song[]);
 };

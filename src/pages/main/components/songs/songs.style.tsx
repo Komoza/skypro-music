@@ -69,6 +69,12 @@ export const track = styled.div`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+
+    cursor: pointer;
+
+    &:hover {
+        background-color: #222;
+    }
 `;
 
 export const trackTitle = styled.div`
@@ -185,4 +191,9 @@ export const trackTimeLoading = styled.div`
     animation: skeleton-loading 1s linear infinite alternate;
     height: 19px;
     background-color: #313131;
+`;
+
+export const errorGetSongs = styled.p`
+    font-size: 32px;
+    margin-top: 40px;
 `;

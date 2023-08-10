@@ -1,8 +1,8 @@
 import * as S from './sidebar.style';
-import { PLAYLIST } from '../../../../cosntant';
+import { playlist } from '../../../../cosntant';
 
 interface SidebarProps {
-    isLoadApp: Boolean;
+    isLoadApp: boolean;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ isLoadApp }) => {
@@ -14,7 +14,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isLoadApp }) => {
             </S.sidebarPersonal>
             <S.sidebarBlock>
                 <S.sidebarList>
-                    {PLAYLIST.map((item) => {
+                    {playlist.map((item) => {
                         return (
                             <S.sidebarItem key={item.id} $isLoadApp={isLoadApp}>
                                 {isLoadApp && (

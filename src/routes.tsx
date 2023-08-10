@@ -7,14 +7,27 @@ import { Compilation } from './pages/compilation/compilation';
 import { MyPlaylist } from './pages/my-playlist/my-playlist';
 import { NotFoundPage } from './pages/not-found/not-found';
 import { ProtectedRoute } from './protected-route';
+import { Song } from './App';
 
 interface AppRoutesProps {
     user: {
         isAllowed: boolean;
     };
+    isLoadApp: boolean;
+    songs: Song[] | null;
+    currentSong: Song | null;
+    setCurrentSong: (value: Song | null) => void;
+    isErrorGetAllSong: boolean;
 }
 
-export const AppRoutes: React.FC<AppRoutesProps> = ({ user }) => {
+export const AppRoutes: React.FC<AppRoutesProps> = ({
+    user,
+    isLoadApp,
+    songs,
+    currentSong,
+    setCurrentSong,
+    isErrorGetAllSong,
+}) => {
     return (
         <Routes>
             <Route path="/login" element={<Login />} />
@@ -28,7 +41,18 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ user }) => {
                     />
                 }
             >
-                <Route path="/" element={<Main />} />
+                <Route
+                    path="/"
+                    element={
+                        <Main
+                            isLoadApp={isLoadApp}
+                            songs={songs}
+                            currentSong={currentSong}
+                            setCurrentSong={setCurrentSong}
+                            isErrorGetAllSong={isErrorGetAllSong}
+                        />
+                    }
+                />
                 <Route path="/compilation/:id" element={<Compilation />} />
                 <Route path="/playlist" element={<MyPlaylist />} />
             </Route>

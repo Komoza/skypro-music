@@ -2,7 +2,7 @@ import { styled } from 'styled-components';
 import { Link } from 'react-router-dom';
 
 interface Props {
-    $isLoadApp: Boolean;
+    $isLoadApp: boolean;
 }
 
 export const sidebar = styled.div`

@@ -49,7 +49,7 @@ const Playlist: React.FC<PlaylistProps> = ({
                                     </S.trackTitleSvg>
                                 </S.trackTitleImage>
                                 <S.trackTitleText>
-                                    <S.trackTitleLink href="http://">
+                                    <S.trackTitleLink>
                                         {song.name}
                                         <S.trackTitleSpan>
                                             {/* &nbsp;{song.description} */}
@@ -59,13 +59,13 @@ const Playlist: React.FC<PlaylistProps> = ({
                             </S.trackTitle>
 
                             <S.trackAuthor>
-                                <S.trackAuthorLink href="http://">
+                                <S.trackAuthorLink>
                                     {song.author}
                                 </S.trackAuthorLink>
                             </S.trackAuthor>
 
                             <S.trackAlbum>
-                                <S.trackAlbumLink href="http://">
+                                <S.trackAlbumLink>
                                     {song.album}
                                 </S.trackAlbumLink>
                             </S.trackAlbum>

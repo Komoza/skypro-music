@@ -1,15 +1,16 @@
 import { Navigate, Outlet } from 'react-router-dom';
+import { User } from './App';
 
 interface ProtectedRouteProps {
     redirectPath: string;
-    isAllowed: boolean;
+    user: User | null;
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     redirectPath,
-    isAllowed,
+    user,
 }) => {
-    if (!isAllowed) {
+    if (!user) {
         return <Navigate to={redirectPath} replace={true} />;
     }
 

@@ -21,14 +21,13 @@ export interface User {
     isAllowed: boolean;
 }
 
-const isUser: User | null = getUserFromLocalStorage();
-const user: User = isUser ? isUser : { isAllowed: false };
 
 function App() {
     const [isLoadApp, setIsLoadApp] = useState<boolean>(false);
     const [songs, setSongs] = useState<Song[] | null>(null);
     const [currentSong, setCurrentSong] = useState<Song | null>(null);
     const [isErrorGetAllSong, setIsErrorGetAllSong] = useState<boolean>(false);
+    const [user, setUser] = useState<null | User>(getUserFromLocalStorage());
 
     useEffect(() => {
         const fetchData = async () => {
@@ -44,6 +43,7 @@ function App() {
 
         void fetchData();
     }, []);
+
     return (
         <>
             <GlobalStyle />
@@ -56,6 +56,7 @@ function App() {
                         currentSong={currentSong}
                         setCurrentSong={setCurrentSong}
                         isErrorGetAllSong={isErrorGetAllSong}
+                        setUser={setUser}
                     />
                 </S.container>
             </S.wrapper>

@@ -1,13 +1,23 @@
 import * as S from './login.style';
 import { saveUserToLocalStorage } from '../../helper';
 import { useNavigate } from 'react-router-dom';
+import { User } from '../../App';
 
-export const Login = () => {
+interface LoginProps {
+    setUser: (value: User) => void;
+}
+
+const userFields: User = {
+    isAllowed: false,
+};
+
+export const Login: React.FC<LoginProps> = ({ setUser }) => {
     const navigate = useNavigate();
 
+    userFields.isAllowed = true;
     const handleClickLogin = () => {
-        saveUserToLocalStorage({ isAllowed: true });
-        console.log(1);
+        saveUserToLocalStorage(userFields);
+        setUser(userFields);
         navigate('/', { replace: true });
     };
     return (

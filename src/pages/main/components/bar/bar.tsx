@@ -1,5 +1,8 @@
+import { useEffect, useRef, useState } from 'react';
 import { Song } from '../../../../App';
 import * as S from './bar.styles';
+import { Timer } from './timer';
+import { ProgressBar } from './progress-bar';
 
 interface BarProps {
     isAppLoad: boolean;
@@ -7,35 +10,139 @@ interface BarProps {
 }
 
 export const Bar: React.FC<BarProps> = ({ isAppLoad, currentSong }) => {
+    const [isPlay, setIsPlay] = useState<boolean>(false);
+    const [isRepeatTrack, setIsRepeatTrack] = useState<boolean>(false);
+    const [duration, setDuration] = useState<number>(0);
+    const [currentProgress, setCurrentProgress] = useState<number>(0);
+    const [currentSecond, setCurrentSecond] = useState<number>(0);
+
+    const refPlayer = useRef<HTMLAudioElement>(null);
+
+    const handleClickPause = () => {
+        setIsPlay(false);
+        refPlayer.current?.pause();
+    };
+    const startSong = () => {
+        setIsPlay(true);
+        void refPlayer.current?.play();
+    };
+    useEffect(startSong, [currentSong]);
+    const handleClickPlay = () => {
+        startSong();
+    };
+    const handleClickPrev = () => {
+        alert('Функция предыдущая песня пока не готова');
+    };
+    const handleClickNext = () => {
+        alert('Функция следующая песня пока не готова');
+    };
+    const handleClickRepeat = () => {
+        setIsRepeatTrack(!isRepeatTrack);
+    };
+    const handleClickShuffle = () => {
+        alert('Функция перемешать песни пока не готова');
+    };
+
+    const handleClickProgressBar = (
+        event: React.MouseEvent<HTMLDivElement>
+    ) => {
+        const trackPercent =
+            (event.clientX / event.currentTarget.clientWidth) * 100;
+
+        if (refPlayer.current) {
+            refPlayer.current.currentTime = (duration / 100) * trackPercent;
+        }
+    };
+
+    const onPlaying = () => {
+        if (refPlayer.current) {
+            const currentTime = Math.round(refPlayer.current.currentTime);
+            // refPlayer.current.duration при переключении трека возвращает isNaN
+            const durationTime = Math.round(
+                !isNaN(refPlayer.current.duration)
+                    ? refPlayer.current.duration
+                    : 0
+            );
+            setDuration(durationTime);
+
+            if (currentTime && durationTime) {
+                setCurrentProgress((currentTime / durationTime) * 100);
+            }
+            setCurrentSecond(currentTime);
+        }
+    };
+
+    const endTrack = () => {
+        if (!isRepeatTrack) {
+            setIsPlay(false);
+        }
+    };
+
+    const handleChangeVolume = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.currentTarget && refPlayer.current) {
+            refPlayer.current.volume = Number(event.currentTarget.value);
+        }
+    };
+
     return (
         currentSong && (
             <S.bar>
                 <S.barContent>
-                    <S.barPlayerProgress></S.barPlayerProgress>
+                    <S.audioFile
+                        loop={isRepeatTrack}
+                        onEnded={endTrack}
+                        onTimeUpdate={onPlaying}
+                        ref={refPlayer}
+                        src={currentSong.track_file}
+                    ></S.audioFile>
+                    <Timer currentSecond={currentSecond} duration={duration} />
+                    <ProgressBar
+                        currentProgress={currentProgress}
+                        handleClickProgressBar={handleClickProgressBar}
+                    />
                     <S.barPlayerBlock>
                         <S.player>
                             <S.playerControls>
-                                <S.playerBtnPrev>
+                                <S.playerBtnPrev onClick={handleClickPrev}>
                                     <S.playerBtnPrevSvg aria-label="prev">
                                         <use xlinkHref="./src/img/icon/sprite.svg#icon-prev"></use>
                                     </S.playerBtnPrevSvg>
                                 </S.playerBtnPrev>
-                                <S.playerBtnPlay>
+                                <S.playerBtnPlay
+                                    onClick={
+                                        isPlay
+                                            ? handleClickPause
+                                            : handleClickPlay
+                                    }
+                                >
                                     <S.playerBtnPlaySvg aria-label="play">
-                                        <use xlinkHref="./src/img/icon/sprite.svg#icon-play"></use>
+                                        <use
+                                            xlinkHref={`./src/img/icon/sprite.svg#icon-${
+                                                isPlay ? 'pause' : 'play'
+                                            }`}
+                                        ></use>
                                     </S.playerBtnPlaySvg>
                                 </S.playerBtnPlay>
-                                <S.playerBtnNext>
+                                <S.playerBtnNext onClick={handleClickNext}>
                                     <S.playerBtnNextSvg aria-label="next">
                                         <use xlinkHref="./src/img/icon/sprite.svg#icon-next"></use>
                                     </S.playerBtnNextSvg>
                                 </S.playerBtnNext>
-                                <S.playerBtnRepeat className="_btn-icon">
-                                    <S.playerBtnRepeatSvg aria-label="repeat">
+                                <S.playerBtnRepeat
+                                    onClick={handleClickRepeat}
+                                    className="_btn-icon"
+                                >
+                                    <S.playerBtnRepeatSvg
+                                        $isRepeatTrack={isRepeatTrack}
+                                        aria-label="repeat"
+                                    >
                                         <use xlinkHref="./src/img/icon/sprite.svg#icon-repeat"></use>
                                     </S.playerBtnRepeatSvg>
                                 </S.playerBtnRepeat>
-                                <S.playerBtnShuffle className="_btn-icon">
+                                <S.playerBtnShuffle
+                                    onClick={handleClickShuffle}
+                                    className="_btn-icon"
+                                >
                                     <S.playerBtnShuffleSvg aria-label="shuffle">
                                         <use xlinkHref="./src/img/icon/sprite.svg#icon-shuffle"></use>
                                     </S.playerBtnShuffleSvg>
@@ -93,6 +200,12 @@ export const Bar: React.FC<BarProps> = ({ isAppLoad, currentSong }) => {
                                     <S.volumeProgressLine
                                         type="range"
                                         name="range"
+                                        min="0"
+                                        max="1"
+                                        step="0.01"
+                                        onChange={(event) =>
+                                            handleChangeVolume(event)
+                                        }
                                     />
                                 </S.volumeProgress>
                             </S.volumeContent>

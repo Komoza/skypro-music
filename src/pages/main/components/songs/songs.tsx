@@ -1,5 +1,6 @@
 import { Song } from '../../../../App';
 import * as S from './songs.style';
+import { formatTime } from '../../../../cosntant';
 
 interface SongsProps {
     isLoadApp: boolean;
@@ -11,16 +12,6 @@ interface PlaylistProps {
     songs: Song[] | null;
     setCurrentSong: (value: Song | null) => void;
     isErrorGetAllSong: boolean;
-}
-
-function formatTime(seconds: number) {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-
-    const formattedMinutes = String(minutes).padStart(2, '0');
-    const formattedSeconds = String(remainingSeconds).padStart(2, '0');
-
-    return `${formattedMinutes}:${formattedSeconds}`;
 }
 
 const Playlist: React.FC<PlaylistProps> = ({

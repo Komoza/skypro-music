@@ -1,5 +1,7 @@
 import { GlobalStyle } from './index.style';
 import * as S from './App.style';
+import './fonts.css';
+
 import { AppRoutes } from './routes';
 import { getUserFromLocalStorage } from './helper';
 import { useEffect, useState } from 'react';
@@ -20,7 +22,6 @@ export interface Song {
 export interface User {
     isAllowed: boolean;
 }
-
 
 function App() {
     const [isLoadApp, setIsLoadApp] = useState<boolean>(false);

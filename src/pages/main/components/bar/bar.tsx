@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Song } from '../../../../App';
 import * as S from './bar.styles';
-import { Timer } from './timer';
 import { ProgressBar } from './progress-bar';
 
 interface BarProps {
@@ -10,13 +9,10 @@ interface BarProps {
 }
 
 export const Bar: React.FC<BarProps> = ({ isAppLoad, currentSong }) => {
+    const refPlayer = useRef<HTMLAudioElement>(null);
+
     const [isPlay, setIsPlay] = useState<boolean>(false);
     const [isRepeatTrack, setIsRepeatTrack] = useState<boolean>(false);
-    const [duration, setDuration] = useState<number>(0);
-    const [currentProgress, setCurrentProgress] = useState<number>(0);
-    const [currentSecond, setCurrentSecond] = useState<number>(0);
-
-    const refPlayer = useRef<HTMLAudioElement>(null);
 
     const handleClickPause = () => {
         setIsPlay(false);
@@ -30,46 +26,21 @@ export const Bar: React.FC<BarProps> = ({ isAppLoad, currentSong }) => {
     const handleClickPlay = () => {
         startSong();
     };
+
     const handleClickPrev = () => {
         alert('Функция предыдущая песня пока не готова');
     };
+
     const handleClickNext = () => {
         alert('Функция следующая песня пока не готова');
     };
+
     const handleClickRepeat = () => {
         setIsRepeatTrack(!isRepeatTrack);
     };
+
     const handleClickShuffle = () => {
         alert('Функция перемешать песни пока не готова');
-    };
-
-    const handleClickProgressBar = (
-        event: React.MouseEvent<HTMLDivElement>
-    ) => {
-        const trackPercent =
-            (event.clientX / event.currentTarget.clientWidth) * 100;
-
-        if (refPlayer.current) {
-            refPlayer.current.currentTime = (duration / 100) * trackPercent;
-        }
-    };
-
-    const onPlaying = () => {
-        if (refPlayer.current) {
-            const currentTime = Math.round(refPlayer.current.currentTime);
-            // refPlayer.current.duration при переключении трека возвращает isNaN
-            const durationTime = Math.round(
-                !isNaN(refPlayer.current.duration)
-                    ? refPlayer.current.duration
-                    : 0
-            );
-            setDuration(durationTime);
-
-            if (currentTime && durationTime) {
-                setCurrentProgress((currentTime / durationTime) * 100);
-            }
-            setCurrentSecond(currentTime);
-        }
     };
 
     const endTrack = () => {
@@ -89,17 +60,13 @@ export const Bar: React.FC<BarProps> = ({ isAppLoad, currentSong }) => {
             <S.bar>
                 <S.barContent>
                     <S.audioFile
+                        id='audio-player'
                         loop={isRepeatTrack}
                         onEnded={endTrack}
-                        onTimeUpdate={onPlaying}
                         ref={refPlayer}
                         src={currentSong.track_file}
                     ></S.audioFile>
-                    <Timer currentSecond={currentSecond} duration={duration} />
-                    <ProgressBar
-                        currentProgress={currentProgress}
-                        handleClickProgressBar={handleClickProgressBar}
-                    />
+                    <ProgressBar refPlayer={refPlayer}></ProgressBar>
                     <S.barPlayerBlock>
                         <S.player>
                             <S.playerControls>

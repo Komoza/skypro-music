@@ -33,25 +33,25 @@ export const barContent = styled.div`
     flex-direction: column;
 `;
 
-export const barPlayerProgress = styled.div<Props>`
+export const barPlayerProgress = styled.div`
+    position: relative;
     width: 100%;
     height: 5px;
     background: #2e2e2e;
     cursor: pointer;
-    transition: all 0.2s;
-    &:hover {
-        height: 15px;
-    }
+    transition: height 0.2s;
+    transition-delay: 0.5s;
 
-    &::after {
-        content: '';
-        display: block;
-        left: 0;
-        top: 0;
-        width: ${props => props.$currentProgress}%;
-        height: 100%;
-        background: #B672FF;
+    &:hover {
+        height: 20px;
+        transition-delay: 0s;
     }
+`;
+
+export const barPlayerProgressCurrent = styled.div<Props>`
+    width: ${(props) => props.$currentProgress}%;
+    height: 100%;
+    background: #b672ff;
 `;
 
 export const barPlayerProgressTime = styled.div`

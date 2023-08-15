@@ -1,7 +1,7 @@
 import { User } from './App';
 
 export function saveUserToLocalStorage(user: { isAllowed: boolean }) {
-    window.localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('user', JSON.stringify(user));
 }
 
 export function getUserFromLocalStorage(): User | null {

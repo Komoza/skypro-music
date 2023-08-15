@@ -1,7 +1,9 @@
 import { keyframes, styled } from 'styled-components';
 
 interface Props {
-    $isAppLoad: boolean;
+    $isAppLoad?: boolean;
+    $isRepeatTrack?: boolean;
+    $currentProgress?: number;
 }
 
 const slideInBar = keyframes`
@@ -32,9 +34,30 @@ export const barContent = styled.div`
 `;
 
 export const barPlayerProgress = styled.div`
+    position: relative;
     width: 100%;
     height: 5px;
     background: #2e2e2e;
+    cursor: pointer;
+    transition: height 0.2s;
+    transition-delay: 0.5s;
+
+    &:hover {
+        height: 20px;
+        transition-delay: 0s;
+    }
+`;
+
+export const barPlayerProgressCurrent = styled.div<Props>`
+    width: ${(props) => props.$currentProgress}%;
+    height: 100%;
+    background: #b672ff;
+`;
+
+export const barPlayerProgressTime = styled.div`
+    position: absolute;
+    right: 10px;
+    top: -25px;
 `;
 export const barPlayerBlock = styled.div`
     height: 73px;
@@ -67,6 +90,10 @@ const buttonStyle = `
     padding: 5px;
     display: flex;
     align-items: center;
+
+    &:hover {
+        opacity: .5;
+    }
 `;
 
 export const playerBtnPrev = styled.div`
@@ -104,11 +131,11 @@ export const playerBtnRepeat = styled.div`
     ${buttonStyle + btn}
     margin-right: 24px;
 `;
-export const playerBtnRepeatSvg = styled.svg`
+export const playerBtnRepeatSvg = styled.svg<Props>`
     width: 18px;
     height: 12px;
     fill: transparent;
-    stroke: #696969;
+    stroke: ${(props) => (props.$isRepeatTrack ? '#fff' : '#696969')};
 `;
 
 export const playerBtnShuffle = styled.div`
@@ -260,4 +287,8 @@ export const volumeProgress = styled.div`
 export const volumeProgressLine = styled.input`
     ${btn}
     width: 109px;
+`;
+
+export const audioFile = styled.audio`
+    display: none;
 `;

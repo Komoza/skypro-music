@@ -7,17 +7,16 @@ import { Compilation } from './pages/compilation/compilation';
 import { MyPlaylist } from './pages/my-playlist/my-playlist';
 import { NotFoundPage } from './pages/not-found/not-found';
 import { ProtectedRoute } from './protected-route';
-import { Song } from './App';
+import { Song, User } from './App';
 
 interface AppRoutesProps {
-    user: {
-        isAllowed: boolean;
-    };
+    user: User | null;
     isLoadApp: boolean;
     songs: Song[] | null;
     currentSong: Song | null;
     setCurrentSong: (value: Song | null) => void;
     isErrorGetAllSong: boolean;
+    setUser: (value: User) => void;
 }
 
 export const AppRoutes: React.FC<AppRoutesProps> = ({
@@ -27,19 +26,15 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({
     currentSong,
     setCurrentSong,
     isErrorGetAllSong,
+    setUser,
 }) => {
     return (
         <Routes>
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<Login setUser={setUser} />} />
             <Route path="/registration" element={<Registration />} />
 
             <Route
-                element={
-                    <ProtectedRoute
-                        isAllowed={user.isAllowed}
-                        redirectPath={'/login'}
-                    />
-                }
+                element={<ProtectedRoute user={user} redirectPath={'/login'} />}
             >
                 <Route
                     path="/"

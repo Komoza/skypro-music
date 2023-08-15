@@ -61,6 +61,7 @@ export const Main: React.FC<MainProps> = ({
                         isOpenNavAnimation={isOpenNavAnimation}
                         setIsOpenNavAnumation={setIsOpenNavAnimation}
                         setIsNavOpen={setIsNavOpen}
+                        setCurrentSong={setCurrentSong}
                     />
                 )}
                 <S.centerblock>

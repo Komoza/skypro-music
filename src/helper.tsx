@@ -1,6 +1,6 @@
 import { User } from './App';
 
-export function saveUserToLocalStorage(user: { isAllowed: boolean }) {
+export function saveUserToLocalStorage(user: User) {
     localStorage.setItem('user', JSON.stringify(user));
 }
 

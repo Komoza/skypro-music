@@ -1,13 +1,14 @@
 import React from 'react';
 import * as S from './nav.style';
 import { removeUserFromLocalStorage } from '../../../../helper';
-import { Song } from '../../../../App';
+import { Song, User } from '../../../../App';
 
 interface navProps {
     isOpenNavAnimation: boolean;
     setIsOpenNavAnumation: (value: boolean) => void;
     setIsNavOpen: (value: boolean) => void;
     setCurrentSong: (value: Song | null) => void;
+    setUser: (value: User | null) => void;
 }
 
 export const Nav: React.FC<navProps> = ({
@@ -15,6 +16,7 @@ export const Nav: React.FC<navProps> = ({
     setIsOpenNavAnumation,
     setIsNavOpen,
     setCurrentSong,
+    setUser,
 }) => {
     // остановка закрытия окна при клике на панель навигация
     const handleClickNav = (
@@ -33,6 +35,7 @@ export const Nav: React.FC<navProps> = ({
     };
 
     const handleClickLogout = () => {
+        setUser(null);
         removeUserFromLocalStorage();
         setCurrentSong(null);
     };

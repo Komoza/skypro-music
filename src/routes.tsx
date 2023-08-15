@@ -16,7 +16,7 @@ interface AppRoutesProps {
     currentSong: Song | null;
     setCurrentSong: (value: Song | null) => void;
     isErrorGetAllSong: boolean;
-    setUser: (value: User) => void;
+    setUser: (value: User | null) => void;
 }
 
 export const AppRoutes: React.FC<AppRoutesProps> = ({
@@ -31,7 +31,10 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({
     return (
         <Routes>
             <Route path="/login" element={<Login setUser={setUser} />} />
-            <Route path="/registration" element={<Registration />} />
+            <Route
+                path="/registration"
+                element={<Registration setUser={setUser} />}
+            />
 
             <Route
                 element={<ProtectedRoute user={user} redirectPath={'/login'} />}
@@ -45,6 +48,8 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({
                             currentSong={currentSong}
                             setCurrentSong={setCurrentSong}
                             isErrorGetAllSong={isErrorGetAllSong}
+                            user={user}
+                            setUser={setUser}
                         />
                     }
                 />

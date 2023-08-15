@@ -25,11 +25,22 @@ export const sidebarPersonalName = styled.p`
     color: #ffffff;
     margin-right: 16px;
 `;
-export const sidebarAvatar = styled.div`
-    width: 43px;
-    height: 43px;
-    background-color: #313131;
-    border-radius: 50%;
+export const sidebarLogout = styled.button`
+    text-decoration: underline;
+    background: none;
+    border: 0;
+
+    color: white;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+
+    cursor: pointer;
+
+    &:hover {
+        opacity: 0.7;
+    }
 `;
 
 export const sidebarBlock = styled.div`

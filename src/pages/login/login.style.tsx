@@ -82,3 +82,12 @@ export const loginRegistration = styled.div`
         background-color: #ddd;
     }
 `;
+
+export const errorMessage = styled.p`
+    align-self: start;
+    margin-bottom: -40px;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    color: red;
+`;

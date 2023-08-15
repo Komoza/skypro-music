@@ -9,7 +9,7 @@ import { Search } from './components/search/search';
 import { Filter } from './components/filter/filter';
 
 import * as S from '../../App.style';
-import { Song } from '../../App';
+import { Song, User } from '../../App';
 
 interface MainProps {
     isLoadApp: boolean;
@@ -17,6 +17,8 @@ interface MainProps {
     currentSong: Song | null;
     setCurrentSong: (value: Song | null) => void;
     isErrorGetAllSong: boolean;
+    user: User | null;
+    setUser: (value: User | null) => void;
 }
 
 export const Main: React.FC<MainProps> = ({
@@ -25,6 +27,8 @@ export const Main: React.FC<MainProps> = ({
     currentSong,
     setCurrentSong,
     isErrorGetAllSong,
+    setUser,
+    user,
 }) => {
     const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
     const [isOpenNavAnimation, setIsOpenNavAnimation] = useState(true);
@@ -62,6 +66,7 @@ export const Main: React.FC<MainProps> = ({
                         setIsOpenNavAnumation={setIsOpenNavAnimation}
                         setIsNavOpen={setIsNavOpen}
                         setCurrentSong={setCurrentSong}
+                        setUser={setUser}
                     />
                 )}
                 <S.centerblock>
@@ -75,7 +80,12 @@ export const Main: React.FC<MainProps> = ({
                         isErrorGetAllSong={isErrorGetAllSong}
                     />
                 </S.centerblock>
-                <Sidebar isLoadApp={isLoadApp} />
+                <Sidebar
+                    user={user}
+                    isLoadApp={isLoadApp}
+                    setCurrentSong={setCurrentSong}
+                    setUser={setUser}
+                />
             </S.main>
 
             <Bar isAppLoad={isLoadApp} currentSong={currentSong} />

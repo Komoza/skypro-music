@@ -68,3 +68,11 @@ export const registrationRegistration = styled.div`
         opacity: 0.8;
     }
 `;
+export const errorMessage = styled.p`
+    align-self: start;
+    margin-bottom: -30px;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    color: red;
+`;

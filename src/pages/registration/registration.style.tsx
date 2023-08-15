@@ -1,4 +1,4 @@
-import { styled } from 'styled-components';
+import { keyframes, styled } from 'styled-components';
 
 export const registration = styled.div`
     height: 100vh;
@@ -68,6 +68,33 @@ export const registrationRegistration = styled.div`
         opacity: 0.8;
     }
 `;
+
+const waiting = keyframes`
+    0% {
+        opacity: .7;
+    }
+    100% {
+        opacity: 1;
+    }
+`;
+
+export const registrationRegistrationLoad = styled.div`
+    width: 100%;
+    text-align: center;
+    padding: 16px 0;
+    border-radius: 6px;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: -0.054px;
+
+    cursor: wait;
+    background-color: #580ea2;
+    margin-top: 22px;
+    animation: ${waiting} 1s linear infinite alternate;
+`;
+
 export const errorMessage = styled.p`
     align-self: start;
     margin-bottom: -30px;

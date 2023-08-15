@@ -1,4 +1,4 @@
-import { styled } from 'styled-components';
+import { keyframes, styled } from 'styled-components';
 import { Link } from 'react-router-dom';
 
 export const login = styled.div`
@@ -69,6 +69,23 @@ export const loginLogin = styled.div`
     &:hover {
         opacity: 0.8;
     }
+`;
+
+const waiting = keyframes`
+    0% {
+        opacity: .7;
+    }
+    100% {
+        opacity: 1;
+    }
+`;
+
+export const loginLoginLoad = styled.div`
+    ${loginButton}
+    cursor: wait;
+    background-color: #580EA2;
+    margin-top: 40px;
+    animation: ${waiting} 1s linear infinite alternate;
 `;
 
 export const registrationLink = styled(Link)`

@@ -13,9 +13,13 @@ export const Login: React.FC<LoginProps> = ({ setUser }) => {
     const mailRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [connectToServer, setConnectToServer] = useState<boolean>(false);
+
     const navigate = useNavigate();
 
     const validateAndLogin = async () => {
+        setConnectToServer(true);
+
         try {
             let email = '';
             let password = '';
@@ -35,6 +39,8 @@ export const Login: React.FC<LoginProps> = ({ setUser }) => {
             if (error instanceof Error) {
                 setErrorMessage(error.message);
             }
+        } finally {
+            setConnectToServer(false);
         }
     };
 
@@ -64,7 +70,13 @@ export const Login: React.FC<LoginProps> = ({ setUser }) => {
                 {errorMessage && (
                     <S.errorMessage>{errorMessage}</S.errorMessage>
                 )}
-                <S.loginLogin onClick={handleClickLogin}>Войти</S.loginLogin>
+                {connectToServer ? (
+                    <S.loginLoginLoad>Загрузка...</S.loginLoginLoad>
+                ) : (
+                    <S.loginLogin onClick={handleClickLogin}>
+                        Войти
+                    </S.loginLogin>
+                )}
                 <S.registrationLink to="/registration">
                     <S.loginRegistration>
                         Зарегистрироваться

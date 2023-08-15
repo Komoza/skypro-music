@@ -11,6 +11,7 @@ interface RegistrationProps {
 
 export const Registration: React.FC<RegistrationProps> = ({ setUser }) => {
     const [errorMessage, setErrorMessage] = useState<null | string>(null);
+    const [connectToServer, setConnectToServer] = useState<boolean>(false);
 
     const mailRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
@@ -19,6 +20,7 @@ export const Registration: React.FC<RegistrationProps> = ({ setUser }) => {
     const navigate = useNavigate();
 
     const validateAndRegistration = async () => {
+        setConnectToServer(true);
         try {
             let email = '';
             let password = '';
@@ -41,6 +43,8 @@ export const Registration: React.FC<RegistrationProps> = ({ setUser }) => {
             if (error instanceof Error) {
                 setErrorMessage(error.message);
             }
+        } finally {
+            setConnectToServer(false);
         }
     };
 
@@ -86,9 +90,17 @@ export const Registration: React.FC<RegistrationProps> = ({ setUser }) => {
                 {errorMessage && (
                     <S.errorMessage>{errorMessage}</S.errorMessage>
                 )}
-                <S.registrationRegistration onClick={handleClickRegistration}>
-                    Зарегистрироваться
-                </S.registrationRegistration>
+                {connectToServer ? (
+                    <S.registrationRegistrationLoad>
+                        Загрузка...
+                    </S.registrationRegistrationLoad>
+                ) : (
+                    <S.registrationRegistration
+                        onClick={handleClickRegistration}
+                    >
+                        Зарегистрироваться
+                    </S.registrationRegistration>
+                )}
             </S.registrationWrap>
         </S.registration>
     );

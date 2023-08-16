@@ -7,20 +7,18 @@ import { Compilation } from './pages/compilation/compilation';
 import { MyPlaylist } from './pages/my-playlist/my-playlist';
 import { NotFoundPage } from './pages/not-found/not-found';
 import { ProtectedRoute } from './protected-route';
-import { Song, User } from './App';
+import { Song, User, UserContext } from './App';
 
 interface AppRoutesProps {
-    user: User | null;
     isLoadApp: boolean;
     songs: Song[] | null;
     currentSong: Song | null;
     setCurrentSong: (value: Song | null) => void;
     isErrorGetAllSong: boolean;
-    setUser: (value: User) => void;
+    setUser: (value: User | null) => void;
 }
 
 export const AppRoutes: React.FC<AppRoutesProps> = ({
-    user,
     isLoadApp,
     songs,
     currentSong,
@@ -31,10 +29,22 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({
     return (
         <Routes>
             <Route path="/login" element={<Login setUser={setUser} />} />
-            <Route path="/registration" element={<Registration />} />
+            <Route
+                path="/registration"
+                element={<Registration setUser={setUser} />}
+            />
 
             <Route
-                element={<ProtectedRoute user={user} redirectPath={'/login'} />}
+                element={
+                    <UserContext.Consumer>
+                        {(user) => (
+                            <ProtectedRoute
+                                user={user}
+                                redirectPath={'/login'}
+                            />
+                        )}
+                    </UserContext.Consumer>
+                }
             >
                 <Route
                     path="/"
@@ -45,6 +55,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({
                             currentSong={currentSong}
                             setCurrentSong={setCurrentSong}
                             isErrorGetAllSong={isErrorGetAllSong}
+                            setUser={setUser}
                         />
                     }
                 />

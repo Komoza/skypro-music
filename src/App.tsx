@@ -4,7 +4,7 @@ import './fonts.css';
 
 import { AppRoutes } from './routes';
 import { getUserFromLocalStorage } from './helper';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getAllSongs } from './api';
 
 export interface Song {
@@ -20,8 +20,13 @@ export interface Song {
 }
 
 export interface User {
-    isAllowed: boolean;
+    email: string;
+    first_name: string;
+    id: number;
+    last_name: string;
+    username: string;
 }
+export const UserContext = React.createContext<User | null>(null);
 
 function App() {
     const [isLoadApp, setIsLoadApp] = useState<boolean>(false);
@@ -50,15 +55,16 @@ function App() {
             <GlobalStyle />
             <S.wrapper>
                 <S.container>
-                    <AppRoutes
-                        isLoadApp={isLoadApp}
-                        user={user}
-                        songs={songs}
-                        currentSong={currentSong}
-                        setCurrentSong={setCurrentSong}
-                        isErrorGetAllSong={isErrorGetAllSong}
-                        setUser={setUser}
-                    />
+                    <UserContext.Provider value={user}>
+                        <AppRoutes
+                            isLoadApp={isLoadApp}
+                            songs={songs}
+                            currentSong={currentSong}
+                            setCurrentSong={setCurrentSong}
+                            isErrorGetAllSong={isErrorGetAllSong}
+                            setUser={setUser}
+                        />
+                    </UserContext.Provider>
                 </S.container>
             </S.wrapper>
         </>

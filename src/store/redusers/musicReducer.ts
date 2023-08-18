@@ -7,6 +7,7 @@ const initialState: MusicState = {
     playlist: [],
     loadingApp: true,
     currentPlaylist: [],
+    isPlay: false,
 };
 
 const musicReducer = (
@@ -45,6 +46,11 @@ const musicReducer = (
                 ...state,
                 currentPlaylist: action.payload,
             };
+        case ActionTypes.SET_IS_PLAY:
+            return {
+                ...state,
+                isPlay: action.payload,
+            }
 
         default:
             return state;

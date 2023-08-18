@@ -24,6 +24,7 @@ function App() {
     const dispatch = useDispatch();
 
     useEffect(() => {
+        console.log(1);
         const fetchData = async () => {
             try {
                 const data: Track[] = await getAllSongs();

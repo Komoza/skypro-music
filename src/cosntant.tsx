@@ -15,10 +15,9 @@ export const playlist = [
         id: 3,
         name: 'Инди-заряд',
         img: './src/img/playlist03.png',
-        alt: "Indi",
+        alt: 'Indi',
     },
 ];
-
 
 export const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -29,3 +28,12 @@ export const formatTime = (seconds: number) => {
 
     return `${formattedMinutes}:${formattedSeconds}`;
 };
+
+export interface User {
+    email: string;
+    first_name: string;
+    id: number;
+    last_name: string;
+    username: string;
+}
+

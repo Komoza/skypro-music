@@ -2,20 +2,68 @@ import * as S from './songs.style';
 import { formatTime } from '../../../../cosntant';
 import { MusicState, Track } from '../../../../store/actions/types/types';
 import { useSelector, useDispatch } from 'react-redux';
-import { setCurrentTrack } from '../../../../store/actions/creators/creators';
+import {
+    setCurrentPlaylist,
+    setCurrentTrack,
+    setIsPlay,
+} from '../../../../store/actions/creators/creators';
+import { RefObject, useEffect, useRef } from 'react';
 
-const Playlist = () => {
+interface PlaylistProps {
+    refPlaylist: RefObject<HTMLDivElement>;
+}
+const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
     const currentTrack = useSelector((state: MusicState) => state.currentTrack);
+    const currentPlaylist = useSelector(
+        (state: MusicState) => state.currentPlaylist
+    );
+
     const currentTrackID = currentTrack ? currentTrack.id : null;
+    const currentTrackRef = useRef<HTMLDivElement>(null);
 
     const playlist: Track[] = useSelector(
         (state: MusicState) => state.playlist
     );
 
+    const isPlay: boolean = useSelector((state: MusicState) => state.isPlay);
+
     const dispatch = useDispatch();
     const handleClickTrack = (track: Track) => {
-        dispatch(setCurrentTrack(track));
+        if (currentTrack !== track) {
+            dispatch(setIsPlay(true));
+            dispatch(setCurrentTrack(track));
+
+            // добавляем трек в виртуальный плейлист
+            const newCurrentPlaylist: Track[] = [...currentPlaylist];
+
+            // проверяем есть ли этот трек в виртуальном массиве, если есть удалим
+            const indexFindTrack = newCurrentPlaylist.indexOf(track);
+            if (indexFindTrack !== -1) {
+                newCurrentPlaylist.splice(indexFindTrack, 1);
+            }
+
+            newCurrentPlaylist.push(track);
+
+            dispatch(setCurrentPlaylist(newCurrentPlaylist));
+        }
     };
+
+    useEffect(() => {
+        if (currentTrackRef.current && refPlaylist.current) {
+            const trackTop = currentTrackRef.current.offsetTop;
+            const trackBottom = trackTop + currentTrackRef.current.offsetHeight;
+            const areaTop = refPlaylist.current.scrollTop;
+            const areaBottom = areaTop + refPlaylist.current.offsetHeight;
+
+            if (trackTop < areaTop || trackBottom > areaBottom) {
+                // Прокрутите область прокрутки к текущему треку
+                refPlaylist.current.scrollTo({
+                    top: trackTop - refPlaylist.current.offsetHeight,
+                    behavior: 'smooth',
+                });
+            }
+        }
+    }, [currentTrack, refPlaylist]);
 
     if (!playlist.length) {
         return <S.errorGetSongs>Не удалось загрузить песни...</S.errorGetSongs>;
@@ -24,11 +72,20 @@ const Playlist = () => {
             return playlist.map((song) => {
                 return (
                     <S.playlistItem key={song.id}>
-                        <S.track onClick={() => handleClickTrack(song)}>
+                        <S.track
+                            ref={
+                                currentTrackID === song.id
+                                    ? currentTrackRef
+                                    : null
+                            }
+                            onClick={() => handleClickTrack(song)}
+                        >
                             <S.trackTitle>
                                 <S.trackTitleImage>
                                     {currentTrackID == song.id && (
-                                        <S.trackTitleImageActive></S.trackTitleImageActive>
+                                        <S.trackTitleImageActive
+                                            $isPlay={isPlay}
+                                        ></S.trackTitleImageActive>
                                     )}
                                     <S.trackTitleSvg aria-label="music">
                                         <use
@@ -99,6 +156,7 @@ const PlaylistSkeleton = () => {
 };
 
 export const Songs = () => {
+    const refPlaylist = useRef<HTMLDivElement>(null);
     const loadingApp: boolean = useSelector(
         (state: MusicState) => state.loadingApp
     );
@@ -115,8 +173,12 @@ export const Songs = () => {
                     </S.playlistTitleSvg>
                 </S.playlistTitleCol04>
             </S.playlistTitle>
-            <S.playlist>
-                {!loadingApp ? <Playlist /> : <PlaylistSkeleton />}
+            <S.playlist ref={refPlaylist}>
+                {!loadingApp ? (
+                    <Playlist refPlaylist={refPlaylist} />
+                ) : (
+                    <PlaylistSkeleton />
+                )}
             </S.playlist>
         </S.centerblockContent>
     );

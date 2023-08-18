@@ -33,3 +33,10 @@ export const setCurrentPlaylist = (playlist: Track[]) => {
         payload: playlist,
     };
 };
+
+export const setIsPlay = (isPlay: boolean) => {
+    return {
+        type: ActionTypes.SET_IS_PLAY,
+        payload: isPlay,
+    };
+};

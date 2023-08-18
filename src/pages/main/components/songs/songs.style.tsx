@@ -1,5 +1,8 @@
-import { keyframes, styled } from 'styled-components';
+import { css, keyframes, styled } from 'styled-components';
 
+interface Props {
+    $isPlay: boolean;
+}
 const trackLoading = `
     animation: skeleton-loading 1s linear infinite alternate;
     height: 19px;
@@ -9,7 +12,7 @@ const trackLoading = `
 export const centerblockContent = styled.div`
     display: flex;
     flex-direction: column;
-    height: 700px;
+    height: 600px;
 `;
 export const playlistTitle = styled.div`
     display: flex;
@@ -105,17 +108,23 @@ const playing = keyframes`
         scale: 1;
     }
     100% {
-        scale: 1.6;
+        scale: 1.3;
     }
 `;
-export const trackTitleImageActive = styled.svg`
+
+export const trackTitleImageActive = styled.div<Props>`
     position: absolute;
     width: 15px;
     height: 15px;
     border-radius: 50%;
     background: #b672ff;
     opacity: 0.6;
-    animation: ${playing} 1s linear infinite alternate;
+
+    ${(props) =>
+        props.$isPlay &&
+        css`
+            animation: ${playing} .3s linear infinite alternate;
+        `}
 `;
 
 export const trackTitleImageLoading = styled.div`

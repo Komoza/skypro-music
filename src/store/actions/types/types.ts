@@ -15,6 +15,7 @@ export interface MusicState {
     playlist: Track[];
     currentPlaylist: Track[];
     loadingApp: boolean;
+    isPlay: boolean;
 }
 
 export interface SetCurrentTrackAction {
@@ -26,7 +27,10 @@ export interface SetPlaylistAction {
     type: ActionTypes.SET_PLAYLIST;
     payload: Track[];
 }
-
+export interface SetIsPlay {
+    type: ActionTypes.SET_IS_PLAY;
+    payload: boolean;
+}
 export interface SetCurrentPlaylistAction {
     type: ActionTypes.SET_CURRENT_PLAYLIST;
     payload: Track[];
@@ -47,6 +51,7 @@ export enum ActionTypes {
     SET_PLAYLIST = 'SET_PLAYLIST',
     LOADING_APP = 'LOADING_APP',
     SET_CURRENT_PLAYLIST = 'SET_CURRENT_PLAYLIST',
+    SET_IS_PLAY = 'SET_IS_PLAY',
 }
 
 export type MusicAction =
@@ -54,4 +59,5 @@ export type MusicAction =
     | SetPlaylistAction
     | LoadingApp
     | ShufflePlaylistkAction
-    | SetCurrentPlaylistAction;
+    | SetCurrentPlaylistAction
+    | SetIsPlay;

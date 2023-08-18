@@ -3,7 +3,11 @@ import * as S from './bar.styles';
 import { ProgressBar } from './progress-bar';
 import { useDispatch, useSelector } from 'react-redux';
 import { MusicState, Track } from '../../../../store/actions/types/types';
-import { setCurrentTrack } from '../../../../store/actions/creators/creators';
+import {
+    setCurrentPlaylist,
+    setCurrentTrack,
+    setIsPlay,
+} from '../../../../store/actions/creators/creators';
 
 export const Bar = () => {
     const dispatch = useDispatch();
@@ -11,9 +15,14 @@ export const Bar = () => {
     const playlist: Track[] = useSelector(
         (state: MusicState) => state.playlist
     );
+
+    const currentPlaylist: Track[] = useSelector(
+        (state: MusicState) => state.currentPlaylist
+    );
     const currentTrack: Track | null = useSelector(
         (state: MusicState) => state.currentTrack
     );
+    const isPlay: boolean = useSelector((state: MusicState) => state.isPlay);
 
     const loadingApp: boolean = useSelector(
         (state: MusicState) => state.loadingApp
@@ -21,39 +30,86 @@ export const Bar = () => {
 
     const refPlayer = useRef<HTMLAudioElement>(null);
 
-    const [isPlay, setIsPlay] = useState<boolean>(false);
     const [isRepeatTrack, setIsRepeatTrack] = useState<boolean>(false);
+    const [isShuffle, setIsShuffle] = useState<boolean>(false);
 
-    const handleClickPause = () => {
-        setIsPlay(false);
-        refPlayer.current?.pause();
-    };
-    const startSong = () => {
-        setIsPlay(true);
-        void refPlayer.current?.play();
-    };
-    useEffect(startSong, [currentTrack]);
+    useEffect(() => {
+        if (isPlay) {
+            void refPlayer.current?.play();
+        } else {
+            refPlayer.current?.pause();
+        }
+    }, [isPlay, currentTrack]);
+
     const handleClickPlay = () => {
-        startSong();
+        dispatch(setIsPlay(!isPlay));
     };
 
     const handleClickPrev = () => {
         if (currentTrack) {
-            const trackIndex = playlist.indexOf(currentTrack);
-            if (trackIndex) {
-                const prevTrack: Track = playlist[trackIndex - 1];
+            const trackIndex = currentPlaylist.indexOf(currentTrack);
+            if (trackIndex > 0) {
+                const prevTrack: Track = currentPlaylist[trackIndex - 1];
                 dispatch(setCurrentTrack(prevTrack));
             }
         }
     };
 
-    const handleClickNext = () => {
-        if (currentTrack) {
-            const nextTrack: Track =
-                playlist[playlist.indexOf(currentTrack) + 1];
+    const addTrackToCurrPlaylist = (track: Track) => {
+        // добавляем трек в виртуальный плейлист
+        const newCurrentPlaylist: Track[] = [...currentPlaylist];
 
-            dispatch(setCurrentTrack(nextTrack));
+        // проверяем есть ли этот трек в виртуальном массиве, если есть удалим
+        const indexFindTrack = newCurrentPlaylist.indexOf(track);
+        if (indexFindTrack !== -1) {
+            newCurrentPlaylist.splice(indexFindTrack, 1);
         }
+
+        newCurrentPlaylist.push(track);
+
+        dispatch(setCurrentPlaylist(newCurrentPlaylist));
+    };
+
+    const getRandomTrack = () => {
+        const randomIndexTrack =
+            Math.floor(Math.random() * (playlist.length - 1 - 0 + 1)) + 0;
+        return playlist[randomIndexTrack];
+    };
+
+    const setNextTrack = () => {
+        if (currentTrack) {
+            const trackIndexCurrPlaylist =
+                currentPlaylist.indexOf(currentTrack);
+            const trackIndexOriginalPlaylist = playlist.indexOf(currentTrack);
+
+            if (trackIndexCurrPlaylist !== currentPlaylist.length - 1) {
+                const nextTrack = currentPlaylist[trackIndexCurrPlaylist + 1];
+                dispatch(setCurrentTrack(nextTrack));
+                return true;
+            }
+            if (isShuffle) {
+                // получаем любой случайный трек из массива плейлиста, кроме текущего
+                let nextTrack: Track;
+                do {
+                    nextTrack = getRandomTrack();
+                } while (nextTrack === currentTrack);
+
+                dispatch(setCurrentTrack(nextTrack));
+                addTrackToCurrPlaylist(nextTrack);
+                return true;
+            }
+            if (trackIndexOriginalPlaylist !== playlist.length - 1) {
+                const nextTrack = playlist[trackIndexOriginalPlaylist + 1];
+                dispatch(setCurrentTrack(nextTrack));
+
+                addTrackToCurrPlaylist(nextTrack);
+                return true;
+            }
+        }
+        return false;
+    };
+    const handleClickNext = () => {
+        setNextTrack();
     };
 
     const handleClickRepeat = () => {
@@ -61,12 +117,18 @@ export const Bar = () => {
     };
 
     const handleClickShuffle = () => {
-        alert('Функция перемешать песни пока не готова');
+        setIsShuffle(!isShuffle);
     };
 
     const endTrack = () => {
-        if (!isRepeatTrack) {
-            setIsPlay(false);
+        if (isRepeatTrack) {
+            if (refPlayer.current) {
+                void refPlayer.current.play();
+            }
+        } else {
+            if (!setNextTrack()) {
+                dispatch(setIsPlay(false));
+            }
         }
     };
 
@@ -96,13 +158,7 @@ export const Bar = () => {
                                         <use xlinkHref="./src/img/icon/sprite.svg#icon-prev"></use>
                                     </S.playerBtnPrevSvg>
                                 </S.playerBtnPrev>
-                                <S.playerBtnPlay
-                                    onClick={
-                                        isPlay
-                                            ? handleClickPause
-                                            : handleClickPlay
-                                    }
-                                >
+                                <S.playerBtnPlay onClick={handleClickPlay}>
                                     <S.playerBtnPlaySvg aria-label="play">
                                         <use
                                             xlinkHref={`./src/img/icon/sprite.svg#icon-${
@@ -131,7 +187,10 @@ export const Bar = () => {
                                     onClick={handleClickShuffle}
                                     className="_btn-icon"
                                 >
-                                    <S.playerBtnShuffleSvg aria-label="shuffle">
+                                    <S.playerBtnShuffleSvg
+                                        $isShuffle={isShuffle}
+                                        aria-label="shuffle"
+                                    >
                                         <use xlinkHref="./src/img/icon/sprite.svg#icon-shuffle"></use>
                                     </S.playerBtnShuffleSvg>
                                 </S.playerBtnShuffle>

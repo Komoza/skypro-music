@@ -4,6 +4,7 @@ interface Props {
     $loadingApp?: boolean;
     $isRepeatTrack?: boolean;
     $currentProgress?: number;
+    $isShuffle?: boolean;
 }
 
 const slideInBar = keyframes`
@@ -135,7 +136,13 @@ export const playerBtnRepeatSvg = styled.svg<Props>`
     width: 18px;
     height: 12px;
     fill: transparent;
-    stroke: ${(props) => (props.$isRepeatTrack ? '#fff' : '#696969')};
+
+    ${(props) =>
+        props.$isRepeatTrack
+            ? `
+            stroke: #fff 
+            `
+            : `stroke: #696969`}
 `;
 
 export const playerBtnShuffle = styled.div`
@@ -143,11 +150,11 @@ export const playerBtnShuffle = styled.div`
     display: flex;
     align-items: center;
 `;
-export const playerBtnShuffleSvg = styled.svg`
+export const playerBtnShuffleSvg = styled.svg<Props>`
     width: 19px;
     height: 12px;
     fill: transparent;
-    stroke: #696969;
+    stroke: ${(props) => (props.$isShuffle ? '#fff' : '#696969')};
 `;
 
 export const trackPlay = styled.div`

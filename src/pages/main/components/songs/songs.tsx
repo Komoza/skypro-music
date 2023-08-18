@@ -45,6 +45,8 @@ const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
             newCurrentPlaylist.push(track);
 
             dispatch(setCurrentPlaylist(newCurrentPlaylist));
+        } else {
+            dispatch(setIsPlay(!isPlay));
         }
     };
 

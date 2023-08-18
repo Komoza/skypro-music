@@ -1,34 +1,35 @@
-import { Song } from '../../../../App';
 import * as S from './songs.style';
 import { formatTime } from '../../../../cosntant';
+import { MusicState, Track } from '../../../../store/actions/types/types';
+import { useSelector, useDispatch } from 'react-redux';
+import { setCurrentTrack } from '../../../../store/actions/creators/creators';
 
-interface SongsProps {
-    isLoadApp: boolean;
-    songs: Song[] | null;
-    setCurrentSong: (value: Song | null) => void;
-    isErrorGetAllSong: boolean;
-}
-interface PlaylistProps {
-    songs: Song[] | null;
-    setCurrentSong: (value: Song | null) => void;
-    isErrorGetAllSong: boolean;
-}
+const Playlist = () => {
+    const currentTrack = useSelector((state: MusicState) => state.currentTrack);
+    const currentTrackID = currentTrack ? currentTrack.id : null;
 
-const Playlist: React.FC<PlaylistProps> = ({
-    songs,
-    setCurrentSong,
-    isErrorGetAllSong,
-}) => {
-    if (isErrorGetAllSong) {
+    const playlist: Track[] = useSelector(
+        (state: MusicState) => state.playlist
+    );
+
+    const dispatch = useDispatch();
+    const handleClickTrack = (track: Track) => {
+        dispatch(setCurrentTrack(track));
+    };
+
+    if (!playlist.length) {
         return <S.errorGetSongs>Не удалось загрузить песни...</S.errorGetSongs>;
     } else {
-        if (songs) {
-            return songs.map((song) => {
+        if (playlist) {
+            return playlist.map((song) => {
                 return (
                     <S.playlistItem key={song.id}>
-                        <S.track onClick={() => setCurrentSong(song)}>
+                        <S.track onClick={() => handleClickTrack(song)}>
                             <S.trackTitle>
                                 <S.trackTitleImage>
+                                    {currentTrackID == song.id && (
+                                        <S.trackTitleImageActive></S.trackTitleImageActive>
+                                    )}
                                     <S.trackTitleSvg aria-label="music">
                                         <use
                                             xlinkHref={
@@ -97,12 +98,11 @@ const PlaylistSkeleton = () => {
     return playlistSkeleton;
 };
 
-export const Songs: React.FC<SongsProps> = ({
-    isLoadApp,
-    songs,
-    setCurrentSong,
-    isErrorGetAllSong,
-}) => {
+export const Songs = () => {
+    const loadingApp: boolean = useSelector(
+        (state: MusicState) => state.loadingApp
+    );
+
     return (
         <S.centerblockContent>
             <S.playlistTitle>
@@ -116,15 +116,7 @@ export const Songs: React.FC<SongsProps> = ({
                 </S.playlistTitleCol04>
             </S.playlistTitle>
             <S.playlist>
-                {isLoadApp ? (
-                    <Playlist
-                        songs={songs}
-                        setCurrentSong={setCurrentSong}
-                        isErrorGetAllSong={isErrorGetAllSong}
-                    />
-                ) : (
-                    <PlaylistSkeleton />
-                )}
+                {!loadingApp ? <Playlist /> : <PlaylistSkeleton />}
             </S.playlist>
         </S.centerblockContent>
     );

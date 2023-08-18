@@ -1,4 +1,4 @@
-import { styled } from 'styled-components';
+import { keyframes, styled } from 'styled-components';
 
 const trackLoading = `
     animation: skeleton-loading 1s linear infinite alternate;
@@ -9,6 +9,7 @@ const trackLoading = `
 export const centerblockContent = styled.div`
     display: flex;
     flex-direction: column;
+    height: 700px;
 `;
 export const playlistTitle = styled.div`
     display: flex;
@@ -52,7 +53,7 @@ export const playlistTitleSvg = styled.svg`
 `;
 
 export const playlist = styled.div`
-    height: 100%;
+    flex: 1;
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
@@ -96,6 +97,25 @@ const trackTitleImagePattern = `
 `;
 export const trackTitleImage = styled.div`
     ${trackTitleImagePattern}
+    position: relative;
+`;
+
+const playing = keyframes`
+    0% {
+        scale: 1;
+    }
+    100% {
+        scale: 1.6;
+    }
+`;
+export const trackTitleImageActive = styled.svg`
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #b672ff;
+    opacity: 0.6;
+    animation: ${playing} 1s linear infinite alternate;
 `;
 
 export const trackTitleImageLoading = styled.div`

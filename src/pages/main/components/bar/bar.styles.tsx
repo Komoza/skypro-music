@@ -1,7 +1,7 @@
 import { keyframes, styled } from 'styled-components';
 
 interface Props {
-    $isAppLoad?: boolean;
+    $loadingApp?: boolean;
     $isRepeatTrack?: boolean;
     $currentProgress?: number;
 }
@@ -24,7 +24,7 @@ export const bar = styled.div`
     bottom: 0;
     left: 0;
     width: 100%;
-    background: rgba(28, 28, 28, 0.5);
+    background: rgba(28, 28, 28);
     animation: ${slideInBar} 0.3s forwards;
 `;
 
@@ -60,7 +60,7 @@ export const barPlayerProgressTime = styled.div`
     top: -25px;
 `;
 export const barPlayerBlock = styled.div`
-    height: 73px;
+    height: 85px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -174,9 +174,8 @@ export const trackPlayImage = styled.div<Props>`
     grid-area: image;
 
     ${(props) =>
-        props.$isAppLoad
-            ? ''
-            : `
+        props.$loadingApp &&
+        `
             background: #313131;
             animation: skeleton-loading 1s linear infinite alternate;
     `}
@@ -191,11 +190,10 @@ export const trackPlaySvg = styled.svg`
 
 export const trackPlayAuthor = styled.div<Props>`
     grid-area: author;
-    min-width: 49px;
+    width: auto;
     ${(props) =>
-        props.$isAppLoad
-            ? ''
-            : `
+        props.$loadingApp &&
+        `
             width: 60px;
             height: 16px;
             background: #313131;
@@ -213,13 +211,12 @@ export const trackPlayAuthorLink = styled.a`
 `;
 
 export const trackPlayAlbum = styled.div<Props>`
+    width: auto;
     grid-area: album;
-    min-width: 49px;
 
     ${(props) =>
-        props.$isAppLoad
-            ? ''
-            : `
+        props.$loadingApp &&
+        `
             width: 60px;
             height: 16px;
             background: #313131;

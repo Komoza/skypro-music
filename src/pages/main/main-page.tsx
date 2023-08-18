@@ -9,25 +9,13 @@ import { Search } from './components/search/search';
 import { Filter } from './components/filter/filter';
 
 import * as S from '../../App.style';
-import { Song, User, UserContext } from '../../App';
+import { User, UserContext } from '../../App';
 
 interface MainProps {
-    isLoadApp: boolean;
-    songs: Song[] | null;
-    currentSong: Song | null;
-    setCurrentSong: (value: Song | null) => void;
-    isErrorGetAllSong: boolean;
     setUser: (value: User | null) => void;
 }
 
-export const Main: React.FC<MainProps> = ({
-    isLoadApp,
-    songs,
-    currentSong,
-    setCurrentSong,
-    isErrorGetAllSong,
-    setUser,
-}) => {
+export const Main: React.FC<MainProps> = ({ setUser }) => {
     const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
     const [isOpenNavAnimation, setIsOpenNavAnimation] = useState(true);
     const [filter, setFilter] = useState<string | null>(null);
@@ -63,7 +51,6 @@ export const Main: React.FC<MainProps> = ({
                         isOpenNavAnimation={isOpenNavAnimation}
                         setIsOpenNavAnumation={setIsOpenNavAnimation}
                         setIsNavOpen={setIsNavOpen}
-                        setCurrentSong={setCurrentSong}
                         setUser={setUser}
                     />
                 )}
@@ -71,26 +58,19 @@ export const Main: React.FC<MainProps> = ({
                     <Search />
                     <S.centerblockH2>Треки</S.centerblockH2>
                     <Filter filter={filter} setFilter={setFilter} />
-                    <Songs
-                        isLoadApp={isLoadApp}
-                        songs={songs}
-                        setCurrentSong={setCurrentSong}
-                        isErrorGetAllSong={isErrorGetAllSong}
-                    />
+                    <Songs />
                 </S.centerblock>
                 <UserContext.Consumer>
                     {(user) => (
                         <Sidebar
                             user={user}
-                            isLoadApp={isLoadApp}
-                            setCurrentSong={setCurrentSong}
                             setUser={setUser}
                         />
                     )}
                 </UserContext.Consumer>
             </S.main>
 
-            <Bar isAppLoad={isLoadApp} currentSong={currentSong} />
+            <Bar/>
             <Footer />
         </>
     );

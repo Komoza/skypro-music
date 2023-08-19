@@ -2,7 +2,7 @@ import { styled } from 'styled-components';
 import { Link } from 'react-router-dom';
 
 interface Props {
-    $isLoadApp: boolean;
+    $loadingApp: boolean;
 }
 
 export const sidebar = styled.div`
@@ -65,7 +65,7 @@ export const sidebarItem = styled.div<Props>`
     }
 
     ${(props) =>
-        !props.$isLoadApp &&
+        props.$loadingApp &&
         `
         background: #313131;
         animation: skeleton-loading 1s linear infinite alternate;

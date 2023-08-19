@@ -1,38 +1,115 @@
 import { useEffect, useRef, useState } from 'react';
-import { Song } from '../../../../App';
 import * as S from './bar.styles';
 import { ProgressBar } from './progress-bar';
+import { useDispatch, useSelector } from 'react-redux';
+import { MusicState, Track } from '../../../../store/actions/types/types';
+import {
+    setCurrentPlaylist,
+    setCurrentTrack,
+    setIsPlay,
+} from '../../../../store/actions/creators/creators';
 
-interface BarProps {
-    isAppLoad: boolean;
-    currentSong: Song | null;
-}
+export const Bar = () => {
+    const dispatch = useDispatch();
 
-export const Bar: React.FC<BarProps> = ({ isAppLoad, currentSong }) => {
+    const playlist: Track[] = useSelector(
+        (state: MusicState) => state.playlist
+    );
+
+    const currentPlaylist: Track[] = useSelector(
+        (state: MusicState) => state.currentPlaylist
+    );
+    const currentTrack: Track | null = useSelector(
+        (state: MusicState) => state.currentTrack
+    );
+    const isPlay: boolean = useSelector((state: MusicState) => state.isPlay);
+
+    const loadingApp: boolean = useSelector(
+        (state: MusicState) => state.loadingApp
+    );
+
     const refPlayer = useRef<HTMLAudioElement>(null);
 
-    const [isPlay, setIsPlay] = useState<boolean>(false);
     const [isRepeatTrack, setIsRepeatTrack] = useState<boolean>(false);
+    const [isShuffle, setIsShuffle] = useState<boolean>(false);
 
-    const handleClickPause = () => {
-        setIsPlay(false);
-        refPlayer.current?.pause();
-    };
-    const startSong = () => {
-        setIsPlay(true);
-        void refPlayer.current?.play();
-    };
-    useEffect(startSong, [currentSong]);
+    useEffect(() => {
+        if (isPlay) {
+            void refPlayer.current?.play();
+        } else {
+            refPlayer.current?.pause();
+        }
+    }, [isPlay, currentTrack]);
+
     const handleClickPlay = () => {
-        startSong();
+        dispatch(setIsPlay(!isPlay));
     };
 
     const handleClickPrev = () => {
-        alert('Функция предыдущая песня пока не готова');
+        if (currentTrack) {
+            const trackIndex = currentPlaylist.indexOf(currentTrack);
+            if (trackIndex > 0) {
+                const prevTrack: Track = currentPlaylist[trackIndex - 1];
+                dispatch(setCurrentTrack(prevTrack));
+            }
+        }
     };
 
+    const addTrackToCurrPlaylist = (track: Track) => {
+        // добавляем трек в виртуальный плейлист
+        const newCurrentPlaylist: Track[] = [...currentPlaylist];
+
+        // проверяем есть ли этот трек в виртуальном массиве, если есть удалим
+        const indexFindTrack = newCurrentPlaylist.indexOf(track);
+        if (indexFindTrack !== -1) {
+            newCurrentPlaylist.splice(indexFindTrack, 1);
+        }
+
+        newCurrentPlaylist.push(track);
+
+        dispatch(setCurrentPlaylist(newCurrentPlaylist));
+    };
+
+    const getRandomTrack = () => {
+        const randomIndexTrack =
+            Math.floor(Math.random() * (playlist.length - 1 - 0 + 1)) + 0;
+        return playlist[randomIndexTrack];
+    };
+
+    const setNextTrack = () => {
+        if (currentTrack) {
+            const trackIndexCurrPlaylist =
+                currentPlaylist.indexOf(currentTrack);
+            const trackIndexOriginalPlaylist = playlist.indexOf(currentTrack);
+
+            if (trackIndexCurrPlaylist !== currentPlaylist.length - 1) {
+                const nextTrack = currentPlaylist[trackIndexCurrPlaylist + 1];
+                dispatch(setCurrentTrack(nextTrack));
+                return true;
+            }
+            if (isShuffle) {
+                // получаем любой случайный трек из массива плейлиста, кроме текущего
+                let nextTrack: Track;
+                do {
+                    nextTrack = getRandomTrack();
+                } while (nextTrack === currentTrack);
+
+                dispatch(setCurrentTrack(nextTrack));
+                addTrackToCurrPlaylist(nextTrack);
+                return true;
+            }
+            if (trackIndexOriginalPlaylist !== playlist.length - 1) {
+                const nextTrack = playlist[trackIndexOriginalPlaylist + 1];
+                dispatch(setCurrentTrack(nextTrack));
+
+                addTrackToCurrPlaylist(nextTrack);
+                return true;
+            }
+        }
+        return false;
+    };
     const handleClickNext = () => {
-        alert('Функция следующая песня пока не готова');
+        setNextTrack();
     };
 
     const handleClickRepeat = () => {
@@ -40,12 +117,18 @@ export const Bar: React.FC<BarProps> = ({ isAppLoad, currentSong }) => {
     };
 
     const handleClickShuffle = () => {
-        alert('Функция перемешать песни пока не готова');
+        setIsShuffle(!isShuffle);
     };
 
     const endTrack = () => {
-        if (!isRepeatTrack) {
-            setIsPlay(false);
+        if (isRepeatTrack) {
+            if (refPlayer.current) {
+                void refPlayer.current.play();
+            }
+        } else {
+            if (!setNextTrack()) {
+                dispatch(setIsPlay(false));
+            }
         }
     };
 
@@ -56,15 +139,15 @@ export const Bar: React.FC<BarProps> = ({ isAppLoad, currentSong }) => {
     };
 
     return (
-        currentSong && (
+        currentTrack && (
             <S.bar>
                 <S.barContent>
                     <S.audioFile
-                        id='audio-player'
+                        id="audio-player"
                         loop={isRepeatTrack}
                         onEnded={endTrack}
                         ref={refPlayer}
-                        src={currentSong.track_file}
+                        src={currentTrack.track_file}
                     ></S.audioFile>
                     <ProgressBar refPlayer={refPlayer}></ProgressBar>
                     <S.barPlayerBlock>
@@ -75,13 +158,7 @@ export const Bar: React.FC<BarProps> = ({ isAppLoad, currentSong }) => {
                                         <use xlinkHref="./src/img/icon/sprite.svg#icon-prev"></use>
                                     </S.playerBtnPrevSvg>
                                 </S.playerBtnPrev>
-                                <S.playerBtnPlay
-                                    onClick={
-                                        isPlay
-                                            ? handleClickPause
-                                            : handleClickPlay
-                                    }
-                                >
+                                <S.playerBtnPlay onClick={handleClickPlay}>
                                     <S.playerBtnPlaySvg aria-label="play">
                                         <use
                                             xlinkHref={`./src/img/icon/sprite.svg#icon-${
@@ -110,7 +187,10 @@ export const Bar: React.FC<BarProps> = ({ isAppLoad, currentSong }) => {
                                     onClick={handleClickShuffle}
                                     className="_btn-icon"
                                 >
-                                    <S.playerBtnShuffleSvg aria-label="shuffle">
+                                    <S.playerBtnShuffleSvg
+                                        $isShuffle={isShuffle}
+                                        aria-label="shuffle"
+                                    >
                                         <use xlinkHref="./src/img/icon/sprite.svg#icon-shuffle"></use>
                                     </S.playerBtnShuffleSvg>
                                 </S.playerBtnShuffle>
@@ -118,25 +198,25 @@ export const Bar: React.FC<BarProps> = ({ isAppLoad, currentSong }) => {
 
                             <S.trackPlay>
                                 <S.trackPlayContain>
-                                    <S.trackPlayImage $isAppLoad={isAppLoad}>
-                                        {isAppLoad && (
+                                    <S.trackPlayImage $loadingApp={loadingApp}>
+                                        {!loadingApp && (
                                             <S.trackPlaySvg aria-label="music">
                                                 <use xlinkHref="./src/img/icon/sprite.svg#icon-note"></use>
                                             </S.trackPlaySvg>
                                         )}
                                     </S.trackPlayImage>
 
-                                    <S.trackPlayAuthor $isAppLoad={isAppLoad}>
-                                        {isAppLoad && (
+                                    <S.trackPlayAuthor $loadingApp={loadingApp}>
+                                        {!loadingApp && (
                                             <S.trackPlayAuthorLink href="http://">
-                                                {currentSong.name}
+                                                {currentTrack.name}
                                             </S.trackPlayAuthorLink>
                                         )}
                                     </S.trackPlayAuthor>
-                                    <S.trackPlayAlbum $isAppLoad={isAppLoad}>
-                                        {isAppLoad && (
+                                    <S.trackPlayAlbum $loadingApp={loadingApp}>
+                                        {!loadingApp && (
                                             <S.trackPlayAlbumLink href="http://">
-                                                {currentSong.author}
+                                                {currentTrack.author}
                                             </S.trackPlayAlbumLink>
                                         )}
                                     </S.trackPlayAlbum>

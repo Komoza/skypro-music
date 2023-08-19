@@ -1,9 +1,10 @@
 import { keyframes, styled } from 'styled-components';
 
 interface Props {
-    $isAppLoad?: boolean;
+    $loadingApp?: boolean;
     $isRepeatTrack?: boolean;
     $currentProgress?: number;
+    $isShuffle?: boolean;
 }
 
 const slideInBar = keyframes`
@@ -24,7 +25,7 @@ export const bar = styled.div`
     bottom: 0;
     left: 0;
     width: 100%;
-    background: rgba(28, 28, 28, 0.5);
+    background: rgba(28, 28, 28);
     animation: ${slideInBar} 0.3s forwards;
 `;
 
@@ -60,7 +61,7 @@ export const barPlayerProgressTime = styled.div`
     top: -25px;
 `;
 export const barPlayerBlock = styled.div`
-    height: 73px;
+    height: 85px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -135,7 +136,13 @@ export const playerBtnRepeatSvg = styled.svg<Props>`
     width: 18px;
     height: 12px;
     fill: transparent;
-    stroke: ${(props) => (props.$isRepeatTrack ? '#fff' : '#696969')};
+
+    ${(props) =>
+        props.$isRepeatTrack
+            ? `
+            stroke: #fff 
+            `
+            : `stroke: #696969`}
 `;
 
 export const playerBtnShuffle = styled.div`
@@ -143,11 +150,11 @@ export const playerBtnShuffle = styled.div`
     display: flex;
     align-items: center;
 `;
-export const playerBtnShuffleSvg = styled.svg`
+export const playerBtnShuffleSvg = styled.svg<Props>`
     width: 19px;
     height: 12px;
     fill: transparent;
-    stroke: #696969;
+    stroke: ${(props) => (props.$isShuffle ? '#fff' : '#696969')};
 `;
 
 export const trackPlay = styled.div`
@@ -174,9 +181,8 @@ export const trackPlayImage = styled.div<Props>`
     grid-area: image;
 
     ${(props) =>
-        props.$isAppLoad
-            ? ''
-            : `
+        props.$loadingApp &&
+        `
             background: #313131;
             animation: skeleton-loading 1s linear infinite alternate;
     `}
@@ -191,11 +197,10 @@ export const trackPlaySvg = styled.svg`
 
 export const trackPlayAuthor = styled.div<Props>`
     grid-area: author;
-    min-width: 49px;
+    width: auto;
     ${(props) =>
-        props.$isAppLoad
-            ? ''
-            : `
+        props.$loadingApp &&
+        `
             width: 60px;
             height: 16px;
             background: #313131;
@@ -213,13 +218,12 @@ export const trackPlayAuthorLink = styled.a`
 `;
 
 export const trackPlayAlbum = styled.div<Props>`
+    width: auto;
     grid-area: album;
-    min-width: 49px;
 
     ${(props) =>
-        props.$isAppLoad
-            ? ''
-            : `
+        props.$loadingApp &&
+        `
             width: 60px;
             height: 16px;
             background: #313131;

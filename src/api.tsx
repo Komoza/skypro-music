@@ -1,4 +1,4 @@
-import { Song } from './App';
+import { Track } from './store/actions/types/types';
 
 const host = 'https://painassasin.online/';
 let url = '';
@@ -13,7 +13,7 @@ export const getAllSongs = async () => {
                 return response.json();
             } else throw new Error();
         })
-        .then((json) => json as Song[]);
+        .then((json) => json as Track[]);
 };
 
 export const loginAPI = async (email: string, password: string) => {

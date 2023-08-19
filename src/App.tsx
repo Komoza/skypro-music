@@ -6,18 +6,9 @@ import { AppRoutes } from './routes';
 import { getUserFromLocalStorage } from './helper';
 import React, { useEffect, useState } from 'react';
 import { getAllSongs } from './api';
-
-export interface Song {
-    album: string;
-    author: string;
-    duration_in_seconds: number;
-    genre: string;
-    id: number;
-    logo: null;
-    name: string;
-    release_date: string;
-    track_file: string;
-}
+import { Track } from './store/actions/types/types';
+import { useDispatch } from 'react-redux';
+import { loadingApp, setPlaylist } from './store/actions/creators/creators';
 
 export interface User {
     email: string;
@@ -29,26 +20,24 @@ export interface User {
 export const UserContext = React.createContext<User | null>(null);
 
 function App() {
-    const [isLoadApp, setIsLoadApp] = useState<boolean>(false);
-    const [songs, setSongs] = useState<Song[] | null>(null);
-    const [currentSong, setCurrentSong] = useState<Song | null>(null);
-    const [isErrorGetAllSong, setIsErrorGetAllSong] = useState<boolean>(false);
     const [user, setUser] = useState<null | User>(getUserFromLocalStorage());
+    const dispatch = useDispatch();
 
     useEffect(() => {
+        console.log(1);
         const fetchData = async () => {
             try {
-                const data: Song[] = await getAllSongs();
-                setSongs(data);
+                const data: Track[] = await getAllSongs();
+                dispatch(setPlaylist(data));
             } catch (error) {
-                setIsErrorGetAllSong(true);
+                dispatch(setPlaylist([]));
             } finally {
-                setIsLoadApp(true);
+                dispatch(loadingApp(false));
             }
         };
 
         void fetchData();
-    }, []);
+    }, [dispatch]);
 
     return (
         <>
@@ -56,14 +45,7 @@ function App() {
             <S.wrapper>
                 <S.container>
                     <UserContext.Provider value={user}>
-                        <AppRoutes
-                            isLoadApp={isLoadApp}
-                            songs={songs}
-                            currentSong={currentSong}
-                            setCurrentSong={setCurrentSong}
-                            isErrorGetAllSong={isErrorGetAllSong}
-                            setUser={setUser}
-                        />
+                        <AppRoutes setUser={setUser} />
                     </UserContext.Provider>
                 </S.container>
             </S.wrapper>

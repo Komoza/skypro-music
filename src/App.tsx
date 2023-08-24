@@ -10,21 +10,26 @@ import { Track } from './store/actions/types/types';
 import { useDispatch } from 'react-redux';
 import { loadingApp, setPlaylist } from './store/actions/creators/creators';
 
+export interface AccessToken {
+    refresh: string;
+    access: string;
+}
 export interface User {
     email: string;
     first_name: string;
     id: number;
     last_name: string;
     username: string;
+    accessToken: AccessToken;
 }
 export const UserContext = React.createContext<User | null>(null);
 
 function App() {
-    const [user, setUser] = useState<null | User>(getUserFromLocalStorage());
     const dispatch = useDispatch();
 
+    const [user, setUser] = useState<null | User>(getUserFromLocalStorage());
+
     useEffect(() => {
-        console.log(1);
         const fetchData = async () => {
             try {
                 const data: Track[] = await getAllSongs();

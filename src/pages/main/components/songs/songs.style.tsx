@@ -123,7 +123,7 @@ export const trackTitleImageActive = styled.div<Props>`
     ${(props) =>
         props.$isPlay &&
         css`
-            animation: ${playing} .3s linear infinite alternate;
+            animation: ${playing} 0.3s linear infinite alternate;
         `}
 `;
 

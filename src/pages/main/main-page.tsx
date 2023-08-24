@@ -13,9 +13,10 @@ import { User, UserContext } from '../../App';
 
 interface MainProps {
     setUser: (value: User | null) => void;
+    status: string;
 }
 
-export const Main: React.FC<MainProps> = ({ setUser }) => {
+export const Main: React.FC<MainProps> = ({ setUser, status }) => {
     const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
     const [isOpenNavAnimation, setIsOpenNavAnimation] = useState(true);
     const [filter, setFilter] = useState<string | null>(null);
@@ -54,23 +55,23 @@ export const Main: React.FC<MainProps> = ({ setUser }) => {
                         setUser={setUser}
                     />
                 )}
+
                 <S.centerblock>
                     <Search />
-                    <S.centerblockH2>Треки</S.centerblockH2>
+                    <S.centerblockH2>
+                        {status === 'Main' && 'Треки'}
+                        {status === 'Playlist' && 'Мой плейлист'}
+                    </S.centerblockH2>
                     <Filter filter={filter} setFilter={setFilter} />
-                    <Songs />
+                    <Songs status={status} />
                 </S.centerblock>
+
                 <UserContext.Consumer>
-                    {(user) => (
-                        <Sidebar
-                            user={user}
-                            setUser={setUser}
-                        />
-                    )}
+                    {(user) => <Sidebar user={user} setUser={setUser} />}
                 </UserContext.Consumer>
             </S.main>
 
-            <Bar/>
+            <Bar />
             <Footer />
         </>
     );

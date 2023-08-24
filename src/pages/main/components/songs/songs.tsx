@@ -3,15 +3,23 @@ import { formatTime } from '../../../../cosntant';
 import { MusicState, Track } from '../../../../store/actions/types/types';
 import { useSelector, useDispatch } from 'react-redux';
 import {
+    loadingApp,
     setCurrentPlaylist,
     setCurrentTrack,
     setIsPlay,
+    setPlaylist,
 } from '../../../../store/actions/creators/creators';
 import { RefObject, useEffect, useRef } from 'react';
+import { MyPlaylist } from '../../../my-playlist/my-playlist';
+import { getAllSongs } from '../../../../api';
 
 interface PlaylistProps {
     refPlaylist: RefObject<HTMLDivElement>;
 }
+interface SongsProps {
+    status: string;
+}
+
 const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
     const currentTrack = useSelector((state: MusicState) => state.currentTrack);
     const currentPlaylist = useSelector(
@@ -66,6 +74,21 @@ const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
             }
         }
     }, [currentTrack, refPlaylist]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const data: Track[] = await getAllSongs();
+                dispatch(setPlaylist(data));
+            } catch (error) {
+                dispatch(setPlaylist([]));
+            } finally {
+                dispatch(loadingApp(false));
+            }
+        };
+
+        void fetchData();
+    }, [dispatch]);
 
     if (!playlist.length) {
         return <S.errorGetSongs>Не удалось загрузить песни...</S.errorGetSongs>;
@@ -157,7 +180,7 @@ const PlaylistSkeleton = () => {
     return playlistSkeleton;
 };
 
-export const Songs = () => {
+export const Songs: React.FC<SongsProps> = ({ status }) => {
     const refPlaylist = useRef<HTMLDivElement>(null);
     const loadingApp: boolean = useSelector(
         (state: MusicState) => state.loadingApp
@@ -177,7 +200,11 @@ export const Songs = () => {
             </S.playlistTitle>
             <S.playlist ref={refPlaylist}>
                 {!loadingApp ? (
-                    <Playlist refPlaylist={refPlaylist} />
+                    status === 'Main' ? (
+                        <Playlist refPlaylist={refPlaylist} />
+                    ) : (
+                        <MyPlaylist />
+                    )
                 ) : (
                     <PlaylistSkeleton />
                 )}

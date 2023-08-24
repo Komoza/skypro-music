@@ -23,8 +23,7 @@ export const Nav: React.FC<navProps> = ({
         event.stopPropagation();
     };
 
-    // закрытие на иконку крестика
-    const handleCloseClick = () => {
+    const closeMenu = () => {
         setIsOpenNavAnumation(false);
 
         setTimeout(() => {
@@ -32,9 +31,19 @@ export const Nav: React.FC<navProps> = ({
         }, 500);
     };
 
+    // закрытие на иконку крестика
+    const handleCloseClick = () => {
+        closeMenu();
+    };
+
     const handleClickLogout = () => {
+        closeMenu();
         setUser(null);
         removeUserFromLocalStorage();
+    };
+
+    const handleClickLink = () => {
+        closeMenu();
     };
 
     return (
@@ -53,10 +62,14 @@ export const Nav: React.FC<navProps> = ({
             <S.menu>
                 <S.menuList>
                     <S.menuItem>
-                        <S.menuLink to="/">Главная</S.menuLink>
+                        <S.menuLink onClick={handleClickLink} to="/">
+                            Главная
+                        </S.menuLink>
                     </S.menuItem>
                     <S.menuItem>
-                        <S.menuLink to="/playlist">Мой плейлист</S.menuLink>
+                        <S.menuLink onClick={handleClickLink} to="/playlist">
+                            Мой плейлист
+                        </S.menuLink>
                     </S.menuItem>
                     <S.menuItem>
                         <S.menuLink onClick={handleClickLogout} to="/login">

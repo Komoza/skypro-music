@@ -1,9 +1,9 @@
 import * as S from './login.style';
 import { saveUserToLocalStorage } from '../../helper';
 import { useNavigate } from 'react-router-dom';
-import { User } from '../../App';
+import { AccessToken, User } from '../../App';
 import { useRef, useState } from 'react';
-import { loginAPI } from '../../api';
+import { getAccessToken, loginAPI } from '../../api';
 
 interface LoginProps {
     setUser: (value: User) => void;
@@ -30,7 +30,12 @@ export const Login: React.FC<LoginProps> = ({ setUser }) => {
             }
 
             const userData: User = (await loginAPI(email, password)) as User;
+            const accessToken: AccessToken = (await getAccessToken(
+                email,
+                password
+            )) as AccessToken;
 
+            userData.accessToken = accessToken;
             setUser(userData);
             saveUserToLocalStorage(userData);
             setErrorMessage(null);

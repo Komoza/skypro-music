@@ -36,10 +36,13 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ setUser }) => {
             >
                 <Route
                     path="/"
-                    element={<Main setUser={setUser} />}
+                    element={<Main status={'Main'} setUser={setUser} />}
                 />
                 <Route path="/compilation/:id" element={<Compilation />} />
-                <Route path="/playlist" element={<MyPlaylist />} />
+                <Route
+                    path="/playlist"
+                    element={<Main status={'Playlist'} setUser={setUser} />}
+                />
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />

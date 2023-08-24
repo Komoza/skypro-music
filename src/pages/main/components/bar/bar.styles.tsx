@@ -51,6 +51,7 @@ export const barPlayerProgress = styled.div`
 
 export const barPlayerProgressCurrent = styled.div<Props>`
     width: ${(props) => props.$currentProgress}%;
+    border-radius: 30px;
     height: 100%;
     background: #b672ff;
 `;

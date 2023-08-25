@@ -1,4 +1,3 @@
-import { Track } from './cosntant';
 import { getUserTokenFromLocalStorage } from './helper';
 
 const host = 'https://painassasin.online/';
@@ -24,36 +23,23 @@ export const getAccessToken = async (email: string, password: string) => {
     });
 };
 
-export const getAllSongs = async () => {
-    url = 'catalog/track/all/';
-    return fetch(host + url, {
-        method: 'GET',
-    })
-        .then((response) => {
-            if (response.ok) {
-                return response.json();
-            } else throw new Error();
-        })
-        .then((json) => json as Track[]);
-};
-
-export const getMyPlaylist = async () => {
-    url = 'catalog/track/favorite/all/';
-    return fetch(host + url, {
-        method: 'GET',
-        headers: {
-            Authorization: `Bearer ${getUserTokenFromLocalStorage()}`,
-        },
-    })
-        .then((response) => {
-            if (response.ok) {
-                return response.json();
-            } else if (response.status === 401) {
-                throw new Error('401');
-            } else throw new Error();
-        })
-        .then((json) => json as Track[]);
-};
+// export const getMyPlaylist = async () => {
+//     url = 'catalog/track/favorite/all/';
+//     return fetch(host + url, {
+//         method: 'GET',
+//         headers: {
+//             Authorization: `Bearer ${getUserTokenFromLocalStorage()}`,
+//         },
+//     })
+//         .then((response) => {
+//             if (response.ok) {
+//                 return response.json();
+//             } else if (response.status === 401) {
+//                 throw new Error('401');
+//             } else throw new Error();
+//         })
+//         .then((json) => json as Track[]);
+// };
 
 export const addTrackToFavorite = async (id: number) => {
     url = `catalog/track/${id}/favorite/`;

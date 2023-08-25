@@ -2,19 +2,18 @@ import * as S from './sidebar.style';
 import { playlist } from '../../../../cosntant';
 import { removeUserFromLocalStorage } from '../../../../helper';
 import { useDispatch, useSelector } from 'react-redux';
-import { MusicState } from '../../../../store/actions/types/types';
+import { RootState } from '../../../../store/actions/types/types';
 import { user } from '../../../../store/actions/creators/creators';
+import { useGetAllTracksQuery } from '../../../../services/tracks';
 
 export const Sidebar = () => {
     const dispatch = useDispatch();
-    const loadingApp: boolean = useSelector(
-        (state: MusicState) => state.loadingApp
-    );
+    const { isLoading: loadingApp } = useGetAllTracksQuery();
 
-    const userState = useSelector((state: MusicState) => state.user);
+    const userState = useSelector((state: RootState) => state.otherState.user);
 
     const handleClickLogout = () => {
-        dispatch(user(null))
+        dispatch(user(null));
         removeUserFromLocalStorage();
     };
     return (
@@ -31,7 +30,10 @@ export const Sidebar = () => {
                 <S.sidebarList>
                     {playlist.map((item) => {
                         return (
-                            <S.sidebarItem key={item.id} $loadingApp={loadingApp}>
+                            <S.sidebarItem
+                                key={item.id}
+                                $loadingApp={loadingApp}
+                            >
                                 {!loadingApp && (
                                     <S.sidebarLink
                                         to={`/compilation/${item.id}`}

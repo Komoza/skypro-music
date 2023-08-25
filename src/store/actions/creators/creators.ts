@@ -8,20 +8,6 @@ export const setCurrentTrack = (track: Track) => {
     };
 };
 
-export const setPlaylist = (playlist: Track[]) => {
-    return {
-        type: ActionTypes.SET_PLAYLIST,
-        payload: playlist,
-    };
-};
-
-export const loadingApp = (loadingApp: boolean) => {
-    return {
-        type: ActionTypes.LOADING_APP,
-        payload: loadingApp,
-    };
-};
-
 export const setCurrentPlaylist = (playlist: Track[]) => {
     return {
         type: ActionTypes.SET_CURRENT_PLAYLIST,

@@ -10,10 +10,10 @@ import { Filter } from './components/filter/filter';
 
 import * as S from '../../App.style';
 import { useSelector } from 'react-redux';
-import { MusicState } from '../../store/actions/types/types';
+import { RootState } from '../../store/actions/types/types';
 
 export const Main = () => {
-    const currentPage = useSelector((state: MusicState) => state.currentPage);
+    const currentPage = useSelector((state: RootState) => state.otherState.currentPage);
     const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
     const [isOpenNavAnimation, setIsOpenNavAnimation] = useState(true);
     const [filter, setFilter] = useState<string | null>(null);
@@ -55,11 +55,15 @@ export const Main = () => {
 
                 <S.centerblock>
                     <Search />
-                    <S.centerblockH2>
-                        {currentPage === '/' && 'Треки'}
-                        {currentPage === '/playlist' && 'Мой плейлист'}
-                    </S.centerblockH2>
-                    <Filter filter={filter} setFilter={setFilter} />
+                    {currentPage === '/' && (
+                        <>
+                            <S.centerblockH2>Треки</S.centerblockH2>
+                            <Filter filter={filter} setFilter={setFilter} />
+                        </>
+                    )}
+                    {currentPage === '/playlist' && (
+                        <S.centerblockH2>Мой треки</S.centerblockH2>
+                    )}
                     <Songs />
                 </S.centerblock>
 

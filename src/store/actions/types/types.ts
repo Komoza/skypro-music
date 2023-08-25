@@ -1,23 +1,21 @@
-import { Track, User } from "../../../cosntant";
+import { Track, User } from '../../../cosntant';
+import { tracksApi } from '../../../services/tracks';
 
 export interface MusicState {
     currentTrack: Track | null;
-    playlist: Track[];
     currentPlaylist: Track[];
-    loadingApp: boolean;
     isPlay: boolean;
     currentPage: string;
     user: User | null;
+}
+export interface RootState {
+    otherState: MusicState;
+    [tracksApi.reducerPath]: ReturnType<typeof tracksApi.reducer>;
 }
 
 export interface SetCurrentTrackAction {
     type: ActionTypes.SET_CURRENT_TRACK;
     payload: Track;
-}
-
-export interface SetPlaylistAction {
-    type: ActionTypes.SET_PLAYLIST;
-    payload: Track[];
 }
 export interface SetIsPlay {
     type: ActionTypes.SET_IS_PLAY;
@@ -26,11 +24,6 @@ export interface SetIsPlay {
 export interface SetCurrentPlaylistAction {
     type: ActionTypes.SET_CURRENT_PLAYLIST;
     payload: Track[];
-}
-
-export interface LoadingApp {
-    type: ActionTypes.LOADING_APP;
-    payload: boolean;
 }
 
 export interface CurrentPage {
@@ -42,21 +35,16 @@ export interface UserAction {
     payload: User | null;
 }
 
-export enum 
-ActionTypes {
+export enum ActionTypes {
     SET_CURRENT_TRACK = 'SET_CURRENT_TRACK',
-    SET_PLAYLIST = 'SET_PLAYLIST',
-    LOADING_APP = 'LOADING_APP',
     SET_CURRENT_PLAYLIST = 'SET_CURRENT_PLAYLIST',
     SET_IS_PLAY = 'SET_IS_PLAY',
     CURRENT_PAGE = 'CURRENT_PAGE',
-    USER = 'USER'
+    USER = 'USER',
 }
 
 export type MusicAction =
     | SetCurrentTrackAction
-    | SetPlaylistAction
-    | LoadingApp
     | SetCurrentPlaylistAction
     | SetIsPlay
     | CurrentPage

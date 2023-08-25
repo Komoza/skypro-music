@@ -2,12 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import * as S from './bar.styles';
 import { ProgressBar } from './progress-bar';
 import { useDispatch, useSelector } from 'react-redux';
-import { MusicState, Track } from '../../../../store/actions/types/types';
+import { MusicState } from '../../../../store/actions/types/types';
 import {
     setCurrentPlaylist,
     setCurrentTrack,
     setIsPlay,
 } from '../../../../store/actions/creators/creators';
+import { Track } from '../../../../cosntant';
 
 export const Bar = () => {
     const dispatch = useDispatch();

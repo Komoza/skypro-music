@@ -9,14 +9,11 @@ import { Search } from './components/search/search';
 import { Filter } from './components/filter/filter';
 
 import * as S from '../../App.style';
-import { User, UserContext } from '../../App';
+import { useSelector } from 'react-redux';
+import { MusicState } from '../../store/actions/types/types';
 
-interface MainProps {
-    setUser: (value: User | null) => void;
-    status: string;
-}
-
-export const Main: React.FC<MainProps> = ({ setUser, status }) => {
+export const Main = () => {
+    const currentPage = useSelector((state: MusicState) => state.currentPage);
     const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
     const [isOpenNavAnimation, setIsOpenNavAnimation] = useState(true);
     const [filter, setFilter] = useState<string | null>(null);
@@ -30,6 +27,7 @@ export const Main: React.FC<MainProps> = ({ setUser, status }) => {
             setIsNavOpen(false);
         }, 500);
     };
+
     const handleClickBurger = (
         event: React.MouseEvent<HTMLDivElement, MouseEvent>
     ) => {
@@ -52,23 +50,20 @@ export const Main: React.FC<MainProps> = ({ setUser, status }) => {
                         isOpenNavAnimation={isOpenNavAnimation}
                         setIsOpenNavAnumation={setIsOpenNavAnimation}
                         setIsNavOpen={setIsNavOpen}
-                        setUser={setUser}
                     />
                 )}
 
                 <S.centerblock>
                     <Search />
                     <S.centerblockH2>
-                        {status === 'Main' && 'Треки'}
-                        {status === 'Playlist' && 'Мой плейлист'}
+                        {currentPage === '/' && 'Треки'}
+                        {currentPage === '/playlist' && 'Мой плейлист'}
                     </S.centerblockH2>
                     <Filter filter={filter} setFilter={setFilter} />
-                    <Songs status={status} />
+                    <Songs />
                 </S.centerblock>
 
-                <UserContext.Consumer>
-                    {(user) => <Sidebar user={user} setUser={setUser} />}
-                </UserContext.Consumer>
+                <Sidebar />
             </S.main>
 
             <Bar />

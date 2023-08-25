@@ -1,29 +1,27 @@
 import * as S from './sidebar.style';
 import { playlist } from '../../../../cosntant';
-import { User } from '../../../../App';
 import { removeUserFromLocalStorage } from '../../../../helper';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { MusicState } from '../../../../store/actions/types/types';
+import { user } from '../../../../store/actions/creators/creators';
 
-interface SidebarProps {
-    user: User | null;
-    setUser: (value: User | null) => void;
-}
-
-export const Sidebar: React.FC<SidebarProps> = ({ user, setUser }) => {
+export const Sidebar = () => {
+    const dispatch = useDispatch();
     const loadingApp: boolean = useSelector(
         (state: MusicState) => state.loadingApp
     );
 
+    const userState = useSelector((state: MusicState) => state.user);
+
     const handleClickLogout = () => {
-        setUser(null);
+        dispatch(user(null))
         removeUserFromLocalStorage();
     };
     return (
         <S.sidebar>
             <S.sidebarPersonal>
-                {user && (
-                    <S.sidebarPersonalName>{`Здравствуйте, ${user.username}`}</S.sidebarPersonalName>
+                {userState && (
+                    <S.sidebarPersonalName>{`Здравствуйте, ${userState.username}`}</S.sidebarPersonalName>
                 )}
                 <S.sidebarLogout onClick={handleClickLogout}>
                     Выйти

@@ -1,4 +1,5 @@
-import { ActionTypes, Track } from '../types/types';
+import { Track, User } from '../../../cosntant';
+import { ActionTypes } from '../types/types';
 
 export const setCurrentTrack = (track: Track) => {
     return {
@@ -21,12 +22,6 @@ export const loadingApp = (loadingApp: boolean) => {
     };
 };
 
-export const shufflePlaylist = () => {
-    return {
-        type: ActionTypes.SHUFFLE_PLAYLIST,
-    };
-};
-
 export const setCurrentPlaylist = (playlist: Track[]) => {
     return {
         type: ActionTypes.SET_CURRENT_PLAYLIST,
@@ -38,5 +33,19 @@ export const setIsPlay = (isPlay: boolean) => {
     return {
         type: ActionTypes.SET_IS_PLAY,
         payload: isPlay,
+    };
+};
+
+export const currentPage = (currentPage: string) => {
+    return {
+        type: ActionTypes.CURRENT_PAGE,
+        payload: currentPage,
+    };
+};
+
+export const user = (user: User | null) => {
+    return {
+        type: ActionTypes.USER,
+        payload: user,
     };
 };

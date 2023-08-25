@@ -1,5 +1,5 @@
+import { Track } from './cosntant';
 import { getUserTokenFromLocalStorage } from './helper';
-import { Track } from './store/actions/types/types';
 
 const host = 'https://painassasin.online/';
 let url = '';
@@ -19,6 +19,7 @@ export const getAccessToken = async (email: string, password: string) => {
         if (response.status === 200) {
             return response.json();
         }
+
         throw new Error('Ошибка...');
     });
 };
@@ -47,6 +48,8 @@ export const getMyPlaylist = async () => {
         .then((response) => {
             if (response.ok) {
                 return response.json();
+            } else if (response.status === 401) {
+                throw new Error('401');
             } else throw new Error();
         })
         .then((json) => json as Track[]);

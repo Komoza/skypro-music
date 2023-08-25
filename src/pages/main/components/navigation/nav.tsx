@@ -1,21 +1,22 @@
 import React from 'react';
 import * as S from './nav.style';
 import { removeUserFromLocalStorage } from '../../../../helper';
-import { User } from '../../../../App';
+import { useDispatch } from 'react-redux';
+import { currentPage, user } from '../../../../store/actions/creators/creators';
 
 interface navProps {
     isOpenNavAnimation: boolean;
     setIsOpenNavAnumation: (value: boolean) => void;
     setIsNavOpen: (value: boolean) => void;
-    setUser: (value: User | null) => void;
 }
 
 export const Nav: React.FC<navProps> = ({
     isOpenNavAnimation,
     setIsOpenNavAnumation,
     setIsNavOpen,
-    setUser,
 }) => {
+    const dispatch = useDispatch();
+
     // остановка закрытия окна при клике на панель навигация
     const handleClickNav = (
         event: React.MouseEvent<HTMLElement, MouseEvent>
@@ -38,13 +39,19 @@ export const Nav: React.FC<navProps> = ({
 
     const handleClickLogout = () => {
         closeMenu();
-        setUser(null);
+        dispatch(user(null));
         removeUserFromLocalStorage();
     };
 
-    const handleClickLink = () => {
+    const handleClickMain = () => {
+        dispatch(currentPage('/'));
         closeMenu();
     };
+
+    const handleClickMyPlaylist = () => {
+        dispatch(currentPage('/playlist'));
+        closeMenu();
+    }
 
     return (
         <S.nav
@@ -62,12 +69,12 @@ export const Nav: React.FC<navProps> = ({
             <S.menu>
                 <S.menuList>
                     <S.menuItem>
-                        <S.menuLink onClick={handleClickLink} to="/">
+                        <S.menuLink onClick={handleClickMain} to="/">
                             Главная
                         </S.menuLink>
                     </S.menuItem>
                     <S.menuItem>
-                        <S.menuLink onClick={handleClickLink} to="/playlist">
+                        <S.menuLink onClick={handleClickMyPlaylist} to="/playlist">
                             Мой плейлист
                         </S.menuLink>
                     </S.menuItem>

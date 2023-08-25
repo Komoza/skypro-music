@@ -1,4 +1,4 @@
-import { User } from './App';
+import { User } from "./cosntant";
 
 export function saveUserToLocalStorage(user: User) {
     localStorage.setItem('user', JSON.stringify(user));

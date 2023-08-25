@@ -1,14 +1,4 @@
-export interface Track {
-    album: string;
-    author: string;
-    duration_in_seconds: number;
-    genre: string;
-    id: number;
-    logo: null;
-    name: string;
-    release_date: string;
-    track_file: string;
-}
+import { Track, User } from "../../../cosntant";
 
 export interface MusicState {
     currentTrack: Track | null;
@@ -16,6 +6,8 @@ export interface MusicState {
     currentPlaylist: Track[];
     loadingApp: boolean;
     isPlay: boolean;
+    currentPage: string;
+    user: User | null;
 }
 
 export interface SetCurrentTrackAction {
@@ -41,23 +33,31 @@ export interface LoadingApp {
     payload: boolean;
 }
 
-export interface ShufflePlaylistkAction {
-    type: ActionTypes.SHUFFLE_PLAYLIST;
+export interface CurrentPage {
+    type: ActionTypes.CURRENT_PAGE;
+    payload: string;
+}
+export interface UserAction {
+    type: ActionTypes.USER;
+    payload: User | null;
 }
 
-export enum ActionTypes {
+export enum 
+ActionTypes {
     SET_CURRENT_TRACK = 'SET_CURRENT_TRACK',
-    SHUFFLE_PLAYLIST = 'SHUFFLE_PLAYLIST',
     SET_PLAYLIST = 'SET_PLAYLIST',
     LOADING_APP = 'LOADING_APP',
     SET_CURRENT_PLAYLIST = 'SET_CURRENT_PLAYLIST',
     SET_IS_PLAY = 'SET_IS_PLAY',
+    CURRENT_PAGE = 'CURRENT_PAGE',
+    USER = 'USER'
 }
 
 export type MusicAction =
     | SetCurrentTrackAction
     | SetPlaylistAction
     | LoadingApp
-    | ShufflePlaylistkAction
     | SetCurrentPlaylistAction
-    | SetIsPlay;
+    | SetIsPlay
+    | CurrentPage
+    | UserAction;

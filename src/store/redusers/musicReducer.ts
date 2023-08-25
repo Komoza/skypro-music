@@ -1,13 +1,13 @@
 import { MusicAction, MusicState, ActionTypes } from '../actions/types/types';
 
-import { Track } from '../actions/types/types';
-
 const initialState: MusicState = {
     currentTrack: null,
     playlist: [],
     loadingApp: true,
     currentPlaylist: [],
     isPlay: false,
+    currentPage: '',
+    user: null,
 };
 
 const musicReducer = (
@@ -20,14 +20,6 @@ const musicReducer = (
                 ...state,
                 currentTrack: action.payload,
             };
-
-        case ActionTypes.SHUFFLE_PLAYLIST: {
-            const shuffledPlaylist: Track[] = shuffleArray(state.playlist);
-            return {
-                ...state,
-                playlist: shuffledPlaylist,
-            };
-        }
 
         case ActionTypes.SET_PLAYLIST:
             return {
@@ -50,15 +42,21 @@ const musicReducer = (
             return {
                 ...state,
                 isPlay: action.payload,
-            }
+            };
+        case ActionTypes.CURRENT_PAGE:
+            return {
+                ...state,
+                currentPage: action.payload,
+            };
+        case ActionTypes.USER:
+            return {
+                ...state,
+                user: action.payload,
+            };
 
         default:
             return state;
     }
-};
-
-const shuffleArray = (array: Track[]) => {
-    return array;
 };
 
 export default musicReducer;

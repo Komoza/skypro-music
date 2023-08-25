@@ -2,14 +2,14 @@ import { useRef, useState } from 'react';
 import * as S from './registration.style';
 import { useNavigate } from 'react-router-dom';
 import { saveUserToLocalStorage } from '../../helper';
-import { User } from '../../App';
-import { registrationAPI } from '../../api';
+import { getAccessToken, registrationAPI } from '../../api';
+import { AccessToken, User } from '../../cosntant';
+import { useDispatch } from 'react-redux';
+import { currentPage, user } from '../../store/actions/creators/creators';
 
-interface RegistrationProps {
-    setUser: (value: User | null) => void;
-}
+export const Registration = () => {
+    const dispatch = useDispatch();
 
-export const Registration: React.FC<RegistrationProps> = ({ setUser }) => {
     const [errorMessage, setErrorMessage] = useState<null | string>(null);
     const [connectToServer, setConnectToServer] = useState<boolean>(false);
 
@@ -34,11 +34,18 @@ export const Registration: React.FC<RegistrationProps> = ({ setUser }) => {
                 email,
                 password
             )) as User;
+            
+            const accessToken: AccessToken = (await getAccessToken(
+                email,
+                password
+            )) as AccessToken;
 
-            setUser(userData);
+            userData.accessToken = accessToken;
+            dispatch(user(userData));
             saveUserToLocalStorage(userData);
             setErrorMessage(null);
             navigate('/', { replace: true });
+            dispatch(currentPage('/'))
         } catch (error: unknown) {
             if (error instanceof Error) {
                 setErrorMessage(error.message);

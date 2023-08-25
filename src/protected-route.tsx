@@ -1,15 +1,15 @@
+import { useSelector } from 'react-redux';
 import { Navigate, Outlet } from 'react-router-dom';
-import { User } from './App';
+import { MusicState } from './store/actions/types/types';
 
 interface ProtectedRouteProps {
     redirectPath: string;
-    user: User | null;
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     redirectPath,
-    user,
 }) => {
+    const user = useSelector((state: MusicState) => state.user);
     if (!user) {
         return <Navigate to={redirectPath} replace={true} />;
     }

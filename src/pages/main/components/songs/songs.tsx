@@ -1,6 +1,6 @@
 import * as S from './songs.style';
-import { formatTime } from '../../../../cosntant';
-import { MusicState, Track } from '../../../../store/actions/types/types';
+import { Track, User, formatTime } from '../../../../cosntant';
+import { MusicState } from '../../../../store/actions/types/types';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     loadingApp,
@@ -8,19 +8,18 @@ import {
     setCurrentTrack,
     setIsPlay,
     setPlaylist,
+    user,
 } from '../../../../store/actions/creators/creators';
 import { RefObject, useEffect, useRef } from 'react';
-import { MyPlaylist } from '../../../my-playlist/my-playlist';
-import { getAllSongs } from '../../../../api';
+import { getAllSongs, getMyPlaylist } from '../../../../api';
+import { removeUserFromLocalStorage } from '../../../../helper';
 
 interface PlaylistProps {
     refPlaylist: RefObject<HTMLDivElement>;
-}
-interface SongsProps {
-    status: string;
+    playlist: Track[];
 }
 
-const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
+const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
     const currentTrack = useSelector((state: MusicState) => state.currentTrack);
     const currentPlaylist = useSelector(
         (state: MusicState) => state.currentPlaylist
@@ -28,10 +27,6 @@ const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
 
     const currentTrackID = currentTrack ? currentTrack.id : null;
     const currentTrackRef = useRef<HTMLDivElement>(null);
-
-    const playlist: Track[] = useSelector(
-        (state: MusicState) => state.playlist
-    );
 
     const isPlay: boolean = useSelector((state: MusicState) => state.isPlay);
 
@@ -74,21 +69,6 @@ const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
             }
         }
     }, [currentTrack, refPlaylist]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const data: Track[] = await getAllSongs();
-                dispatch(setPlaylist(data));
-            } catch (error) {
-                dispatch(setPlaylist([]));
-            } finally {
-                dispatch(loadingApp(false));
-            }
-        };
-
-        void fetchData();
-    }, [dispatch]);
 
     if (!playlist.length) {
         return <S.errorGetSongs>Не удалось загрузить песни...</S.errorGetSongs>;
@@ -180,11 +160,47 @@ const PlaylistSkeleton = () => {
     return playlistSkeleton;
 };
 
-export const Songs: React.FC<SongsProps> = ({ status }) => {
+export const Songs = () => {
+    const currentPage = useSelector((state: MusicState) => state.currentPage);
     const refPlaylist = useRef<HTMLDivElement>(null);
-    const loadingApp: boolean = useSelector(
+
+    const isLoadingApp: boolean = useSelector(
         (state: MusicState) => state.loadingApp
     );
+
+    const playlist: Track[] = useSelector(
+        (state: MusicState) => state.playlist
+    );
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            dispatch(loadingApp(true));
+            try {
+                let data: Track[] = [];
+
+                if (currentPage === '/') {
+                    data = await getAllSongs();
+                } else if (currentPage === '/playlist') {
+                    data = await getMyPlaylist();
+                }
+
+                dispatch(setPlaylist(data));
+            } catch (error: unknown) {
+                if (error instanceof Error && error.message === '401') {
+                    dispatch(user(null));
+                    removeUserFromLocalStorage();
+                }
+                dispatch(setPlaylist([]));
+            } finally {
+                dispatch(loadingApp(false));
+            }
+        };
+
+        void fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentPage]);
 
     return (
         <S.centerblockContent>
@@ -199,12 +215,8 @@ export const Songs: React.FC<SongsProps> = ({ status }) => {
                 </S.playlistTitleCol04>
             </S.playlistTitle>
             <S.playlist ref={refPlaylist}>
-                {!loadingApp ? (
-                    status === 'Main' ? (
-                        <Playlist refPlaylist={refPlaylist} />
-                    ) : (
-                        <MyPlaylist />
-                    )
+                {!isLoadingApp ? (
+                    <Playlist playlist={playlist} refPlaylist={refPlaylist} />
                 ) : (
                     <PlaylistSkeleton />
                 )}

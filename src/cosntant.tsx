@@ -1,4 +1,3 @@
-
 export interface AccessToken {
     refresh: string;
     access: string;
@@ -23,6 +22,7 @@ export interface Track {
     name: string;
     release_date: string;
     track_file: string;
+    stared_user: User[];
 }
 
 export const playlist = [
@@ -55,4 +55,3 @@ export const formatTime = (seconds: number) => {
 
     return `${formattedMinutes}:${formattedSeconds}`;
 };
-

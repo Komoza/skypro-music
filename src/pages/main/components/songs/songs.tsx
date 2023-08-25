@@ -1,5 +1,5 @@
 import * as S from './songs.style';
-import { Track, User, formatTime } from '../../../../cosntant';
+import { Track, formatTime } from '../../../../cosntant';
 import { MusicState } from '../../../../store/actions/types/types';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -11,7 +11,12 @@ import {
     user,
 } from '../../../../store/actions/creators/creators';
 import { RefObject, useEffect, useRef } from 'react';
-import { getAllSongs, getMyPlaylist } from '../../../../api';
+import {
+    addTrackToFavorite,
+    deleteTrackToFavorite,
+    getAllSongs,
+    getMyPlaylist,
+} from '../../../../api';
 import { removeUserFromLocalStorage } from '../../../../helper';
 
 interface PlaylistProps {
@@ -24,10 +29,12 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
     const currentPlaylist = useSelector(
         (state: MusicState) => state.currentPlaylist
     );
-
+    const userState = useSelector((state: MusicState) => state.user);
     const currentTrackID = currentTrack ? currentTrack.id : null;
     const currentTrackRef = useRef<HTMLDivElement>(null);
-
+    const currentPageState = useSelector(
+        (state: MusicState) => state.currentPage
+    );
     const isPlay: boolean = useSelector((state: MusicState) => state.isPlay);
 
     const dispatch = useDispatch();
@@ -51,6 +58,45 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
         } else {
             dispatch(setIsPlay(!isPlay));
         }
+    };
+
+    const handleClickLike = (
+        event: React.MouseEvent<SVGSVGElement, MouseEvent>,
+        id: number
+    ) => {
+        event.stopPropagation();
+        const fetchData = async () => {
+            try {
+                await addTrackToFavorite(id);
+                dispatch(setPlaylist(playlist));
+            } catch (error: unknown) {
+                if (error instanceof Error && error.message === '401') {
+                    dispatch(user(null));
+                    removeUserFromLocalStorage();
+                }
+            }
+        };
+
+        void fetchData();
+    };
+    const handleClickDislike = (
+        event: React.MouseEvent<SVGSVGElement, MouseEvent>,
+        id: number
+    ) => {
+        event.stopPropagation();
+        const fetchData = async () => {
+            try {
+                await deleteTrackToFavorite(id);
+                dispatch(setPlaylist(playlist));
+            } catch (error: unknown) {
+                if (error instanceof Error && error.message === '401') {
+                    dispatch(user(null));
+                    removeUserFromLocalStorage();
+                }
+            }
+        };
+
+        void fetchData();
     };
 
     useEffect(() => {
@@ -124,14 +170,52 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
                                 </S.trackAlbumLink>
                             </S.trackAlbum>
 
-                            <S.trackTime>
-                                <S.trackTimeSvg aria-label="time">
-                                    <use xlinkHref="./src/img/icon/sprite.svg#icon-like"></use>
-                                </S.trackTimeSvg>
-                                <S.trackTimeText>
-                                    {formatTime(song.duration_in_seconds)}
-                                </S.trackTimeText>
-                            </S.trackTime>
+                            {currentPageState === '/' && (
+                                <S.trackTime>
+                                    {song.stared_user?.some(
+                                        (user) => user.id === userState?.id
+                                    ) ? (
+                                        <S.trackTimeSvgLike
+                                            onClick={(event) =>
+                                                handleClickDislike(
+                                                    event,
+                                                    song.id
+                                                )
+                                            }
+                                            aria-label="time"
+                                        >
+                                            <use xlinkHref="./src/img/icon/sprite.svg#icon-like"></use>
+                                        </S.trackTimeSvgLike>
+                                    ) : (
+                                        <S.trackTimeSvg
+                                            onClick={(event) =>
+                                                handleClickLike(event, song.id)
+                                            }
+                                            aria-label="time"
+                                        >
+                                            <use xlinkHref="./src/img/icon/sprite.svg#icon-like"></use>
+                                        </S.trackTimeSvg>
+                                    )}
+                                    <S.trackTimeText>
+                                        {formatTime(song.duration_in_seconds)}
+                                    </S.trackTimeText>
+                                </S.trackTime>
+                            )}
+                            {currentPageState === '/playlist' && (
+                                <S.trackTime>
+                                    <S.trackTimeSvgLike
+                                        onClick={(event) =>
+                                            handleClickDislike(event, song.id)
+                                        }
+                                        aria-label="time"
+                                    >
+                                        <use xlinkHref="./src/img/icon/sprite.svg#icon-like"></use>
+                                    </S.trackTimeSvgLike>
+                                    <S.trackTimeText>
+                                        {formatTime(song.duration_in_seconds)}
+                                    </S.trackTimeText>
+                                </S.trackTime>
+                            )}
                         </S.track>
                     </S.playlistItem>
                 );

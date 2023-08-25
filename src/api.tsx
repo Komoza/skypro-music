@@ -55,6 +55,42 @@ export const getMyPlaylist = async () => {
         .then((json) => json as Track[]);
 };
 
+export const addTrackToFavorite = async (id: number) => {
+    url = `catalog/track/${id}/favorite/`;
+    return fetch(host + url, {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${getUserTokenFromLocalStorage()}`,
+        },
+    }).then((response) => {
+        if (response.ok) {
+            console.log('лайк поставлен');
+        } else if (response.status === 401) {
+            throw new Error('401');
+        } else {
+            throw new Error();
+        }
+    });
+};
+
+export const deleteTrackToFavorite = async (id: number) => {
+    url = `catalog/track/${id}/favorite/`;
+    return fetch(host + url, {
+        method: 'DELETE',
+        headers: {
+            Authorization: `Bearer ${getUserTokenFromLocalStorage()}`,
+        },
+    }).then((response) => {
+        if (response.ok) {
+            console.log('лайк убран');
+        } else if (response.status === 401) {
+            throw new Error('401');
+        } else {
+            throw new Error();
+        }
+    });
+};
+
 export const loginAPI = async (email: string, password: string) => {
     url = 'user/login/';
     return fetch(host + url, {

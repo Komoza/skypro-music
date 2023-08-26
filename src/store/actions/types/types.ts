@@ -7,6 +7,7 @@ export interface MusicState {
     isPlay: boolean;
     currentPage: string;
     user: User | null;
+    activePlaylist: Track[];
 }
 export interface RootState {
     otherState: MusicState;
@@ -34,6 +35,10 @@ export interface UserAction {
     type: ActionTypes.USER;
     payload: User | null;
 }
+export interface ActivePlaylist {
+    type: ActionTypes.ACTIVE_PLAYLIST;
+    payload: Track[];
+}
 
 export enum ActionTypes {
     SET_CURRENT_TRACK = 'SET_CURRENT_TRACK',
@@ -41,6 +46,7 @@ export enum ActionTypes {
     SET_IS_PLAY = 'SET_IS_PLAY',
     CURRENT_PAGE = 'CURRENT_PAGE',
     USER = 'USER',
+    ACTIVE_PLAYLIST = 'ACTIVE_PLAYLIST',
 }
 
 export type MusicAction =
@@ -48,4 +54,5 @@ export type MusicAction =
     | SetCurrentPlaylistAction
     | SetIsPlay
     | CurrentPage
-    | UserAction;
+    | UserAction
+    | ActivePlaylist;

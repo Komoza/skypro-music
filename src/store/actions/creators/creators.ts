@@ -35,3 +35,10 @@ export const user = (user: User | null) => {
         payload: user,
     };
 };
+
+export const activePlaylist = (activePlaylist: Track[]) => {
+    return {
+        type: ActionTypes.ACTIVE_PLAYLIST,
+        payload: activePlaylist,
+    };
+};

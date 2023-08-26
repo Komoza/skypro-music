@@ -9,12 +9,13 @@ import {
     setIsPlay,
 } from '../../../../store/actions/creators/creators';
 import { Track } from '../../../../cosntant';
-import { useGetAllTracksQuery } from '../../../../services/tracks';
 
 export const Bar = () => {
     const dispatch = useDispatch();
 
-    const { data: playlist } = useGetAllTracksQuery();
+    const playlist = useSelector(
+        (state: RootState) => state.otherState.activePlaylist
+    );
 
     const currentPlaylist: Track[] = useSelector(
         (state: RootState) => state.otherState.currentPlaylist

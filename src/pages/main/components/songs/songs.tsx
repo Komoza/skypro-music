@@ -3,6 +3,7 @@ import { CustomError, Track, formatTime } from '../../../../cosntant';
 import { RootState } from '../../../../store/actions/types/types';
 import { useSelector, useDispatch } from 'react-redux';
 import {
+    activePlaylist,
     setCurrentPlaylist,
     setCurrentTrack,
     setIsPlay,
@@ -25,11 +26,16 @@ interface PlaylistProps {
 const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
     const dispatch = useDispatch();
 
+    const activePlaylistState = useSelector(
+        (state: RootState) => state.otherState.activePlaylist
+    );
+
     const [addTrackToFavorite, { error: errorLike }] =
         useAddTrackToFavoriteMutation();
     const [deleteTrackFromFavorite, { error: errorDislike }] =
         useDeleteTrackFromFavoriteMutation();
 
+    // Обработка 401 ошибки
     useEffect(() => {
         const errorStateDislike: CustomError = errorDislike as CustomError;
         const errorStateLike: CustomError = errorLike as CustomError;
@@ -42,6 +48,7 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
             removeUserFromLocalStorage();
         }
     }, [dispatch, errorDislike, errorLike]);
+
     const currentTrack = useSelector(
         (state: RootState) => state.otherState.currentTrack
     );
@@ -57,6 +64,10 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
     );
 
     const handleClickTrack = (track: Track) => {
+        // Смена активного плейлиста
+        if (activePlaylistState !== playlist) {
+            dispatch(activePlaylist(playlist));
+        }
         if (currentTrack !== track) {
             dispatch(setIsPlay(true));
             dispatch(setCurrentTrack(track));

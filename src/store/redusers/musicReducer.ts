@@ -6,6 +6,7 @@ const initialState: MusicState = {
     isPlay: false,
     currentPage: '',
     user: null,
+    activePlaylist: [],
 };
 
 const musicReducer = (
@@ -37,6 +38,11 @@ const musicReducer = (
             return {
                 ...state,
                 user: action.payload,
+            };
+        case ActionTypes.ACTIVE_PLAYLIST:
+            return {
+                ...state,
+                activePlaylist: action.payload,
             };
 
         default:

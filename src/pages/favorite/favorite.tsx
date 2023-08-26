@@ -5,6 +5,7 @@ import {
 } from '../../services/tracks';
 import { removeUserFromLocalStorage } from '../../helper';
 import {
+    activePlaylist,
     setCurrentPlaylist,
     setCurrentTrack,
     setIsPlay,
@@ -53,9 +54,7 @@ export const FavoriteTrack = () => {
                     <PlaylistSkeleton />
                 )}
                 {!playlist?.length && (
-                    <S.errorGetSongs>
-                        Список треков пуст
-                    </S.errorGetSongs>
+                    <S.errorGetSongs>Список треков пуст</S.errorGetSongs>
                 )}
             </S.playlist>
         </S.centerblockContent>
@@ -69,6 +68,10 @@ interface PlaylistProps {
 
 const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
     const dispatch = useDispatch();
+
+    const activePlaylistState = useSelector(
+        (state: RootState) => state.otherState.activePlaylist
+    );
 
     const [deleteTrackFromFavorite, { error: errorDislike }] =
         useDeleteTrackFromFavoriteMutation();
@@ -95,6 +98,10 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
     const currentTrackRef = useRef<HTMLDivElement>(null);
 
     const handleClickTrack = (track: Track) => {
+        // Смена активного плейлиста
+        if (activePlaylistState !== playlist) {
+            dispatch(activePlaylist(playlist));
+        }
         if (currentTrack !== track) {
             dispatch(setIsPlay(true));
             dispatch(setCurrentTrack(track));

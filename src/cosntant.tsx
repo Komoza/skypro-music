@@ -25,6 +25,10 @@ export interface Track {
     stared_user: User[];
 }
 
+export interface CustomError {
+    status: number;
+}
+
 export const playlist = [
     {
         id: 1,

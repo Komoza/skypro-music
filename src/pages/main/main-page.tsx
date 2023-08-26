@@ -11,9 +11,12 @@ import { Filter } from './components/filter/filter';
 import * as S from '../../App.style';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/actions/types/types';
+import { FavoriteTrack } from '../favorite/favorite';
 
 export const Main = () => {
-    const currentPage = useSelector((state: RootState) => state.otherState.currentPage);
+    const currentPage = useSelector(
+        (state: RootState) => state.otherState.currentPage
+    );
     const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
     const [isOpenNavAnimation, setIsOpenNavAnimation] = useState(true);
     const [filter, setFilter] = useState<string | null>(null);
@@ -59,12 +62,15 @@ export const Main = () => {
                         <>
                             <S.centerblockH2>Треки</S.centerblockH2>
                             <Filter filter={filter} setFilter={setFilter} />
+                            <Songs />
                         </>
                     )}
                     {currentPage === '/playlist' && (
-                        <S.centerblockH2>Мой треки</S.centerblockH2>
+                        <>
+                            <S.centerblockH2>Мой треки</S.centerblockH2>
+                            <FavoriteTrack />
+                        </>
                     )}
-                    <Songs />
                 </S.centerblock>
 
                 <Sidebar />

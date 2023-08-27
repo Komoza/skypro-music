@@ -123,7 +123,7 @@ export const trackTitleImageActive = styled.div<Props>`
     ${(props) =>
         props.$isPlay &&
         css`
-            animation: ${playing} .3s linear infinite alternate;
+            animation: ${playing} 0.3s linear infinite alternate;
         `}
 `;
 
@@ -208,6 +208,14 @@ export const trackTimeSvg = styled.svg`
     fill: transparent;
     stroke: #696969;
 `;
+export const trackTimeSvgLike = styled.svg`
+    width: 14px;
+    height: 12px;
+    margin-right: 17px;
+    fill: transparent;
+    stroke: red;
+`;
+
 export const trackTimeText = styled.span`
     font-style: normal;
     font-weight: 400;

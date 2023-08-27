@@ -2,30 +2,29 @@ import { useEffect, useRef, useState } from 'react';
 import * as S from './bar.styles';
 import { ProgressBar } from './progress-bar';
 import { useDispatch, useSelector } from 'react-redux';
-import { MusicState, Track } from '../../../../store/actions/types/types';
+import { RootState } from '../../../../store/actions/types/types';
 import {
     setCurrentPlaylist,
     setCurrentTrack,
     setIsPlay,
 } from '../../../../store/actions/creators/creators';
+import { Track } from '../../../../cosntant';
 
 export const Bar = () => {
     const dispatch = useDispatch();
 
-    const playlist: Track[] = useSelector(
-        (state: MusicState) => state.playlist
+    const playlist = useSelector(
+        (state: RootState) => state.otherState.activePlaylist
     );
 
     const currentPlaylist: Track[] = useSelector(
-        (state: MusicState) => state.currentPlaylist
+        (state: RootState) => state.otherState.currentPlaylist
     );
     const currentTrack: Track | null = useSelector(
-        (state: MusicState) => state.currentTrack
+        (state: RootState) => state.otherState.currentTrack
     );
-    const isPlay: boolean = useSelector((state: MusicState) => state.isPlay);
-
-    const loadingApp: boolean = useSelector(
-        (state: MusicState) => state.loadingApp
+    const isPlay: boolean = useSelector(
+        (state: RootState) => state.otherState.isPlay
     );
 
     const refPlayer = useRef<HTMLAudioElement>(null);
@@ -71,13 +70,16 @@ export const Bar = () => {
     };
 
     const getRandomTrack = () => {
-        const randomIndexTrack =
-            Math.floor(Math.random() * (playlist.length - 1 - 0 + 1)) + 0;
-        return playlist[randomIndexTrack];
+        if (playlist) {
+            const randomIndexTrack =
+                Math.floor(Math.random() * (playlist.length - 1 - 0 + 1)) + 0;
+            return playlist[randomIndexTrack];
+        }
+        return {} as Track;
     };
 
     const setNextTrack = () => {
-        if (currentTrack) {
+        if (currentTrack && playlist) {
             const trackIndexCurrPlaylist =
                 currentPlaylist.indexOf(currentTrack);
             const trackIndexOriginalPlaylist = playlist.indexOf(currentTrack);
@@ -198,27 +200,21 @@ export const Bar = () => {
 
                             <S.trackPlay>
                                 <S.trackPlayContain>
-                                    <S.trackPlayImage $loadingApp={loadingApp}>
-                                        {!loadingApp && (
-                                            <S.trackPlaySvg aria-label="music">
-                                                <use xlinkHref="./src/img/icon/sprite.svg#icon-note"></use>
-                                            </S.trackPlaySvg>
-                                        )}
+                                    <S.trackPlayImage>
+                                        <S.trackPlaySvg aria-label="music">
+                                            <use xlinkHref="./src/img/icon/sprite.svg#icon-note"></use>
+                                        </S.trackPlaySvg>
                                     </S.trackPlayImage>
 
-                                    <S.trackPlayAuthor $loadingApp={loadingApp}>
-                                        {!loadingApp && (
-                                            <S.trackPlayAuthorLink href="http://">
-                                                {currentTrack.name}
-                                            </S.trackPlayAuthorLink>
-                                        )}
+                                    <S.trackPlayAuthor>
+                                        <S.trackPlayAuthorLink href="http://">
+                                            {currentTrack.name}
+                                        </S.trackPlayAuthorLink>
                                     </S.trackPlayAuthor>
-                                    <S.trackPlayAlbum $loadingApp={loadingApp}>
-                                        {!loadingApp && (
-                                            <S.trackPlayAlbumLink href="http://">
-                                                {currentTrack.author}
-                                            </S.trackPlayAlbumLink>
-                                        )}
+                                    <S.trackPlayAlbum>
+                                        <S.trackPlayAlbumLink href="http://">
+                                            {currentTrack.author}
+                                        </S.trackPlayAlbumLink>
                                     </S.trackPlayAlbum>
                                 </S.trackPlayContain>
 

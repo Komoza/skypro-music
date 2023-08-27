@@ -1,15 +1,15 @@
 import * as S from './login.style';
 import { saveUserToLocalStorage } from '../../helper';
 import { useNavigate } from 'react-router-dom';
-import { User } from '../../App';
 import { useRef, useState } from 'react';
-import { loginAPI } from '../../api';
+import { getAccessToken, loginAPI } from '../../api';
+import { AccessToken, User } from '../../cosntant';
+import { useDispatch } from 'react-redux';
+import { currentPage, user } from '../../store/actions/creators/creators';
 
-interface LoginProps {
-    setUser: (value: User) => void;
-}
-
-export const Login: React.FC<LoginProps> = ({ setUser }) => {
+export const Login = () => {
+    const dispatch = useDispatch();
+    
     const mailRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -30,11 +30,17 @@ export const Login: React.FC<LoginProps> = ({ setUser }) => {
             }
 
             const userData: User = (await loginAPI(email, password)) as User;
+            const accessToken: AccessToken = (await getAccessToken(
+                email,
+                password
+            )) as AccessToken;
 
-            setUser(userData);
+            userData.accessToken = accessToken;
+            dispatch(user(userData));
             saveUserToLocalStorage(userData);
             setErrorMessage(null);
             navigate('/', { replace: true });
+            dispatch(currentPage('/'))
         } catch (error: unknown) {
             if (error instanceof Error) {
                 setErrorMessage(error.message);

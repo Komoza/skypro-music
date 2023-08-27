@@ -9,13 +9,14 @@ import { Search } from './components/search/search';
 import { Filter } from './components/filter/filter';
 
 import * as S from '../../App.style';
-import { User, UserContext } from '../../App';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/actions/types/types';
+import { FavoriteTrack } from '../favorite/favorite';
 
-interface MainProps {
-    setUser: (value: User | null) => void;
-}
-
-export const Main: React.FC<MainProps> = ({ setUser }) => {
+export const Main = () => {
+    const currentPage = useSelector(
+        (state: RootState) => state.otherState.currentPage
+    );
     const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
     const [isOpenNavAnimation, setIsOpenNavAnimation] = useState(true);
     const [filter, setFilter] = useState<string | null>(null);
@@ -29,6 +30,7 @@ export const Main: React.FC<MainProps> = ({ setUser }) => {
             setIsNavOpen(false);
         }, 500);
     };
+
     const handleClickBurger = (
         event: React.MouseEvent<HTMLDivElement, MouseEvent>
     ) => {
@@ -51,26 +53,30 @@ export const Main: React.FC<MainProps> = ({ setUser }) => {
                         isOpenNavAnimation={isOpenNavAnimation}
                         setIsOpenNavAnumation={setIsOpenNavAnimation}
                         setIsNavOpen={setIsNavOpen}
-                        setUser={setUser}
                     />
                 )}
+
                 <S.centerblock>
                     <Search />
-                    <S.centerblockH2>Треки</S.centerblockH2>
-                    <Filter filter={filter} setFilter={setFilter} />
-                    <Songs />
-                </S.centerblock>
-                <UserContext.Consumer>
-                    {(user) => (
-                        <Sidebar
-                            user={user}
-                            setUser={setUser}
-                        />
+                    {currentPage === '/' && (
+                        <>
+                            <S.centerblockH2>Треки</S.centerblockH2>
+                            <Filter filter={filter} setFilter={setFilter} />
+                            <Songs />
+                        </>
                     )}
-                </UserContext.Consumer>
+                    {currentPage === '/playlist' && (
+                        <>
+                            <S.centerblockH2>Мой треки</S.centerblockH2>
+                            <FavoriteTrack />
+                        </>
+                    )}
+                </S.centerblock>
+
+                <Sidebar />
             </S.main>
 
-            <Bar/>
+            <Bar />
             <Footer />
         </>
     );

@@ -1,22 +1,65 @@
-import * as S from './songs.style';
-import { CustomError, Track, formatTime } from '../../../../cosntant';
-import { RootState } from '../../../../store/actions/types/types';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+    useDeleteTrackFromFavoriteMutation,
+    useGetAllFavoriteTracksQuery,
+} from '../../services/tracks';
+import { removeUserFromLocalStorage } from '../../helper';
 import {
     activePlaylist,
     setCurrentPlaylist,
     setCurrentTrack,
     setIsPlay,
     user,
-} from '../../../../store/actions/creators/creators';
+} from '../../store/actions/creators/creators';
 import { RefObject, useEffect, useRef } from 'react';
-import { removeUserFromLocalStorage } from '../../../../helper';
+import * as S from '../main/components/songs/songs.style';
+import { PlaylistSkeleton } from '../main/components/songs/songs';
+import { CustomError, Track, formatTime } from '../../cosntant';
+import { RootState } from '../../store/actions/types/types';
 
-import {
-    useAddTrackToFavoriteMutation,
-    useDeleteTrackFromFavoriteMutation,
-    useGetAllTracksQuery,
-} from '../../../../services/tracks';
+export const FavoriteTrack = () => {
+    const dispatch = useDispatch();
+    const {
+        data: playlist,
+        error,
+        isLoading: isLoadingApp,
+    } = useGetAllFavoriteTracksQuery();
+
+    useEffect(() => {
+        const errorState: CustomError = error as CustomError;
+        if (errorState?.status === 401) {
+            dispatch(user(null));
+            removeUserFromLocalStorage();
+        }
+    }, [dispatch, error]);
+
+    const refPlaylist = useRef<HTMLDivElement>(null);
+
+    return (
+        <S.centerblockContent>
+            <S.playlistTitle>
+                <S.playlistTitleCol01>Трек</S.playlistTitleCol01>
+                <S.playlistTitleCol02>ИСПОЛНИТЕЛЬ</S.playlistTitleCol02>
+                <S.playlistTitleCol03>АЛЬБОМ</S.playlistTitleCol03>
+                <S.playlistTitleCol04>
+                    <S.playlistTitleSvg aria-label="time">
+                        <use xlinkHref="./src/img/icon/sprite.svg#icon-watch"></use>
+                    </S.playlistTitleSvg>
+                </S.playlistTitleCol04>
+            </S.playlistTitle>
+            <S.playlist ref={refPlaylist}>
+                {!isLoadingApp && playlist ? (
+                    <Playlist playlist={playlist} refPlaylist={refPlaylist} />
+                ) : (
+                    <PlaylistSkeleton />
+                )}
+                {!playlist?.length && (
+                    <S.errorGetSongs>Список треков пуст</S.errorGetSongs>
+                )}
+            </S.playlist>
+        </S.centerblockContent>
+    );
+};
 
 interface PlaylistProps {
     refPlaylist: RefObject<HTMLDivElement>;
@@ -30,24 +73,16 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
         (state: RootState) => state.otherState.activePlaylist
     );
 
-    const [addTrackToFavorite, { error: errorLike }] =
-        useAddTrackToFavoriteMutation();
     const [deleteTrackFromFavorite, { error: errorDislike }] =
         useDeleteTrackFromFavoriteMutation();
 
-    // Обработка 401 ошибки
     useEffect(() => {
-        const errorStateDislike: CustomError = errorDislike as CustomError;
-        const errorStateLike: CustomError = errorLike as CustomError;
-
-        if (
-            errorStateDislike?.status === 401 ||
-            errorStateLike?.status === 401
-        ) {
+        const errorState: CustomError = errorDislike as CustomError;
+        if (errorState?.status === 401) {
             dispatch(user(null));
             removeUserFromLocalStorage();
         }
-    }, [dispatch, errorDislike, errorLike]);
+    }, [dispatch, errorDislike]);
 
     const currentTrack = useSelector(
         (state: RootState) => state.otherState.currentTrack
@@ -55,13 +90,12 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
     const currentPlaylist = useSelector(
         (state: RootState) => state.otherState.currentPlaylist
     );
-    const userState = useSelector((state: RootState) => state.otherState.user);
-    const currentTrackID = currentTrack ? currentTrack.id : null;
-    const currentTrackRef = useRef<HTMLDivElement>(null);
-
     const isPlay: boolean = useSelector(
         (state: RootState) => state.otherState.isPlay
     );
+
+    const currentTrackID = currentTrack ? currentTrack.id : null;
+    const currentTrackRef = useRef<HTMLDivElement>(null);
 
     const handleClickTrack = (track: Track) => {
         // Смена активного плейлиста
@@ -89,13 +123,6 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
         }
     };
 
-    const handleClickLike = (
-        event: React.MouseEvent<SVGSVGElement, MouseEvent>,
-        id: number
-    ) => {
-        event.stopPropagation();
-        void addTrackToFavorite(id);
-    };
     const handleClickDislike = (
         event: React.MouseEvent<SVGSVGElement, MouseEvent>,
         id: number
@@ -165,29 +192,15 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
                         <S.trackAlbum>
                             <S.trackAlbumLink>{song.album}</S.trackAlbumLink>
                         </S.trackAlbum>
-
                         <S.trackTime>
-                            {song.stared_user?.some(
-                                (user) => user.id === userState?.id
-                            ) ? (
-                                <S.trackTimeSvgLike
-                                    onClick={(event) =>
-                                        handleClickDislike(event, song.id)
-                                    }
-                                    aria-label="time"
-                                >
-                                    <use xlinkHref="./src/img/icon/sprite.svg#icon-like"></use>
-                                </S.trackTimeSvgLike>
-                            ) : (
-                                <S.trackTimeSvg
-                                    onClick={(event) =>
-                                        handleClickLike(event, song.id)
-                                    }
-                                    aria-label="time"
-                                >
-                                    <use xlinkHref="./src/img/icon/sprite.svg#icon-like"></use>
-                                </S.trackTimeSvg>
-                            )}
+                            <S.trackTimeSvgLike
+                                onClick={(event) =>
+                                    handleClickDislike(event, song.id)
+                                }
+                                aria-label="time"
+                            >
+                                <use xlinkHref="./src/img/icon/sprite.svg#icon-like"></use>
+                            </S.trackTimeSvgLike>
                             <S.trackTimeText>
                                 {formatTime(song.duration_in_seconds)}
                             </S.trackTimeText>
@@ -197,61 +210,4 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
             );
         });
     }
-};
-
-export const PlaylistSkeleton = () => {
-    const playlistSkeleton = [];
-    for (let i = 0; i < 10; i++) {
-        playlistSkeleton.push(
-            <S.playlistItem key={i}>
-                <S.track>
-                    <S.trackTitle>
-                        <S.trackTitleImageLoading></S.trackTitleImageLoading>
-                        <S.trackTitleTextLoading></S.trackTitleTextLoading>
-                    </S.trackTitle>
-                    <S.trackAuthorLoading></S.trackAuthorLoading>
-                    <S.trackAlbumLoading></S.trackAlbumLoading>
-                </S.track>
-            </S.playlistItem>
-        );
-    }
-
-    return playlistSkeleton;
-};
-
-export const Songs = () => {
-    const {
-        data: playlist,
-        error,
-        isLoading: isLoadingApp,
-    } = useGetAllTracksQuery();
-
-    const refPlaylist = useRef<HTMLDivElement>(null);
-
-    return (
-        <S.centerblockContent>
-            <S.playlistTitle>
-                <S.playlistTitleCol01>Трек</S.playlistTitleCol01>
-                <S.playlistTitleCol02>ИСПОЛНИТЕЛЬ</S.playlistTitleCol02>
-                <S.playlistTitleCol03>АЛЬБОМ</S.playlistTitleCol03>
-                <S.playlistTitleCol04>
-                    <S.playlistTitleSvg aria-label="time">
-                        <use xlinkHref="./src/img/icon/sprite.svg#icon-watch"></use>
-                    </S.playlistTitleSvg>
-                </S.playlistTitleCol04>
-            </S.playlistTitle>
-            <S.playlist ref={refPlaylist}>
-                {!isLoadingApp && playlist ? (
-                    <Playlist playlist={playlist} refPlaylist={refPlaylist} />
-                ) : (
-                    <PlaylistSkeleton />
-                )}
-                {error && (
-                    <S.errorGetSongs>
-                        Не удалось загрузить песни...
-                    </S.errorGetSongs>
-                )}
-            </S.playlist>
-        </S.centerblockContent>
-    );
 };

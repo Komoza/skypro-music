@@ -1,3 +1,34 @@
+export interface AccessToken {
+    refresh: string;
+    access: string;
+}
+
+export interface User {
+    email: string;
+    first_name: string;
+    id: number;
+    last_name: string;
+    username: string;
+    accessToken: AccessToken;
+}
+
+export interface Track {
+    album: string;
+    author: string;
+    duration_in_seconds: number;
+    genre: string;
+    id: number;
+    logo: null;
+    name: string;
+    release_date: string;
+    track_file: string;
+    stared_user: User[];
+}
+
+export interface CustomError {
+    status: number;
+}
+
 export const playlist = [
     {
         id: 1,
@@ -28,12 +59,3 @@ export const formatTime = (seconds: number) => {
 
     return `${formattedMinutes}:${formattedSeconds}`;
 };
-
-export interface User {
-    email: string;
-    first_name: string;
-    id: number;
-    last_name: string;
-    username: string;
-}
-

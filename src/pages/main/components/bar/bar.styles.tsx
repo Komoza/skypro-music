@@ -1,7 +1,6 @@
 import { keyframes, styled } from 'styled-components';
 
 interface Props {
-    $loadingApp?: boolean;
     $isRepeatTrack?: boolean;
     $currentProgress?: number;
     $isShuffle?: boolean;
@@ -51,6 +50,7 @@ export const barPlayerProgress = styled.div`
 
 export const barPlayerProgressCurrent = styled.div<Props>`
     width: ${(props) => props.$currentProgress}%;
+    border-radius: 30px;
     height: 100%;
     background: #b672ff;
 `;
@@ -179,13 +179,6 @@ export const trackPlayImage = styled.div<Props>`
     justify-content: center;
     margin-right: 12px;
     grid-area: image;
-
-    ${(props) =>
-        props.$loadingApp &&
-        `
-            background: #313131;
-            animation: skeleton-loading 1s linear infinite alternate;
-    `}
 `;
 
 export const trackPlaySvg = styled.svg`
@@ -198,14 +191,6 @@ export const trackPlaySvg = styled.svg`
 export const trackPlayAuthor = styled.div<Props>`
     grid-area: author;
     width: auto;
-    ${(props) =>
-        props.$loadingApp &&
-        `
-            width: 60px;
-            height: 16px;
-            background: #313131;
-            animation: skeleton-loading 1s linear infinite alternate;
-            `}
 `;
 
 export const trackPlayAuthorLink = styled.a`
@@ -220,15 +205,6 @@ export const trackPlayAuthorLink = styled.a`
 export const trackPlayAlbum = styled.div<Props>`
     width: auto;
     grid-area: album;
-
-    ${(props) =>
-        props.$loadingApp &&
-        `
-            width: 60px;
-            height: 16px;
-            background: #313131;
-            animation: skeleton-loading 1s linear infinite alternate;
-            `}
 `;
 
 export const trackPlayAlbumLink = styled.a`

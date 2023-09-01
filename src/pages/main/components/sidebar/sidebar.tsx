@@ -1,9 +1,9 @@
 import * as S from './sidebar.style';
-import { playlist } from '../../../../cosntant';
+import { selections } from '../../../../cosntant';
 import { removeUserFromLocalStorage } from '../../../../helper';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../../store/actions/types/types';
-import { user } from '../../../../store/actions/creators/creators';
+import { currentPage, user } from '../../../../store/actions/creators/creators';
 import { useGetAllTracksQuery } from '../../../../services/tracks';
 
 export const Sidebar = () => {
@@ -15,6 +15,9 @@ export const Sidebar = () => {
     const handleClickLogout = () => {
         dispatch(user(null));
         removeUserFromLocalStorage();
+    };
+    const handleClickSelector = (id: number) => {
+        dispatch(currentPage(`/compilation/${id}`));
     };
     return (
         <S.sidebar>
@@ -28,7 +31,7 @@ export const Sidebar = () => {
             </S.sidebarPersonal>
             <S.sidebarBlock>
                 <S.sidebarList>
-                    {playlist.map((item) => {
+                    {selections.map((item) => {
                         return (
                             <S.sidebarItem
                                 key={item.id}
@@ -36,6 +39,9 @@ export const Sidebar = () => {
                             >
                                 {!loadingApp && (
                                     <S.sidebarLink
+                                        onClick={() =>
+                                            handleClickSelector(item.id)
+                                        }
                                         to={`/compilation/${item.id}`}
                                     >
                                         <S.sidebarImg

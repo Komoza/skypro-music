@@ -208,13 +208,13 @@ export const Bar = () => {
                             <S.playerControls>
                                 <S.playerBtnPrev onClick={handleClickPrev}>
                                     <S.playerBtnPrevSvg aria-label="prev">
-                                        <use xlinkHref="./src/img/icon/sprite.svg#icon-prev"></use>
+                                        <use xlinkHref="/src/img/icon/sprite.svg#icon-prev"></use>
                                     </S.playerBtnPrevSvg>
                                 </S.playerBtnPrev>
                                 <S.playerBtnPlay onClick={handleClickPlay}>
                                     <S.playerBtnPlaySvg aria-label="play">
                                         <use
-                                            xlinkHref={`./src/img/icon/sprite.svg#icon-${
+                                            xlinkHref={`/src/img/icon/sprite.svg#icon-${
                                                 isPlay ? 'pause' : 'play'
                                             }`}
                                         ></use>
@@ -222,7 +222,7 @@ export const Bar = () => {
                                 </S.playerBtnPlay>
                                 <S.playerBtnNext onClick={handleClickNext}>
                                     <S.playerBtnNextSvg aria-label="next">
-                                        <use xlinkHref="./src/img/icon/sprite.svg#icon-next"></use>
+                                        <use xlinkHref="/src/img/icon/sprite.svg#icon-next"></use>
                                     </S.playerBtnNextSvg>
                                 </S.playerBtnNext>
                                 <S.playerBtnRepeat
@@ -233,7 +233,7 @@ export const Bar = () => {
                                         $isRepeatTrack={isRepeatTrack}
                                         aria-label="repeat"
                                     >
-                                        <use xlinkHref="./src/img/icon/sprite.svg#icon-repeat"></use>
+                                        <use xlinkHref="/src/img/icon/sprite.svg#icon-repeat"></use>
                                     </S.playerBtnRepeatSvg>
                                 </S.playerBtnRepeat>
                                 <S.playerBtnShuffle
@@ -244,7 +244,7 @@ export const Bar = () => {
                                         $isShuffle={isShuffle}
                                         aria-label="shuffle"
                                     >
-                                        <use xlinkHref="./src/img/icon/sprite.svg#icon-shuffle"></use>
+                                        <use xlinkHref="/src/img/icon/sprite.svg#icon-shuffle"></use>
                                     </S.playerBtnShuffleSvg>
                                 </S.playerBtnShuffle>
                             </S.playerControls>
@@ -253,7 +253,7 @@ export const Bar = () => {
                                 <S.trackPlayContain>
                                     <S.trackPlayImage>
                                         <S.trackPlaySvg aria-label="music">
-                                            <use xlinkHref="./src/img/icon/sprite.svg#icon-note"></use>
+                                            <use xlinkHref="/src/img/icon/sprite.svg#icon-note"></use>
                                         </S.trackPlaySvg>
                                     </S.trackPlayImage>
 
@@ -282,7 +282,7 @@ export const Bar = () => {
                                                 }
                                                 aria-label="like"
                                             >
-                                                <use xlinkHref="./src/img/icon/sprite.svg#icon-like"></use>
+                                                <use xlinkHref="/src/img/icon/sprite.svg#icon-like"></use>
                                             </S.trackPlayLikeSvgActive>
                                         </S.trackPlayLike>
                                     ) : (
@@ -295,7 +295,7 @@ export const Bar = () => {
                                                 }
                                                 aria-label="like"
                                             >
-                                                <use xlinkHref="./src/img/icon/sprite.svg#icon-like"></use>
+                                                <use xlinkHref="/src/img/icon/sprite.svg#icon-like"></use>
                                             </S.trackPlayLikeSvg>
                                         </S.trackPlayLike>
                                     )}
@@ -306,7 +306,7 @@ export const Bar = () => {
                             <S.volumeContent>
                                 <S.volumeImage>
                                     <S.volumeSvg aria-label="volume">
-                                        <use xlinkHref="./src/img/icon/sprite.svg#icon-volume"></use>
+                                        <use xlinkHref="/src/img/icon/sprite.svg#icon-volume"></use>
                                     </S.volumeSvg>
                                 </S.volumeImage>
                                 <S.volumeProgress>

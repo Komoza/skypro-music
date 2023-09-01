@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { Track } from '../cosntant';
+import { SelectionsProps, Track } from '../cosntant';
 import { getUserTokenFromLocalStorage } from '../helper';
 import { FullTagDescription } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
 
@@ -50,6 +50,13 @@ export const tracksApi = createApi({
             }),
             invalidatesTags: [DATA_TAG],
         }),
+        getSelectionTracks: builder.query<SelectionsProps, number>({
+            query: (id) => ({
+                url: `selection/${id}/`,
+                method: 'GET',
+            }),
+            providesTags: [DATA_TAG],
+        }),
     }),
 });
 
@@ -58,4 +65,5 @@ export const {
     useGetAllFavoriteTracksQuery,
     useAddTrackToFavoriteMutation,
     useDeleteTrackFromFavoriteMutation,
+    useGetSelectionTracksQuery,
 } = tracksApi;

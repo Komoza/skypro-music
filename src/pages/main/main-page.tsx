@@ -12,6 +12,7 @@ import * as S from '../../App.style';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/actions/types/types';
 import { FavoriteTrack } from '../favorite/favorite';
+import { Compilation } from '../compilation/compilation';
 
 export const Main = () => {
     const currentPage = useSelector(
@@ -45,7 +46,7 @@ export const Main = () => {
             <S.main onClick={handleClickContainer}>
                 <S.burger
                     onClick={(event) => handleClickBurger(event)}
-                    src="./src/img/icon/burger.svg"
+                    src="/src/img/icon/burger.svg"
                     alt="открыть меню"
                 />
                 {isNavOpen && (
@@ -69,6 +70,12 @@ export const Main = () => {
                         <>
                             <S.centerblockH2>Мой треки</S.centerblockH2>
                             <FavoriteTrack />
+                        </>
+                    )}
+                    {currentPage.match(/compilation/g) && (
+                        <>
+                            <S.centerblockH2>Подборка</S.centerblockH2>
+                            <Compilation />
                         </>
                     )}
                 </S.centerblock>

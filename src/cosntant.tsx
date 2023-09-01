@@ -35,24 +35,31 @@ export interface CustomError {
     status: number;
 }
 
-export const playlist = [
+export interface SelectionsProps {
+    id: number;
+    items: Track[];
+    name: string;
+    owner: string;
+}
+
+export const selections = [
     {
         id: 1,
-        name: 'Плейлист дня',
-        img: './src/img/playlist01.png',
-        alt: "day's playlist",
+        name: 'Классическая музыка',
+        img: '/src/img/playlist01.png',
+        alt: 'Classical music',
     },
     {
         id: 2,
-        name: '100 танцевальных хитов',
-        img: './src/img/playlist02.png',
-        alt: "100 track's dances",
+        name: 'Электронная музыка',
+        img: '/src/img/playlist02.png',
+        alt: 'Electonic music',
     },
     {
         id: 3,
-        name: 'Инди-заряд',
-        img: './src/img/playlist03.png',
-        alt: 'Indi',
+        name: 'Рок музыка',
+        img: '/src/img/playlist03.png',
+        alt: 'Rock music',
     },
 ];
 

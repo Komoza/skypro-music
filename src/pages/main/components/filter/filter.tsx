@@ -1,59 +1,64 @@
+import { useDispatch, useSelector } from 'react-redux';
 import * as S from './filter.style';
+import { filters } from '../../../../store/actions/creators/creators';
+import { RootState } from '../../../../store/actions/types/types';
+import { useGetAllTracksQuery } from '../../../../services/tracks';
+import { useEffect, useState } from 'react';
 
 interface FilterProps {
     filter: string | null;
     setFilter: (value: string | null) => void;
 }
 
-const AllAuthors = () => {
-    return (
-        <S.authors>
-            <S.authorsWrap>
-                <S.authorsText>Michael Jackson</S.authorsText>
-                <S.authorsText>Frank Sinatra</S.authorsText>
-                <S.authorsText>Calvin Harris</S.authorsText>
-                <S.authorsText>Zhu</S.authorsText>
-                <S.authorsText>Arctic Monkeys</S.authorsText>
-                <S.authorsText>Imaging Dragons</S.authorsText>
-            </S.authorsWrap>
-        </S.authors>
-    );
+interface FilterItemProps {
+    items: string[];
+}
+
+const AllAuthors: React.FC<FilterItemProps> = ({ items }) => {
+    items.sort();
+    const uniqueAuthors = [...new Set(items)];
+    return uniqueAuthors.map((author, index) => (
+        <S.authorsText key={index}>{author}</S.authorsText>
+    ));
 };
 
-const AllYears = () => {
-    return (
-        <S.years>
-            <S.yearsNew>
-                <S.yearsPoint>
-                    <S.yearsPointActive></S.yearsPointActive>
-                </S.yearsPoint>
-                <p>Более новые</p>
-            </S.yearsNew>
-            <S.yearsOld>
-                <S.yearsPoint></S.yearsPoint>
-                <p>Более старые</p>
-            </S.yearsOld>
-        </S.years>
-    );
-};
-
-const AllGenre = () => {
-    return (
-        <S.genre>
-            <S.genreWrap>
-                <S.genreText>Рок</S.genreText>
-                <S.genreText>Хип-хоп</S.genreText>
-                <S.genreText>Поп-музыка</S.genreText>
-                <S.genreText>Техно</S.genreText>
-                <S.genreText>Инди</S.genreText>
-                <S.genreText>Кантри</S.genreText>
-                <S.genreText>Классика</S.genreText>
-            </S.genreWrap>
-        </S.genre>
-    );
+const AllGenre: React.FC<FilterItemProps> = ({ items }) => {
+    items.sort();
+    const uniqueGenres = [...new Set(items)];
+    return uniqueGenres.map((genre, index) => (
+        <S.genreText key={index}>{genre}</S.genreText>
+    ));
 };
 
 export const Filter: React.FC<FilterProps> = ({ filter, setFilter }) => {
+    const [authorsFilter, setAuthorFilter] = useState<string[]>([
+        'Загрузка...',
+    ]);
+    const [genresFilter, setGenresFilter] = useState<string[]>(['Загрузка...']);
+    const { data: playlistState } = useGetAllTracksQuery();
+    const filtersState = useSelector(
+        (state: RootState) => state.otherState.filters
+    );
+
+    useEffect(() => {
+        if (playlistState) {
+            setAuthorFilter(playlistState.map((track) => track.author));
+            setGenresFilter(playlistState.map((track) => track.genre));
+        }
+    }, [playlistState]);
+
+    const dispatch = useDispatch();
+
+    const handleClickSortYears = (status: string) => {
+        dispatch(
+            filters({
+                author: filtersState.author,
+                genre: filtersState.genre,
+                years: status,
+            })
+        );
+    };
+
     const handleClickFilter = (
         event: React.MouseEvent<HTMLDivElement, MouseEvent>,
         status: string | null
@@ -65,33 +70,94 @@ export const Filter: React.FC<FilterProps> = ({ filter, setFilter }) => {
             setFilter(status);
         }
     };
+
     return (
         <S.filter>
-            <S.filterTitle>Искать по:</S.filterTitle>
-            <S.filterButton
-                className="_btn-text"
-                $active={filter === 'authors' ? true : false}
-                onClick={(event) => handleClickFilter(event, 'authors')}
-            >
-                исполнителю
-                {filter === 'authors' && <AllAuthors />}
-            </S.filterButton>
-            <S.filterButton
-                className="_btn-text"
-                $active={filter === 'years' ? true : false}
-                onClick={(event) => handleClickFilter(event, 'years')}
-            >
-                году выпуска
-                {filter === 'years' && <AllYears />}
-            </S.filterButton>
-            <S.filterButton
-                className="_btn-text"
-                $active={filter === 'genres' ? true : false}
-                onClick={(event) => handleClickFilter(event, 'genres')}
-            >
-                жанру
-                {filter === 'genres' && <AllGenre />}
-            </S.filterButton>
+            <S.filterLeftWrap>
+                <S.filterTitle>Искать по:</S.filterTitle>
+                <S.filterButton
+                    className="_btn-text"
+                    $active={filter === 'authors' ? true : false}
+                    onClick={(event) => handleClickFilter(event, 'authors')}
+                >
+                    исполнителю
+                    {filter === 'authors' && (
+                        <S.authors>
+                            <S.authorsWrap>
+                                <AllAuthors items={authorsFilter} />
+                            </S.authorsWrap>
+                        </S.authors>
+                    )}
+                </S.filterButton>
+                <S.filterButton
+                    className="_btn-text"
+                    $active={filter === 'genres' ? true : false}
+                    onClick={(event) => handleClickFilter(event, 'genres')}
+                >
+                    жанру
+                    {filter === 'genres' && (
+                        <S.genre>
+                            <S.genreWrap>
+                                <AllGenre items={genresFilter} />
+                            </S.genreWrap>
+                        </S.genre>
+                    )}
+                </S.filterButton>
+            </S.filterLeftWrap>
+
+            <S.filterSortWrap>
+                <S.filterTitle>Сортировка:</S.filterTitle>
+                <S.filterButton
+                    className="_btn-text"
+                    $active={filter === 'years' ? true : false}
+                    onClick={(event) => handleClickFilter(event, 'years')}
+                >
+                    {filtersState.years}
+                    {filter === 'years' && (
+                        <S.years>
+                            {filtersState.years === 'По умолчанию' ? (
+                                <S.yearsItemActive>
+                                    По умолчанию
+                                </S.yearsItemActive>
+                            ) : (
+                                <S.yearsItem
+                                    onClick={() =>
+                                        handleClickSortYears('По умолчанию')
+                                    }
+                                >
+                                    По умолчанию
+                                </S.yearsItem>
+                            )}
+                            {filtersState.years === 'Сначала новые' ? (
+                                <S.yearsItemActive>
+                                    Сначала новые
+                                </S.yearsItemActive>
+                            ) : (
+                                <S.yearsItem
+                                    onClick={() =>
+                                        handleClickSortYears('Сначала новые')
+                                    }
+                                >
+                                    Сначала новые
+                                </S.yearsItem>
+                            )}
+                            {filtersState.years === 'Сначала старые' ? (
+                                <S.yearsItemActive>
+                                    Сначала старые
+                                </S.yearsItemActive>
+                            ) : (
+                                <S.yearsItem
+                                    onClick={() =>
+                                        handleClickSortYears('Сначала старые')
+                                    }
+                                >
+                                    Сначала старые
+                                </S.yearsItem>
+                            )}
+                        </S.years>
+                    )}
+                </S.filterButton>
+            </S.filterSortWrap>
         </S.filter>
     );
 };

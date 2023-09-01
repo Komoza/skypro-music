@@ -4,9 +4,9 @@ import { ProgressBar } from './progress-bar';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../../store/actions/types/types';
 import {
-    setCurrentPlaylist,
     setCurrentTrack,
     setIsPlay,
+    setVirtualPlaylist,
 } from '../../../../store/actions/creators/creators';
 import { Track } from '../../../../cosntant';
 
@@ -17,8 +17,8 @@ export const Bar = () => {
         (state: RootState) => state.otherState.activePlaylist
     );
 
-    const currentPlaylist: Track[] = useSelector(
-        (state: RootState) => state.otherState.currentPlaylist
+    const virtualPlaylist: Track[] = useSelector(
+        (state: RootState) => state.otherState.virtualPlaylist
     );
     const currentTrack: Track | null = useSelector(
         (state: RootState) => state.otherState.currentTrack
@@ -46,9 +46,9 @@ export const Bar = () => {
 
     const handleClickPrev = () => {
         if (currentTrack) {
-            const trackIndex = currentPlaylist.indexOf(currentTrack);
+            const trackIndex = virtualPlaylist.indexOf(currentTrack);
             if (trackIndex > 0) {
-                const prevTrack: Track = currentPlaylist[trackIndex - 1];
+                const prevTrack: Track = virtualPlaylist[trackIndex - 1];
                 dispatch(setCurrentTrack(prevTrack));
             }
         }
@@ -56,17 +56,17 @@ export const Bar = () => {
 
     const addTrackToCurrPlaylist = (track: Track) => {
         // добавляем трек в виртуальный плейлист
-        const newCurrentPlaylist: Track[] = [...currentPlaylist];
+        const newVirtualPlaylist: Track[] = [...virtualPlaylist];
 
         // проверяем есть ли этот трек в виртуальном массиве, если есть удалим
-        const indexFindTrack = newCurrentPlaylist.indexOf(track);
+        const indexFindTrack = newVirtualPlaylist.indexOf(track);
         if (indexFindTrack !== -1) {
-            newCurrentPlaylist.splice(indexFindTrack, 1);
+            newVirtualPlaylist.splice(indexFindTrack, 1);
         }
 
-        newCurrentPlaylist.push(track);
+        newVirtualPlaylist.push(track);
 
-        dispatch(setCurrentPlaylist(newCurrentPlaylist));
+        dispatch(setVirtualPlaylist(newVirtualPlaylist));
     };
 
     const getRandomTrack = () => {
@@ -80,12 +80,12 @@ export const Bar = () => {
 
     const setNextTrack = () => {
         if (currentTrack && playlist) {
-            const trackIndexCurrPlaylist =
-                currentPlaylist.indexOf(currentTrack);
+            const trackIndexVirtuallist =
+                virtualPlaylist.indexOf(currentTrack);
             const trackIndexOriginalPlaylist = playlist.indexOf(currentTrack);
 
-            if (trackIndexCurrPlaylist !== currentPlaylist.length - 1) {
-                const nextTrack = currentPlaylist[trackIndexCurrPlaylist + 1];
+            if (trackIndexVirtuallist !== virtualPlaylist.length - 1) {
+                const nextTrack = virtualPlaylist[trackIndexVirtuallist + 1];
                 dispatch(setCurrentTrack(nextTrack));
                 return true;
             }

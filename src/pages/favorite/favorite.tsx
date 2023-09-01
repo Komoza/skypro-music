@@ -5,10 +5,11 @@ import {
 } from '../../services/tracks';
 import { removeUserFromLocalStorage } from '../../helper';
 import {
-    activePlaylist,
-    setCurrentPlaylist,
+    setActivePlaylist,
     setCurrentTrack,
+    setDisplayPlaylist,
     setIsPlay,
+    setVirtualPlaylist,
     user,
 } from '../../store/actions/creators/creators';
 import { RefObject, useEffect, useRef } from 'react';
@@ -19,11 +20,20 @@ import { RootState } from '../../store/actions/types/types';
 
 export const FavoriteTrack = () => {
     const dispatch = useDispatch();
+
+    const dispayPlaylist = useSelector(
+        (state: RootState) => state.otherState.displayPlaylist
+    );
     const {
-        data: playlist,
+        data,
         error,
         isLoading: isLoadingApp,
     } = useGetAllFavoriteTracksQuery();
+
+    useEffect(() => {
+        if (data) dispatch(setDisplayPlaylist([...data]));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data]);
 
     useEffect(() => {
         const errorState: CustomError = error as CustomError;
@@ -48,12 +58,12 @@ export const FavoriteTrack = () => {
                 </S.playlistTitleCol04>
             </S.playlistTitle>
             <S.playlist ref={refPlaylist}>
-                {!isLoadingApp && playlist ? (
-                    <Playlist playlist={playlist} refPlaylist={refPlaylist} />
+                {!isLoadingApp && dispayPlaylist ? (
+                    <Playlist refPlaylist={refPlaylist} />
                 ) : (
                     <PlaylistSkeleton />
                 )}
-                {!playlist?.length && (
+                {!dispayPlaylist?.length && (
                     <S.errorGetSongs>Список треков пуст</S.errorGetSongs>
                 )}
             </S.playlist>
@@ -63,12 +73,13 @@ export const FavoriteTrack = () => {
 
 interface PlaylistProps {
     refPlaylist: RefObject<HTMLDivElement>;
-    playlist: Track[];
 }
 
-const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
+const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
     const dispatch = useDispatch();
-
+    const dispayPlaylist = useSelector(
+        (state: RootState) => state.otherState.displayPlaylist
+    );
     const activePlaylistState = useSelector(
         (state: RootState) => state.otherState.activePlaylist
     );
@@ -87,8 +98,8 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
     const currentTrack = useSelector(
         (state: RootState) => state.otherState.currentTrack
     );
-    const currentPlaylist = useSelector(
-        (state: RootState) => state.otherState.currentPlaylist
+    const virtualPlaylist = useSelector(
+        (state: RootState) => state.otherState.virtualPlaylist
     );
     const isPlay: boolean = useSelector(
         (state: RootState) => state.otherState.isPlay
@@ -99,25 +110,25 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
 
     const handleClickTrack = (track: Track) => {
         // Смена активного плейлиста
-        if (activePlaylistState !== playlist) {
-            dispatch(activePlaylist(playlist));
+        if (activePlaylistState !== dispayPlaylist) {
+            dispatch(setActivePlaylist(dispayPlaylist));
         }
         if (currentTrack !== track) {
             dispatch(setIsPlay(true));
             dispatch(setCurrentTrack(track));
 
             // добавляем трек в виртуальный плейлист
-            const newCurrentPlaylist: Track[] = [...currentPlaylist];
+            const newVirtualPlaylist: Track[] = [...virtualPlaylist];
 
             // проверяем есть ли этот трек в виртуальном массиве, если есть удалим
-            const indexFindTrack = newCurrentPlaylist.indexOf(track);
+            const indexFindTrack = newVirtualPlaylist.indexOf(track);
             if (indexFindTrack !== -1) {
-                newCurrentPlaylist.splice(indexFindTrack, 1);
+                newVirtualPlaylist.splice(indexFindTrack, 1);
             }
 
-            newCurrentPlaylist.push(track);
+            newVirtualPlaylist.push(track);
 
-            dispatch(setCurrentPlaylist(newCurrentPlaylist));
+            dispatch(setVirtualPlaylist(newVirtualPlaylist));
         } else {
             dispatch(setIsPlay(!isPlay));
         }
@@ -148,8 +159,8 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
         }
     }, [currentTrack, refPlaylist]);
 
-    if (playlist) {
-        return playlist.map((song) => {
+    if (dispayPlaylist) {
+        return dispayPlaylist.map((song) => {
             return (
                 <S.playlistItem key={song.id}>
                     <S.track

@@ -7,8 +7,13 @@ interface Props {
 export const filter = styled.div`
     display: flex;
     flex-direction: row;
-    align-items: center;
     margin-bottom: 51px;
+    justify-content: space-between;
+`;
+
+export const filterLeftWrap = styled.div`
+    display: flex;
+    align-items: center;
 `;
 export const filterTitle = styled.div`
     font-style: normal;
@@ -44,7 +49,6 @@ export const filterButton = styled.div<Props>`
 `;
 
 const authGenreProps = `
-    width: 248px;
     max-height: 305px;
     position: absolute;
     top: 50px;
@@ -74,6 +78,7 @@ const authGenreTextProps = `
 `;
 
 export const authors = styled.div`
+    width: 248px;
     ${authGenreProps}
 `;
 export const authorsWrap = styled.div`
@@ -84,55 +89,43 @@ export const authorsText = styled.p`
 `;
 
 export const years = styled.div`
-    width: 404px;
+    width: 232px;
     position: absolute;
+    flex-direction: column;
     display: flex;
-    gap: 28px;
+    gap: 20px;
     top: 50px;
     left: 0;
     padding: 34px;
     border-radius: 12px;
     background: #313131;
+`;
 
+const yearsItemStyle = `
     color: #fff;
     font-size: 20px;
     font-style: normal;
     font-weight: 400;
     line-height: 24px;
-`;
 
-const newOldProps = `
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    cursor: pointer;
+
+`;
+export const yearsItem = styled.p`
+    ${yearsItemStyle}
     &:hover {
         color: #cda4fa;
+        text-decoration: underline;
     }
 `;
-export const yearsNew = styled.div`
-    ${newOldProps}
-`;
-export const yearsOld = styled.div`
-    ${newOldProps}
-`;
-export const yearsPoint = styled.div`
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    border: 2px solid #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`;
-
-export const yearsPointActive = styled.div`
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #fff;
+export const yearsItemActive = styled.p`
+    ${yearsItemStyle}
+    color: #b672ff;
+    font-weight: bold;
 `;
 
 export const genre = styled.div`
+    width: 282px;
     ${authGenreProps}
 `;
 export const genreWrap = styled.div`
@@ -140,4 +133,9 @@ export const genreWrap = styled.div`
 `;
 export const genreText = styled.p`
     ${authGenreTextProps}
+`;
+
+export const filterSortWrap = styled.div`
+    display: flex;
+    align-items: center;
 `;

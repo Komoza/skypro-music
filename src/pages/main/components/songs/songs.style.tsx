@@ -212,8 +212,8 @@ export const trackTimeSvgLike = styled.svg`
     width: 14px;
     height: 12px;
     margin-right: 17px;
-    fill: transparent;
-    stroke: red;
+    fill: #b672ff;
+    stroke: #b672ff;
 `;
 
 export const trackTimeText = styled.span`

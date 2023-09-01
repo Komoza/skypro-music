@@ -1,15 +1,21 @@
 import * as S from './songs.style';
-import { CustomError, Track, formatTime } from '../../../../cosntant';
+import {
+    CustomError,
+    Track,
+    formatTime,
+    sortByDate,
+} from '../../../../cosntant';
 import { RootState } from '../../../../store/actions/types/types';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-    activePlaylist,
-    setCurrentPlaylist,
+    setActivePlaylist,
     setCurrentTrack,
+    setDisplayPlaylist,
     setIsPlay,
+    setVirtualPlaylist,
     user,
 } from '../../../../store/actions/creators/creators';
-import { RefObject, useEffect, useRef } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
 import { removeUserFromLocalStorage } from '../../../../helper';
 
 import {
@@ -20,14 +26,19 @@ import {
 
 interface PlaylistProps {
     refPlaylist: RefObject<HTMLDivElement>;
-    playlist: Track[];
+    originPlaylist: Track[];
 }
 
-const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
+const Playlist: React.FC<PlaylistProps> = ({ originPlaylist, refPlaylist }) => {
     const dispatch = useDispatch();
-
-    const activePlaylistState = useSelector(
+    const activePlaylist = useSelector(
         (state: RootState) => state.otherState.activePlaylist
+    );
+    const filtersState = useSelector(
+        (state: RootState) => state.otherState.filters
+    );
+    const displayPlaylist = useSelector(
+        (state: RootState) => state.otherState.displayPlaylist
     );
 
     const [addTrackToFavorite, { error: errorLike }] =
@@ -49,11 +60,39 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
         }
     }, [dispatch, errorDislike, errorLike]);
 
+    // Сортировка
+    useEffect(() => {
+        if (displayPlaylist) {
+            const newDisplayPlaylist: Track[] = [...displayPlaylist];
+
+            if (filtersState.years === 'Сначала новые') {
+                dispatch(
+                    setDisplayPlaylist([
+                        ...newDisplayPlaylist.sort((a, b) =>
+                            sortByDate(b.release_date, a.release_date)
+                        ),
+                    ])
+                );
+            } else if (filtersState.years === 'Сначала старые') {
+                dispatch(
+                    setDisplayPlaylist([
+                        ...newDisplayPlaylist.sort((a, b) =>
+                            sortByDate(a.release_date, b.release_date)
+                        ),
+                    ])
+                );
+            } else if (filtersState.years === 'По умолчанию') {
+                dispatch(setDisplayPlaylist([...originPlaylist]));
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filtersState]);
+
     const currentTrack = useSelector(
         (state: RootState) => state.otherState.currentTrack
     );
-    const currentPlaylist = useSelector(
-        (state: RootState) => state.otherState.currentPlaylist
+    const virtualPlaylist = useSelector(
+        (state: RootState) => state.otherState.virtualPlaylist
     );
     const userState = useSelector((state: RootState) => state.otherState.user);
     const currentTrackID = currentTrack ? currentTrack.id : null;
@@ -65,25 +104,25 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
 
     const handleClickTrack = (track: Track) => {
         // Смена активного плейлиста
-        if (activePlaylistState !== playlist) {
-            dispatch(activePlaylist(playlist));
+        if (activePlaylist !== displayPlaylist) {
+            dispatch(setActivePlaylist(displayPlaylist));
         }
         if (currentTrack !== track) {
             dispatch(setIsPlay(true));
             dispatch(setCurrentTrack(track));
 
             // добавляем трек в виртуальный плейлист
-            const newCurrentPlaylist: Track[] = [...currentPlaylist];
+            const newVirtualPlaylist: Track[] = [...virtualPlaylist];
 
             // проверяем есть ли этот трек в виртуальном массиве, если есть удалим
-            const indexFindTrack = newCurrentPlaylist.indexOf(track);
+            const indexFindTrack = newVirtualPlaylist.indexOf(track);
             if (indexFindTrack !== -1) {
-                newCurrentPlaylist.splice(indexFindTrack, 1);
+                newVirtualPlaylist.splice(indexFindTrack, 1);
             }
 
-            newCurrentPlaylist.push(track);
+            newVirtualPlaylist.push(track);
 
-            dispatch(setCurrentPlaylist(newCurrentPlaylist));
+            dispatch(setVirtualPlaylist(newVirtualPlaylist));
         } else {
             dispatch(setIsPlay(!isPlay));
         }
@@ -104,6 +143,7 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
         void deleteTrackFromFavorite(id);
     };
 
+    // прокрутка страницы к треку
     useEffect(() => {
         if (currentTrackRef.current && refPlaylist.current) {
             const trackTop = currentTrackRef.current.offsetTop;
@@ -112,7 +152,6 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
             const areaBottom = areaTop + refPlaylist.current.offsetHeight;
 
             if (trackTop < areaTop || trackBottom > areaBottom) {
-                // Прокрутите область прокрутки к текущему треку
                 refPlaylist.current.scrollTo({
                     top: trackTop - refPlaylist.current.offsetHeight,
                     behavior: 'smooth',
@@ -121,8 +160,8 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
         }
     }, [currentTrack, refPlaylist]);
 
-    if (playlist) {
-        return playlist.map((song) => {
+    if (displayPlaylist) {
+        return displayPlaylist.map((song) => {
             return (
                 <S.playlistItem key={song.id}>
                     <S.track
@@ -220,13 +259,13 @@ export const PlaylistSkeleton = () => {
 };
 
 export const Songs = () => {
-    const {
-        data: playlist,
-        error,
-        isLoading: isLoadingApp,
-    } = useGetAllTracksQuery();
-
+    const { data, error, isLoading: isLoadingApp } = useGetAllTracksQuery();
+    const dispatch = useDispatch();
     const refPlaylist = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (data) dispatch(setDisplayPlaylist([...data]));
+    }, [data, dispatch]);
 
     return (
         <S.centerblockContent>
@@ -241,8 +280,8 @@ export const Songs = () => {
                 </S.playlistTitleCol04>
             </S.playlistTitle>
             <S.playlist ref={refPlaylist}>
-                {!isLoadingApp && playlist ? (
-                    <Playlist playlist={playlist} refPlaylist={refPlaylist} />
+                {!isLoadingApp && data ? (
+                    <Playlist originPlaylist={data} refPlaylist={refPlaylist} />
                 ) : (
                     <PlaylistSkeleton />
                 )}

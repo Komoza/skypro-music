@@ -25,6 +25,12 @@ export interface Track {
     stared_user: User[];
 }
 
+export interface Filters {
+    author: null | string;
+    genre: null | string;
+    years: string;
+}
+
 export interface CustomError {
     status: number;
 }
@@ -58,4 +64,17 @@ export const formatTime = (seconds: number) => {
     const formattedSeconds = String(remainingSeconds).padStart(2, '0');
 
     return `${formattedMinutes}:${formattedSeconds}`;
+};
+
+export const sortByDate = (a: string, b: string): number => {
+    const dateA = new Date(a);
+    const dateB = new Date(b);
+
+    if (dateA < dateB) {
+        return -1;
+    } else if (dateA > dateB) {
+        return 1;
+    } else {
+        return 0;
+    }
 };

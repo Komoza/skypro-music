@@ -7,12 +7,21 @@ import {
     setCurrentTrack,
     setIsPlay,
     setVirtualPlaylist,
+    user,
 } from '../../../../store/actions/creators/creators';
-import { Track } from '../../../../cosntant';
+import { CustomError, Track } from '../../../../cosntant';
+import {
+    useAddTrackToFavoriteMutation,
+    useDeleteTrackFromFavoriteMutation,
+    useGetAllTracksQuery,
+} from '../../../../services/tracks';
+import { removeUserFromLocalStorage } from '../../../../helper';
 
 export const Bar = () => {
     const dispatch = useDispatch();
+    const userState = useSelector((state: RootState) => state.otherState.user);
 
+    const { data: originPlaylist } = useGetAllTracksQuery();
     const playlist = useSelector(
         (state: RootState) => state.otherState.activePlaylist
     );
@@ -20,6 +29,7 @@ export const Bar = () => {
     const virtualPlaylist: Track[] = useSelector(
         (state: RootState) => state.otherState.virtualPlaylist
     );
+
     const currentTrack: Track | null = useSelector(
         (state: RootState) => state.otherState.currentTrack
     );
@@ -80,8 +90,7 @@ export const Bar = () => {
 
     const setNextTrack = () => {
         if (currentTrack && playlist) {
-            const trackIndexVirtuallist =
-                virtualPlaylist.indexOf(currentTrack);
+            const trackIndexVirtuallist = virtualPlaylist.indexOf(currentTrack);
             const trackIndexOriginalPlaylist = playlist.indexOf(currentTrack);
 
             if (trackIndexVirtuallist !== virtualPlaylist.length - 1) {
@@ -120,6 +129,48 @@ export const Bar = () => {
 
     const handleClickShuffle = () => {
         setIsShuffle(!isShuffle);
+    };
+
+    const [addTrackToFavorite, { error: errorLike }] =
+        useAddTrackToFavoriteMutation();
+    const [deleteTrackFromFavorite, { error: errorDislike }] =
+        useDeleteTrackFromFavoriteMutation();
+
+    // Изменить текущий трек, при изменении основго плейлиста (лайк/dislike)
+    useEffect(() => {
+        if (currentTrack && originPlaylist) {
+            dispatch(
+                setCurrentTrack(
+                    originPlaylist.find(
+                        (track) => track.id === currentTrack.id
+                    )!
+                )
+            );
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [originPlaylist]);
+
+    // Обработка 401 ошибки
+    useEffect(() => {
+        const errorStateDislike: CustomError = errorDislike as CustomError;
+        const errorStateLike: CustomError = errorLike as CustomError;
+
+        if (
+            errorStateDislike?.status === 401 ||
+            errorStateLike?.status === 401
+        ) {
+            dispatch(user(null));
+            removeUserFromLocalStorage();
+        }
+    }, [dispatch, errorDislike, errorLike]);
+
+    const handleClickLike = (id: number) => {
+        void addTrackToFavorite(id);
+        // обновлять current track
+    };
+    const handleClickDislike = (id: number) => {
+        void deleteTrackFromFavorite(id);
+        // обновлять current track
     };
 
     const endTrack = () => {
@@ -219,16 +270,35 @@ export const Bar = () => {
                                 </S.trackPlayContain>
 
                                 <S.trackPlayLikeDis>
-                                    <S.trackPlayLike className="_btn-icon">
-                                        <S.trackPlayLikeSvg aria-label="like">
-                                            <use xlinkHref="./src/img/icon/sprite.svg#icon-like"></use>
-                                        </S.trackPlayLikeSvg>
-                                    </S.trackPlayLike>
-                                    <S.trackPlayDislike className="_btn-icon">
-                                        <S.trackPlayDislikeSvg aria-label="dislike">
-                                            <use xlinkHref="./src/img/icon/sprite.svg#icon-dislike"></use>
-                                        </S.trackPlayDislikeSvg>
-                                    </S.trackPlayDislike>
+                                    {currentTrack.stared_user?.some(
+                                        (user) => user.id === userState?.id
+                                    ) ? (
+                                        <S.trackPlayLike>
+                                            <S.trackPlayLikeSvgActive
+                                                onClick={() =>
+                                                    handleClickDislike(
+                                                        currentTrack.id
+                                                    )
+                                                }
+                                                aria-label="like"
+                                            >
+                                                <use xlinkHref="./src/img/icon/sprite.svg#icon-like"></use>
+                                            </S.trackPlayLikeSvgActive>
+                                        </S.trackPlayLike>
+                                    ) : (
+                                        <S.trackPlayLike>
+                                            <S.trackPlayLikeSvg
+                                                onClick={() =>
+                                                    handleClickLike(
+                                                        currentTrack.id
+                                                    )
+                                                }
+                                                aria-label="like"
+                                            >
+                                                <use xlinkHref="./src/img/icon/sprite.svg#icon-like"></use>
+                                            </S.trackPlayLikeSvg>
+                                        </S.trackPlayLike>
+                                    )}
                                 </S.trackPlayLikeDis>
                             </S.trackPlay>
                         </S.player>

@@ -15,7 +15,7 @@ import {
     setVirtualPlaylist,
     user,
 } from '../../../../store/actions/creators/creators';
-import { RefObject, useEffect, useRef, useState } from 'react';
+import { RefObject, useEffect, useRef } from 'react';
 import { removeUserFromLocalStorage } from '../../../../helper';
 
 import {

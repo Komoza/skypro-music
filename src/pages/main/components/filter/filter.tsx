@@ -15,18 +15,91 @@ interface FilterItemProps {
 }
 
 const AllAuthors: React.FC<FilterItemProps> = ({ items }) => {
+    const dispatch = useDispatch();
+    const filterState = useSelector(
+        (state: RootState) => state.otherState.filters
+    );
+
+    const handleClickAddAuthor = (author: string) => {
+        const updatedFilters = {
+            ...filterState,
+            author: [...filterState.author, author],
+        };
+        dispatch(filters(updatedFilters));
+    };
+
+    const handleClickDeleteAuthor = (author: string) => {
+        const updateAuthors = [...filterState.author];
+        const authorIndex = updateAuthors.indexOf(author);
+        updateAuthors.splice(authorIndex, 1);
+
+        const updateFilters = {
+            ...filterState,
+            author: [...updateAuthors],
+        };
+        dispatch(filters(updateFilters));
+    };
+
     items.sort();
     const uniqueAuthors = [...new Set(items)];
     return uniqueAuthors.map((author, index) => (
-        <S.authorsText key={index}>{author}</S.authorsText>
+        <div key={index}>
+            {!filterState.author.includes(author) ? (
+                <S.authorsText onClick={() => handleClickAddAuthor(author)}>
+                    {author}
+                </S.authorsText>
+            ) : (
+                <S.authorTextActive
+                    onClick={() => handleClickDeleteAuthor(author)}
+                >
+                    {author}
+                </S.authorTextActive>
+            )}
+        </div>
     ));
 };
 
 const AllGenre: React.FC<FilterItemProps> = ({ items }) => {
+    const dispatch = useDispatch();
+    const filterState = useSelector(
+        (state: RootState) => state.otherState.filters
+    );
+
+    const handleClickAddGenre = (genre: string) => {
+        const updatedFilters = {
+            ...filterState,
+            genre: [...filterState.genre, genre],
+        };
+        dispatch(filters(updatedFilters));
+    };
+    const handleClickDeleteGenre = (genre: string) => {
+        const updateGenres = [...filterState.genre];
+        const genreIndex = updateGenres.indexOf(genre);
+        updateGenres.splice(genreIndex, 1);
+
+        const updateFilters = {
+            ...filterState,
+            genre: [...updateGenres],
+        };
+        dispatch(filters(updateFilters));
+    };
+
     items.sort();
     const uniqueGenres = [...new Set(items)];
     return uniqueGenres.map((genre, index) => (
-        <S.genreText key={index}>{genre}</S.genreText>
+        <div key={index}>
+            {filterState.genre.includes(genre) ? (
+                <S.genreTextActive
+                    onClick={() => handleClickDeleteGenre(genre)}
+                >
+                    {genre}
+                </S.genreTextActive>
+            ) : (
+                <S.genreText onClick={() => handleClickAddGenre(genre)}>
+                    {genre}
+                </S.genreText>
+            )}
+        </div>
     ));
 };
 
@@ -52,11 +125,11 @@ export const Filter: React.FC<FilterProps> = ({ filter, setFilter }) => {
     const handleClickSortYears = (status: string) => {
         dispatch(
             filters({
-                author: filtersState.author,
-                genre: filtersState.genre,
+                ...filtersState,
                 years: status,
             })
         );
+        setFilter(null);
     };
 
     const handleClickFilter = (
@@ -81,8 +154,13 @@ export const Filter: React.FC<FilterProps> = ({ filter, setFilter }) => {
                     onClick={(event) => handleClickFilter(event, 'authors')}
                 >
                     исполнителю
+                    {filtersState.author.length > 0 && (
+                        <S.countFilters>
+                            {filtersState.author.length}
+                        </S.countFilters>
+                    )}
                     {filter === 'authors' && (
-                        <S.authors>
+                        <S.authors onClick={(event) => event.stopPropagation()}>
                             <S.authorsWrap>
                                 <AllAuthors items={authorsFilter} />
                             </S.authorsWrap>
@@ -95,8 +173,13 @@ export const Filter: React.FC<FilterProps> = ({ filter, setFilter }) => {
                     onClick={(event) => handleClickFilter(event, 'genres')}
                 >
                     жанру
+                    {filtersState.genre.length > 0 && (
+                        <S.countFilters>
+                            {filtersState.genre.length}
+                        </S.countFilters>
+                    )}
                     {filter === 'genres' && (
-                        <S.genre>
+                        <S.genre onClick={(event) => event.stopPropagation()}>
                             <S.genreWrap>
                                 <AllGenre items={genresFilter} />
                             </S.genreWrap>
@@ -114,7 +197,7 @@ export const Filter: React.FC<FilterProps> = ({ filter, setFilter }) => {
                 >
                     {filtersState.years}
                     {filter === 'years' && (
-                        <S.years>
+                        <S.years onClick={(event) => event.stopPropagation()}>
                             {filtersState.years === 'По умолчанию' ? (
                                 <S.yearsItemActive>
                                     По умолчанию

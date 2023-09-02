@@ -30,9 +30,10 @@ export interface Track {
 }
 
 export interface Filters {
-    author: null | string;
-    genre: null | string;
+    author: string[];
+    genre: string[];
     years: string;
+    searchWords: string;
 }
 
 export interface CustomError {

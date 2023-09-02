@@ -67,7 +67,6 @@ const authGenreWrapProps = `
 `;
 
 const authGenreTextProps = `
-    color: #fff;
     font-size: 20px;
     font-style: normal;
     font-weight: 400;
@@ -86,6 +85,11 @@ export const authorsWrap = styled.div`
 `;
 export const authorsText = styled.p`
     ${authGenreTextProps}
+    color: #fff;
+`;
+export const authorTextActive = styled.p`
+    ${authGenreTextProps}
+    color: #b672ff;
 `;
 
 export const years = styled.div`
@@ -133,9 +137,33 @@ export const genreWrap = styled.div`
 `;
 export const genreText = styled.p`
     ${authGenreTextProps}
+    color: #fff;
+`;
+export const genreTextActive = styled.p`
+    ${authGenreTextProps}
+    color: #b672ff;
 `;
 
 export const filterSortWrap = styled.div`
     display: flex;
     align-items: center;
+`;
+
+export const countFilters = styled.div`
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #9a48f1;
+    right: -8px;
+    top: -9px;
+
+    color: #fff;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
 `;

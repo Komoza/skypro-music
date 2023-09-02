@@ -4,7 +4,12 @@ import {
     useDeleteTrackFromFavoriteMutation,
     useGetSelectionTracksQuery,
 } from '../../services/tracks';
-import { removeUserFromLocalStorage } from '../../helper';
+import {
+    getRefreshUserTokenFromLocalStorage,
+    getUserFromLocalStorage,
+    removeUserFromLocalStorage,
+    saveUserToLocalStorage,
+} from '../../helper';
 import {
     setActivePlaylist,
     setCurrentTrack,
@@ -17,9 +22,16 @@ import {
 import { RefObject, useEffect, useRef } from 'react';
 import * as S from '../main/components/songs/songs.style';
 import { PlaylistSkeleton } from '../main/components/songs/songs';
-import { CustomError, Track, formatTime } from '../../cosntant';
+import {
+    CustomError,
+    Track,
+    UpdateToken,
+    User,
+    formatTime,
+} from '../../cosntant';
 import { RootState } from '../../store/actions/types/types';
 import { useParams } from 'react-router-dom';
+import { getNewAccessToken } from '../../api';
 
 export const Compilation = () => {
     const dispatch = useDispatch();
@@ -85,11 +97,17 @@ interface PlaylistProps {
 
 const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
     const dispatch = useDispatch();
-    const dispayPlaylist = useSelector(
+    const displayPlaylist = useSelector(
         (state: RootState) => state.otherState.displayPlaylist
     );
     const activePlaylistState = useSelector(
         (state: RootState) => state.otherState.activePlaylist
+    );
+    const originPlaylist = useSelector(
+        (state: RootState) => state.otherState.originPlaylist
+    );
+    const filterState = useSelector(
+        (state: RootState) => state.otherState.filters
     );
 
     const [addTrackToFavorite, { error: errorLike }] =
@@ -97,6 +115,8 @@ const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
     const [deleteTrackFromFavorite, { error: errorDislike }] =
         useDeleteTrackFromFavoriteMutation();
     const userState = useSelector((state: RootState) => state.otherState.user);
+
+    // Обработка 401 ошибки
     useEffect(() => {
         const errorStateDislike: CustomError = errorDislike as CustomError;
         const errorStateLike: CustomError = errorLike as CustomError;
@@ -105,10 +125,51 @@ const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
             errorStateDislike?.status === 401 ||
             errorStateLike?.status === 401
         ) {
-            dispatch(user(null));
-            removeUserFromLocalStorage();
+            const fetchUpdateToken = async () => {
+                alert('обновление токена');
+                const userData = getUserFromLocalStorage() as User;
+                try {
+                    const newToken: UpdateToken = await getNewAccessToken(
+                        getRefreshUserTokenFromLocalStorage()
+                    );
+                    const newUser: User = {
+                        ...userData,
+                        accessToken: {
+                            access: newToken.access,
+                            refresh: userData.accessToken.refresh,
+                        },
+                    };
+                    saveUserToLocalStorage(newUser);
+
+                    location.reload();
+                } catch {
+                    dispatch(user(null));
+                    removeUserFromLocalStorage();
+                }
+            };
+
+            void fetchUpdateToken();
         }
     }, [dispatch, errorDislike, errorLike]);
+
+    // отбор фильтр пополю в поиске
+    useEffect(() => {
+        if (displayPlaylist) {
+            let newDisplayPlaylist: Track[] = [...originPlaylist];
+            if (filterState.searchWords.length) {
+                newDisplayPlaylist = [
+                    ...newDisplayPlaylist.filter((track) =>
+                        track.name
+                            .toLowerCase()
+                            .includes(filterState.searchWords.toLowerCase())
+                    ),
+                ];
+            }
+
+            dispatch(setDisplayPlaylist(newDisplayPlaylist));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filterState, originPlaylist]);
 
     const currentTrack = useSelector(
         (state: RootState) => state.otherState.currentTrack
@@ -125,8 +186,8 @@ const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
 
     const handleClickTrack = (track: Track) => {
         // Смена активного плейлиста
-        if (activePlaylistState !== dispayPlaylist) {
-            dispatch(setActivePlaylist(dispayPlaylist));
+        if (activePlaylistState !== displayPlaylist) {
+            dispatch(setActivePlaylist(displayPlaylist));
         }
         if (currentTrack !== track) {
             dispatch(setIsPlay(true));
@@ -181,8 +242,8 @@ const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
         }
     }, [currentTrack, refPlaylist]);
 
-    if (dispayPlaylist) {
-        return dispayPlaylist.map((song) => {
+    if (displayPlaylist) {
+        return displayPlaylist.map((song) => {
             return (
                 <S.playlistItem key={song.id}>
                     <S.track

@@ -35,16 +35,18 @@ import { getNewAccessToken } from '../../../../api';
 
 interface PlaylistProps {
     refPlaylist: RefObject<HTMLDivElement>;
-    originPlaylist: Track[];
 }
 
-const Playlist: React.FC<PlaylistProps> = ({ originPlaylist, refPlaylist }) => {
+const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
     const dispatch = useDispatch();
     const activePlaylist = useSelector(
         (state: RootState) => state.otherState.activePlaylist
     );
     const filtersState = useSelector(
         (state: RootState) => state.otherState.filters
+    );
+    const originPlaylist = useSelector(
+        (state: RootState) => state.otherState.originPlaylist
     );
     const displayPlaylist = useSelector(
         (state: RootState) => state.otherState.displayPlaylist
@@ -91,33 +93,65 @@ const Playlist: React.FC<PlaylistProps> = ({ originPlaylist, refPlaylist }) => {
         }
     }, [dispatch, errorDislike, errorLike]);
 
-    // Сортировка
+    // Эффект при изменении фильтров
     useEffect(() => {
         if (displayPlaylist) {
-            const newDisplayPlaylist: Track[] = [...displayPlaylist];
+            let newDisplayPlaylist: Track[] = [...originPlaylist];
 
+            // сортировка
             if (filtersState.years === 'Сначала новые') {
-                dispatch(
-                    setDisplayPlaylist([
-                        ...newDisplayPlaylist.sort((a, b) =>
-                            sortByDate(b.release_date, a.release_date)
-                        ),
-                    ])
+                newDisplayPlaylist.sort((a, b) =>
+                    sortByDate(b.release_date, a.release_date)
                 );
             } else if (filtersState.years === 'Сначала старые') {
-                dispatch(
-                    setDisplayPlaylist([
-                        ...newDisplayPlaylist.sort((a, b) =>
-                            sortByDate(a.release_date, b.release_date)
-                        ),
-                    ])
+                newDisplayPlaylist.sort((a, b) =>
+                    sortByDate(a.release_date, b.release_date)
                 );
-            } else if (filtersState.years === 'По умолчанию') {
-                dispatch(setDisplayPlaylist([...originPlaylist]));
             }
+
+            // отбор по авторам и жанрам
+            if (filtersState.author.length || filtersState.genre.length) {
+                if (filtersState.author.length && filtersState.genre.length) {
+                    newDisplayPlaylist = [
+                        ...newDisplayPlaylist.filter((track) =>
+                            filtersState.author.includes(track.author)
+                        ),
+                    ];
+                    newDisplayPlaylist = [
+                        ...newDisplayPlaylist.filter((track) =>
+                            filtersState.genre.includes(track.genre)
+                        ),
+                    ];
+                } else if (filtersState.author.length) {
+                    newDisplayPlaylist = [
+                        ...newDisplayPlaylist.filter((track) =>
+                            filtersState.author.includes(track.author)
+                        ),
+                    ];
+                } else if (filtersState.genre.length) {
+                    newDisplayPlaylist = [
+                        ...newDisplayPlaylist.filter((track) =>
+                            filtersState.genre.includes(track.genre)
+                        ),
+                    ];
+                }
+            }
+
+            // отбор фильтр пополю в поиске
+            if (filtersState.searchWords.length) {
+                newDisplayPlaylist = [
+                    ...newDisplayPlaylist.filter((track) =>
+                        track.name
+                            .toLowerCase()
+                            .includes(filtersState.searchWords.toLowerCase())
+                    ),
+                ];
+            }
+
+            dispatch(setDisplayPlaylist(newDisplayPlaylist));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [filtersState]);
+    }, [filtersState, originPlaylist]);
 
     const currentTrack = useSelector(
         (state: RootState) => state.otherState.currentTrack
@@ -318,7 +352,7 @@ export const Songs = () => {
             </S.playlistTitle>
             <S.playlist ref={refPlaylist}>
                 {!isLoadingApp && data ? (
-                    <Playlist originPlaylist={data} refPlaylist={refPlaylist} />
+                    <Playlist refPlaylist={refPlaylist} />
                 ) : (
                     <PlaylistSkeleton />
                 )}

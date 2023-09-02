@@ -2,24 +2,16 @@ import { ChangeEvent } from 'react';
 import * as S from './search.style';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../../store/actions/types/types';
-import { setDisplayPlaylist } from '../../../../store/actions/creators/creators';
+import { filters } from '../../../../store/actions/creators/creators';
 
 export const Search = () => {
     const dispatch = useDispatch();
-
-    const originPlaylist = useSelector(
-        (state: RootState) => state.otherState.originPlaylist
+    const filterState = useSelector(
+        (state: RootState) => state.otherState.filters
     );
 
     const handleChangeSearch = (event: ChangeEvent<HTMLInputElement>) => {
-        const newVisualPlaylist = originPlaylist.filter((track) =>
-            track.name
-                .toLowerCase()
-                .includes(
-                    event.currentTarget.value.toString().toLocaleLowerCase()
-                )
-        );
-        dispatch(setDisplayPlaylist(newVisualPlaylist));
+        dispatch(filters({ ...filterState, searchWords: event.target.value }));
     };
     return (
         <S.search>

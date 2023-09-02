@@ -10,9 +10,10 @@ const initialState: MusicState = {
     currentPage: '',
     user: null,
     filters: {
-        author: null,
-        genre: null,
+        author: [],
+        genre: [],
         years: 'По умолчанию',
+        searchWords: '',
     },
 };
 

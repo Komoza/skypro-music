@@ -122,10 +122,17 @@ const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
     const activePlaylistState = useSelector(
         (state: RootState) => state.otherState.activePlaylist
     );
+    const originPlaylist = useSelector(
+        (state: RootState) => state.otherState.originPlaylist
+    );
+    const filterState = useSelector(
+        (state: RootState) => state.otherState.filters
+    );
 
     const [deleteTrackFromFavorite, { error: errorDislike }] =
         useDeleteTrackFromFavoriteMutation();
 
+    // Обработка 401
     useEffect(() => {
         const errorState: CustomError = errorDislike as CustomError;
         if (errorState?.status === 401) {
@@ -155,6 +162,25 @@ const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
             void fetchUpdateToken();
         }
     }, [dispatch, errorDislike]);
+
+    // отбор фильтр пополю в поиске
+    useEffect(() => {
+        if (displayPlaylist) {
+            let newDisplayPlaylist: Track[] = [...originPlaylist];
+            if (filterState.searchWords.length) {
+                newDisplayPlaylist = [
+                    ...newDisplayPlaylist.filter((track) =>
+                        track.name
+                            .toLowerCase()
+                            .includes(filterState.searchWords.toLowerCase())
+                    ),
+                ];
+            }
+
+            dispatch(setDisplayPlaylist(newDisplayPlaylist));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filterState, originPlaylist]);
 
     const currentTrack = useSelector(
         (state: RootState) => state.otherState.currentTrack

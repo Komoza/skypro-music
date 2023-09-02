@@ -3,6 +3,10 @@ export interface AccessToken {
     access: string;
 }
 
+export interface UpdateToken {
+    access: string;
+}
+
 export interface User {
     email: string;
     first_name: string;

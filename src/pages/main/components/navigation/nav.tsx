@@ -59,10 +59,10 @@ export const Nav: React.FC<navProps> = ({
             onClick={(event) => handleClickNav(event)}
         >
             <S.navLogo>
-                <S.logoImage src="./src/img/logo.png" alt="logo" />
+                <S.logoImage src="/src/img/logo.png" alt="logo" />
                 <S.navClose
                     onClick={handleCloseClick}
-                    src="./src/img/icon/close.svg"
+                    src="/src/img/icon/close.svg"
                     alt="Закрыть"
                 />
             </S.navLogo>

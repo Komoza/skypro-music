@@ -1,3 +1,5 @@
+import { UpdateToken } from './cosntant';
+
 const host = 'https://painassasin.online/';
 let url = '';
 
@@ -19,6 +21,29 @@ export const getAccessToken = async (email: string, password: string) => {
 
         throw new Error('Ошибка...');
     });
+};
+
+export const getNewAccessToken = async (token: string) => {
+    url = 'user/token/refresh/';
+    return fetch(host + url, {
+        method: 'POST',
+        body: JSON.stringify({
+            refresh: token,
+        }),
+        headers: {
+            'content-type': 'application/json',
+        },
+    })
+        .then((response) => {
+            if (response.status === 200) {
+                return response.json();
+            }
+            throw new Error();
+        })
+        .then((json) => json as UpdateToken)
+        .catch(() => {
+            throw new Error('проблема');
+        });
 };
 
 export const loginAPI = async (email: string, password: string) => {

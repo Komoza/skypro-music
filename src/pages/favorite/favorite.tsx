@@ -3,7 +3,12 @@ import {
     useDeleteTrackFromFavoriteMutation,
     useGetAllFavoriteTracksQuery,
 } from '../../services/tracks';
-import { removeUserFromLocalStorage } from '../../helper';
+import {
+    getRefreshUserTokenFromLocalStorage,
+    getUserFromLocalStorage,
+    removeUserFromLocalStorage,
+    saveUserToLocalStorage,
+} from '../../helper';
 import {
     setActivePlaylist,
     setCurrentTrack,
@@ -15,8 +20,15 @@ import {
 import { RefObject, useEffect, useRef } from 'react';
 import * as S from '../main/components/songs/songs.style';
 import { PlaylistSkeleton } from '../main/components/songs/songs';
-import { CustomError, Track, formatTime } from '../../cosntant';
+import {
+    CustomError,
+    Track,
+    UpdateToken,
+    User,
+    formatTime,
+} from '../../cosntant';
 import { RootState } from '../../store/actions/types/types';
+import { getNewAccessToken } from '../../api';
 
 export const FavoriteTrack = () => {
     const dispatch = useDispatch();
@@ -35,11 +47,34 @@ export const FavoriteTrack = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data]);
 
+    // обработка 401
     useEffect(() => {
         const errorState: CustomError = error as CustomError;
         if (errorState?.status === 401) {
-            dispatch(user(null));
-            removeUserFromLocalStorage();
+            const fetchUpdateToken = async () => {
+                alert('обновление токена');
+                const userData = getUserFromLocalStorage() as User;
+                try {
+                    const newToken: UpdateToken = await getNewAccessToken(
+                        getRefreshUserTokenFromLocalStorage()
+                    );
+                    const newUser: User = {
+                        ...userData,
+                        accessToken: {
+                            access: newToken.access,
+                            refresh: userData.accessToken.refresh,
+                        },
+                    };
+                    saveUserToLocalStorage(newUser);
+
+                    location.reload();
+                } catch {
+                    dispatch(user(null));
+                    removeUserFromLocalStorage();
+                }
+            };
+
+            void fetchUpdateToken();
         }
     }, [dispatch, error]);
 
@@ -90,8 +125,30 @@ const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
     useEffect(() => {
         const errorState: CustomError = errorDislike as CustomError;
         if (errorState?.status === 401) {
-            dispatch(user(null));
-            removeUserFromLocalStorage();
+            const fetchUpdateToken = async () => {
+                alert('обновление токена');
+                const userData = getUserFromLocalStorage() as User;
+                try {
+                    const newToken: UpdateToken = await getNewAccessToken(
+                        getRefreshUserTokenFromLocalStorage()
+                    );
+                    const newUser: User = {
+                        ...userData,
+                        accessToken: {
+                            access: newToken.access,
+                            refresh: userData.accessToken.refresh,
+                        },
+                    };
+                    saveUserToLocalStorage(newUser);
+
+                    location.reload();
+                } catch {
+                    dispatch(user(null));
+                    removeUserFromLocalStorage();
+                }
+            };
+
+            void fetchUpdateToken();
         }
     }, [dispatch, errorDislike]);
 

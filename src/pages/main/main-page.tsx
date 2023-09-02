@@ -13,8 +13,11 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store/actions/types/types';
 import { FavoriteTrack } from '../favorite/favorite';
 import { Compilation } from '../compilation/compilation';
+import { useParams } from 'react-router-dom';
+import { selections } from '../../cosntant';
 
 export const Main = () => {
+    const params = useParams();
     const currentPage = useSelector(
         (state: RootState) => state.otherState.currentPage
     );
@@ -74,7 +77,13 @@ export const Main = () => {
                     )}
                     {currentPage.match(/compilation/g) && (
                         <>
-                            <S.centerblockH2>Подборка</S.centerblockH2>
+                            <S.centerblockH2>
+                                {
+                                    selections.find(
+                                        (item) => item.id === Number(params.id)
+                                    )?.name
+                                }
+                            </S.centerblockH2>
                             <Compilation />
                         </>
                     )}

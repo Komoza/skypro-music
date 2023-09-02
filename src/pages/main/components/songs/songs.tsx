@@ -2,6 +2,8 @@ import * as S from './songs.style';
 import {
     CustomError,
     Track,
+    UpdateToken,
+    User,
     formatTime,
     sortByDate,
 } from '../../../../cosntant';
@@ -16,13 +18,19 @@ import {
     user,
 } from '../../../../store/actions/creators/creators';
 import { RefObject, useEffect, useRef } from 'react';
-import { removeUserFromLocalStorage } from '../../../../helper';
+import {
+    getRefreshUserTokenFromLocalStorage,
+    getUserFromLocalStorage,
+    removeUserFromLocalStorage,
+    saveUserToLocalStorage,
+} from '../../../../helper';
 
 import {
     useAddTrackToFavoriteMutation,
     useDeleteTrackFromFavoriteMutation,
     useGetAllTracksQuery,
 } from '../../../../services/tracks';
+import { getNewAccessToken } from '../../../../api';
 
 interface PlaylistProps {
     refPlaylist: RefObject<HTMLDivElement>;
@@ -55,8 +63,31 @@ const Playlist: React.FC<PlaylistProps> = ({ originPlaylist, refPlaylist }) => {
             errorStateDislike?.status === 401 ||
             errorStateLike?.status === 401
         ) {
-            dispatch(user(null));
-            removeUserFromLocalStorage();
+            const fetchUpdateToken = async () => {
+                alert('обновление токена');
+                const userData = getUserFromLocalStorage() as User;
+                try {
+                    const newToken: UpdateToken = (await getNewAccessToken(
+                        getRefreshUserTokenFromLocalStorage()
+                    ));
+                    const newUser: User = {
+                        ...userData,
+                        accessToken: {
+                            access: newToken.access,
+                            refresh: userData.accessToken.refresh,
+                        },
+                    };
+                    saveUserToLocalStorage(newUser);
+
+
+                    location.reload();
+                } catch {
+                    dispatch(user(null));
+                    removeUserFromLocalStorage();
+                }
+            };
+
+            void fetchUpdateToken();
         }
     }, [dispatch, errorDislike, errorLike]);
 

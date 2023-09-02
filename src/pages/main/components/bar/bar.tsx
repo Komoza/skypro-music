@@ -9,13 +9,19 @@ import {
     setVirtualPlaylist,
     user,
 } from '../../../../store/actions/creators/creators';
-import { CustomError, Track } from '../../../../cosntant';
+import { CustomError, Track, UpdateToken, User } from '../../../../cosntant';
 import {
     useAddTrackToFavoriteMutation,
     useDeleteTrackFromFavoriteMutation,
     useGetAllTracksQuery,
 } from '../../../../services/tracks';
-import { removeUserFromLocalStorage } from '../../../../helper';
+import {
+    getRefreshUserTokenFromLocalStorage,
+    getUserFromLocalStorage,
+    removeUserFromLocalStorage,
+    saveUserToLocalStorage,
+} from '../../../../helper';
+import { getNewAccessToken } from '../../../../api';
 
 export const Bar = () => {
     const dispatch = useDispatch();
@@ -159,18 +165,38 @@ export const Bar = () => {
             errorStateDislike?.status === 401 ||
             errorStateLike?.status === 401
         ) {
-            dispatch(user(null));
-            removeUserFromLocalStorage();
+            const fetchUpdateToken = async () => {
+                alert('обновление токена');
+                const userData = getUserFromLocalStorage() as User;
+                try {
+                    const newToken: UpdateToken = await getNewAccessToken(
+                        getRefreshUserTokenFromLocalStorage()
+                    );
+                    const newUser: User = {
+                        ...userData,
+                        accessToken: {
+                            access: newToken.access,
+                            refresh: userData.accessToken.refresh,
+                        },
+                    };
+                    saveUserToLocalStorage(newUser);
+
+                    location.reload();
+                } catch {
+                    dispatch(user(null));
+                    removeUserFromLocalStorage();
+                }
+            };
+
+            void fetchUpdateToken();
         }
     }, [dispatch, errorDislike, errorLike]);
 
     const handleClickLike = (id: number) => {
         void addTrackToFavorite(id);
-        // обновлять current track
     };
     const handleClickDislike = (id: number) => {
         void deleteTrackFromFavorite(id);
-        // обновлять current track
     };
 
     const endTrack = () => {

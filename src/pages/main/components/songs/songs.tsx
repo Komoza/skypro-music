@@ -14,6 +14,7 @@ import {
     setCurrentTrack,
     setDisplayPlaylist,
     setIsPlay,
+    setOriginPlaylist,
     setVirtualPlaylist,
     user,
 } from '../../../../store/actions/creators/creators';
@@ -67,9 +68,9 @@ const Playlist: React.FC<PlaylistProps> = ({ originPlaylist, refPlaylist }) => {
                 alert('обновление токена');
                 const userData = getUserFromLocalStorage() as User;
                 try {
-                    const newToken: UpdateToken = (await getNewAccessToken(
+                    const newToken: UpdateToken = await getNewAccessToken(
                         getRefreshUserTokenFromLocalStorage()
-                    ));
+                    );
                     const newUser: User = {
                         ...userData,
                         accessToken: {
@@ -78,7 +79,6 @@ const Playlist: React.FC<PlaylistProps> = ({ originPlaylist, refPlaylist }) => {
                         },
                     };
                     saveUserToLocalStorage(newUser);
-
 
                     location.reload();
                 } catch {
@@ -192,6 +192,9 @@ const Playlist: React.FC<PlaylistProps> = ({ originPlaylist, refPlaylist }) => {
     }, [currentTrack, refPlaylist]);
 
     if (displayPlaylist) {
+        if (!displayPlaylist.length) {
+            return <S.errorGetSongs>Список треков пуст</S.errorGetSongs>;
+        }
         return displayPlaylist.map((song) => {
             return (
                 <S.playlistItem key={song.id}>
@@ -295,7 +298,10 @@ export const Songs = () => {
     const refPlaylist = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (data) dispatch(setDisplayPlaylist([...data]));
+        if (data) {
+            dispatch(setDisplayPlaylist([...data]));
+            dispatch(setOriginPlaylist([...data]));
+        }
     }, [data, dispatch]);
 
     return (

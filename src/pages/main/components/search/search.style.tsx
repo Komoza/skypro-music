@@ -27,6 +27,7 @@ export const searchText = styled.input`
     font-size: 16px;
     line-height: 24px;
     color: #ffffff;
+    outline: none;
 
     &::placeholder {
         background-color: transparent;

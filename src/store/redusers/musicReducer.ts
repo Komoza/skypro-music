@@ -1,6 +1,7 @@
 import { MusicAction, MusicState, ActionTypes } from '../actions/types/types';
 
 const initialState: MusicState = {
+    originPlaylist: [],
     activePlaylist: [],
     virtualPlaylist: [],
     displayPlaylist: [],
@@ -60,6 +61,11 @@ const musicReducer = (
                 ...state,
                 displayPlaylist: action.payload,
             };
+        case ActionTypes.SET_ORIGIN_PLAYLIST:
+            return {
+                ...state,
+                originPlaylist: action.payload,
+            }
         default:
             return state;
     }

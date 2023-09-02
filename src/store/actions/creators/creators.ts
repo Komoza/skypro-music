@@ -22,6 +22,13 @@ export const setDisplayPlaylist = (playlist: Track[]) => {
     };
 };
 
+export const setOriginPlaylist = (playlist: Track[]) => {
+    return {
+        type: ActionTypes.SET_ORIGIN_PLAYLIST,
+        payload: playlist,
+    };
+};
+
 export const setIsPlay = (isPlay: boolean) => {
     return {
         type: ActionTypes.SET_IS_PLAY,

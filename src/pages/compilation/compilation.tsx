@@ -10,6 +10,7 @@ import {
     setCurrentTrack,
     setDisplayPlaylist,
     setIsPlay,
+    setOriginPlaylist,
     setVirtualPlaylist,
     user,
 } from '../../store/actions/creators/creators';
@@ -34,7 +35,11 @@ export const Compilation = () => {
     } = useGetSelectionTracksQuery(Number(params.id));
 
     useEffect(() => {
-        if (data) dispatch(setDisplayPlaylist([...data.items]));
+        if (data) {
+            dispatch(setDisplayPlaylist([...data.items]));
+            dispatch(setOriginPlaylist([...data.items]));
+        }
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data]);
 

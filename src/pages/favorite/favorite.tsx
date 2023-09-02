@@ -14,6 +14,7 @@ import {
     setCurrentTrack,
     setDisplayPlaylist,
     setIsPlay,
+    setOriginPlaylist,
     setVirtualPlaylist,
     user,
 } from '../../store/actions/creators/creators';
@@ -33,7 +34,7 @@ import { getNewAccessToken } from '../../api';
 export const FavoriteTrack = () => {
     const dispatch = useDispatch();
 
-    const dispayPlaylist = useSelector(
+    const displayPlaylist = useSelector(
         (state: RootState) => state.otherState.displayPlaylist
     );
     const {
@@ -43,7 +44,10 @@ export const FavoriteTrack = () => {
     } = useGetAllFavoriteTracksQuery();
 
     useEffect(() => {
-        if (data) dispatch(setDisplayPlaylist([...data]));
+        if (data) {
+            dispatch(setDisplayPlaylist([...data]));
+            dispatch(setOriginPlaylist([...data]));
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data]);
 
@@ -93,12 +97,12 @@ export const FavoriteTrack = () => {
                 </S.playlistTitleCol04>
             </S.playlistTitle>
             <S.playlist ref={refPlaylist}>
-                {!isLoadingApp && dispayPlaylist ? (
+                {!isLoadingApp && displayPlaylist ? (
                     <Playlist refPlaylist={refPlaylist} />
                 ) : (
                     <PlaylistSkeleton />
                 )}
-                {!dispayPlaylist?.length && (
+                {!displayPlaylist?.length && (
                     <S.errorGetSongs>Список треков пуст</S.errorGetSongs>
                 )}
             </S.playlist>
@@ -112,7 +116,7 @@ interface PlaylistProps {
 
 const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
     const dispatch = useDispatch();
-    const dispayPlaylist = useSelector(
+    const displayPlaylist = useSelector(
         (state: RootState) => state.otherState.displayPlaylist
     );
     const activePlaylistState = useSelector(
@@ -167,12 +171,24 @@ const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
 
     const handleClickTrack = (track: Track) => {
         // Смена активного плейлиста
-        if (activePlaylistState !== dispayPlaylist) {
-            dispatch(setActivePlaylist(dispayPlaylist));
+        if (activePlaylistState !== displayPlaylist) {
+            dispatch(setActivePlaylist(displayPlaylist));
         }
         if (currentTrack !== track) {
             dispatch(setIsPlay(true));
-            dispatch(setCurrentTrack(track));
+            const userState = getUserFromLocalStorage();
+            /* 
+                Костыль, потому что в API при получении лайкнутых треков,
+                в массиве треков у трека нет поля stared_user, 
+                из-за чего я не могу узнать лайкнутый это трек или нет
+            */
+            if (userState)
+                dispatch(
+                    setCurrentTrack({
+                        ...track,
+                        stared_user: [userState],
+                    })
+                );
 
             // добавляем трек в виртуальный плейлист
             const newVirtualPlaylist: Track[] = [...virtualPlaylist];
@@ -216,8 +232,8 @@ const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
         }
     }, [currentTrack, refPlaylist]);
 
-    if (dispayPlaylist) {
-        return dispayPlaylist.map((song) => {
+    if (displayPlaylist) {
+        return displayPlaylist.map((song) => {
             return (
                 <S.playlistItem key={song.id}>
                     <S.track

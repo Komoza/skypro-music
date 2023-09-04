@@ -8,7 +8,7 @@ export const NotFoundPage = () => {
             <S.notFoundTextWrap>
                 <S.notFoundText>Страница не найдена</S.notFoundText>
                 <S.notFoundImg
-                    src="./src/img/icon/smile_crying.png"
+                    src="/src/img/icon/smile_crying.png"
                     alt="грустный смайлик"
                 />
             </S.notFoundTextWrap>

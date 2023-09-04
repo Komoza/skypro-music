@@ -230,11 +230,25 @@ export const trackPlayDislike = styled.div`
     margin-left: 28.5px;
 `;
 
-export const trackPlayLikeSvg = styled.svg`
-    width: 14px;
+const likeSvg = `
+    width: 14px;    
     height: 12px;
+    cursor: pointer;
+    transition: all .3s;
+
+    &:hover {
+        transform: scale(1.5);
+    }
+`;
+export const trackPlayLikeSvg = styled.svg`
+    ${likeSvg}
     fill: transparent;
     stroke: #696969;
+`;
+export const trackPlayLikeSvgActive = styled.svg`
+    ${likeSvg}
+    fill: #b672ff;
+    stroke: #b672ff;
 `;
 export const trackPlayDislikeSvg = styled.svg`
     width: 14.34px;

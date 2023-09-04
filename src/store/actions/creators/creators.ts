@@ -1,4 +1,4 @@
-import { Track, User } from '../../../cosntant';
+import { Filters, Track, User } from '../../../cosntant';
 import { ActionTypes } from '../types/types';
 
 export const setCurrentTrack = (track: Track) => {
@@ -8,9 +8,23 @@ export const setCurrentTrack = (track: Track) => {
     };
 };
 
-export const setCurrentPlaylist = (playlist: Track[]) => {
+export const setVirtualPlaylist = (playlist: Track[]) => {
     return {
-        type: ActionTypes.SET_CURRENT_PLAYLIST,
+        type: ActionTypes.SET_VIRTUAL_PLAYLIST,
+        payload: playlist,
+    };
+};
+
+export const setDisplayPlaylist = (playlist: Track[]) => {
+    return {
+        type: ActionTypes.SET_DISPLAY_PLAYLIST,
+        payload: playlist,
+    };
+};
+
+export const setOriginPlaylist = (playlist: Track[]) => {
+    return {
+        type: ActionTypes.SET_ORIGIN_PLAYLIST,
         payload: playlist,
     };
 };
@@ -36,9 +50,16 @@ export const user = (user: User | null) => {
     };
 };
 
-export const activePlaylist = (activePlaylist: Track[]) => {
+export const setActivePlaylist = (activePlaylist: Track[]) => {
     return {
-        type: ActionTypes.ACTIVE_PLAYLIST,
+        type: ActionTypes.SET_ACTIVE_PLAYLIST,
         payload: activePlaylist,
+    };
+};
+
+export const filters = (filters: Filters) => {
+    return {
+        type: ActionTypes.SET_FILTERS,
+        payload: filters,
     };
 };

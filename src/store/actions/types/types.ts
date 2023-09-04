@@ -1,58 +1,86 @@
-import { Track, User } from '../../../cosntant';
+import { Filters, Track, User } from '../../../cosntant';
 import { tracksApi } from '../../../services/tracks';
 
 export interface MusicState {
+    originPlaylist: Track[];
     currentTrack: Track | null;
-    currentPlaylist: Track[];
+    displayPlaylist: Track[];
+    virtualPlaylist: Track[];
     isPlay: boolean;
     currentPage: string;
     user: User | null;
     activePlaylist: Track[];
+    filters: Filters;
 }
 export interface RootState {
     otherState: MusicState;
     [tracksApi.reducerPath]: ReturnType<typeof tracksApi.reducer>;
 }
 
+export interface SetOriginPlaylist {
+    type: ActionTypes.SET_ORIGIN_PLAYLIST;
+    payload: Track[];
+}
+
+export interface SetActivePlaylist {
+    type: ActionTypes.SET_ACTIVE_PLAYLIST;
+    payload: Track[];
+}
+
+export interface SetVirtualPlaylistAction {
+    type: ActionTypes.SET_VIRTUAL_PLAYLIST;
+    payload: Track[];
+}
+
+export interface SetDisplayPlaylist {
+    type: ActionTypes.SET_DISPLAY_PLAYLIST;
+    payload: Track[];
+}
+
 export interface SetCurrentTrackAction {
     type: ActionTypes.SET_CURRENT_TRACK;
     payload: Track;
 }
+
 export interface SetIsPlay {
     type: ActionTypes.SET_IS_PLAY;
     payload: boolean;
-}
-export interface SetCurrentPlaylistAction {
-    type: ActionTypes.SET_CURRENT_PLAYLIST;
-    payload: Track[];
 }
 
 export interface CurrentPage {
     type: ActionTypes.CURRENT_PAGE;
     payload: string;
 }
+
 export interface UserAction {
     type: ActionTypes.USER;
     payload: User | null;
 }
-export interface ActivePlaylist {
-    type: ActionTypes.ACTIVE_PLAYLIST;
-    payload: Track[];
+
+export interface SetFiltersAction {
+    type: ActionTypes.SET_FILTERS;
+    payload: Filters;
 }
 
 export enum ActionTypes {
     SET_CURRENT_TRACK = 'SET_CURRENT_TRACK',
-    SET_CURRENT_PLAYLIST = 'SET_CURRENT_PLAYLIST',
+    SET_VIRTUAL_PLAYLIST = 'SET_VIRTUAL_PLAYLIST',
+    SET_DISPLAY_PLAYLIST = 'SET_DISPLAY_PLAYLIST',
+    SET_ORIGIN_PLAYLIST = 'SET_ORIGIN_PLAYLIST',
     SET_IS_PLAY = 'SET_IS_PLAY',
     CURRENT_PAGE = 'CURRENT_PAGE',
     USER = 'USER',
-    ACTIVE_PLAYLIST = 'ACTIVE_PLAYLIST',
+    SET_ACTIVE_PLAYLIST = 'SET_ACTIVE_PLAYLIST',
+    SET_FILTERS = 'SET_FILTERS',
 }
 
 export type MusicAction =
     | SetCurrentTrackAction
-    | SetCurrentPlaylistAction
+    | SetVirtualPlaylistAction
     | SetIsPlay
     | CurrentPage
     | UserAction
-    | ActivePlaylist;
+    | SetActivePlaylist
+    | SetFiltersAction
+    | SetDisplayPlaylist
+    | SetOriginPlaylist;

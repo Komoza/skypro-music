@@ -12,8 +12,12 @@ import * as S from '../../App.style';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/actions/types/types';
 import { FavoriteTrack } from '../favorite/favorite';
+import { Compilation } from '../compilation/compilation';
+import { useParams } from 'react-router-dom';
+import { selections } from '../../cosntant';
 
 export const Main = () => {
+    const params = useParams();
     const currentPage = useSelector(
         (state: RootState) => state.otherState.currentPage
     );
@@ -45,7 +49,7 @@ export const Main = () => {
             <S.main onClick={handleClickContainer}>
                 <S.burger
                     onClick={(event) => handleClickBurger(event)}
-                    src="./src/img/icon/burger.svg"
+                    src="/src/img/icon/burger.svg"
                     alt="открыть меню"
                 />
                 {isNavOpen && (
@@ -69,6 +73,18 @@ export const Main = () => {
                         <>
                             <S.centerblockH2>Мой треки</S.centerblockH2>
                             <FavoriteTrack />
+                        </>
+                    )}
+                    {currentPage.match(/compilation/g) && (
+                        <>
+                            <S.centerblockH2>
+                                {
+                                    selections.find(
+                                        (item) => item.id === Number(params.id)
+                                    )?.name
+                                }
+                            </S.centerblockH2>
+                            <Compilation />
                         </>
                     )}
                 </S.centerblock>

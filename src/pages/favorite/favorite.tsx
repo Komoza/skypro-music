@@ -3,33 +3,82 @@ import {
     useDeleteTrackFromFavoriteMutation,
     useGetAllFavoriteTracksQuery,
 } from '../../services/tracks';
-import { removeUserFromLocalStorage } from '../../helper';
 import {
-    activePlaylist,
-    setCurrentPlaylist,
+    getRefreshUserTokenFromLocalStorage,
+    getUserFromLocalStorage,
+    removeUserFromLocalStorage,
+    saveUserToLocalStorage,
+} from '../../helper';
+import {
+    setActivePlaylist,
     setCurrentTrack,
+    setDisplayPlaylist,
     setIsPlay,
+    setOriginPlaylist,
+    setVirtualPlaylist,
     user,
 } from '../../store/actions/creators/creators';
 import { RefObject, useEffect, useRef } from 'react';
 import * as S from '../main/components/songs/songs.style';
 import { PlaylistSkeleton } from '../main/components/songs/songs';
-import { CustomError, Track, formatTime } from '../../cosntant';
+import {
+    CustomError,
+    Track,
+    UpdateToken,
+    User,
+    formatTime,
+} from '../../cosntant';
 import { RootState } from '../../store/actions/types/types';
+import { getNewAccessToken } from '../../api';
 
 export const FavoriteTrack = () => {
     const dispatch = useDispatch();
+
+    const displayPlaylist = useSelector(
+        (state: RootState) => state.otherState.displayPlaylist
+    );
     const {
-        data: playlist,
+        data,
         error,
         isLoading: isLoadingApp,
     } = useGetAllFavoriteTracksQuery();
 
     useEffect(() => {
+        if (data) {
+            dispatch(setDisplayPlaylist([...data]));
+            dispatch(setOriginPlaylist([...data]));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data]);
+
+    // обработка 401
+    useEffect(() => {
         const errorState: CustomError = error as CustomError;
         if (errorState?.status === 401) {
-            dispatch(user(null));
-            removeUserFromLocalStorage();
+            const fetchUpdateToken = async () => {
+                alert('обновление токена');
+                const userData = getUserFromLocalStorage() as User;
+                try {
+                    const newToken: UpdateToken = await getNewAccessToken(
+                        getRefreshUserTokenFromLocalStorage()
+                    );
+                    const newUser: User = {
+                        ...userData,
+                        accessToken: {
+                            access: newToken.access,
+                            refresh: userData.accessToken.refresh,
+                        },
+                    };
+                    saveUserToLocalStorage(newUser);
+
+                    location.reload();
+                } catch {
+                    dispatch(user(null));
+                    removeUserFromLocalStorage();
+                }
+            };
+
+            void fetchUpdateToken();
         }
     }, [dispatch, error]);
 
@@ -48,12 +97,12 @@ export const FavoriteTrack = () => {
                 </S.playlistTitleCol04>
             </S.playlistTitle>
             <S.playlist ref={refPlaylist}>
-                {!isLoadingApp && playlist ? (
-                    <Playlist playlist={playlist} refPlaylist={refPlaylist} />
+                {!isLoadingApp && displayPlaylist ? (
+                    <Playlist refPlaylist={refPlaylist} />
                 ) : (
                     <PlaylistSkeleton />
                 )}
-                {!playlist?.length && (
+                {!displayPlaylist?.length && (
                     <S.errorGetSongs>Список треков пуст</S.errorGetSongs>
                 )}
             </S.playlist>
@@ -63,32 +112,81 @@ export const FavoriteTrack = () => {
 
 interface PlaylistProps {
     refPlaylist: RefObject<HTMLDivElement>;
-    playlist: Track[];
 }
 
-const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
+const Playlist: React.FC<PlaylistProps> = ({ refPlaylist }) => {
     const dispatch = useDispatch();
-
+    const displayPlaylist = useSelector(
+        (state: RootState) => state.otherState.displayPlaylist
+    );
     const activePlaylistState = useSelector(
         (state: RootState) => state.otherState.activePlaylist
+    );
+    const originPlaylist = useSelector(
+        (state: RootState) => state.otherState.originPlaylist
+    );
+    const filterState = useSelector(
+        (state: RootState) => state.otherState.filters
     );
 
     const [deleteTrackFromFavorite, { error: errorDislike }] =
         useDeleteTrackFromFavoriteMutation();
 
+    // Обработка 401
     useEffect(() => {
         const errorState: CustomError = errorDislike as CustomError;
         if (errorState?.status === 401) {
-            dispatch(user(null));
-            removeUserFromLocalStorage();
+            const fetchUpdateToken = async () => {
+                alert('обновление токена');
+                const userData = getUserFromLocalStorage() as User;
+                try {
+                    const newToken: UpdateToken = await getNewAccessToken(
+                        getRefreshUserTokenFromLocalStorage()
+                    );
+                    const newUser: User = {
+                        ...userData,
+                        accessToken: {
+                            access: newToken.access,
+                            refresh: userData.accessToken.refresh,
+                        },
+                    };
+                    saveUserToLocalStorage(newUser);
+
+                    location.reload();
+                } catch {
+                    dispatch(user(null));
+                    removeUserFromLocalStorage();
+                }
+            };
+
+            void fetchUpdateToken();
         }
     }, [dispatch, errorDislike]);
+
+    // отбор фильтр пополю в поиске
+    useEffect(() => {
+        if (displayPlaylist) {
+            let newDisplayPlaylist: Track[] = [...originPlaylist];
+            if (filterState.searchWords.length) {
+                newDisplayPlaylist = [
+                    ...newDisplayPlaylist.filter((track) =>
+                        track.name
+                            .toLowerCase()
+                            .includes(filterState.searchWords.toLowerCase())
+                    ),
+                ];
+            }
+
+            dispatch(setDisplayPlaylist(newDisplayPlaylist));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filterState, originPlaylist]);
 
     const currentTrack = useSelector(
         (state: RootState) => state.otherState.currentTrack
     );
-    const currentPlaylist = useSelector(
-        (state: RootState) => state.otherState.currentPlaylist
+    const virtualPlaylist = useSelector(
+        (state: RootState) => state.otherState.virtualPlaylist
     );
     const isPlay: boolean = useSelector(
         (state: RootState) => state.otherState.isPlay
@@ -99,25 +197,37 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
 
     const handleClickTrack = (track: Track) => {
         // Смена активного плейлиста
-        if (activePlaylistState !== playlist) {
-            dispatch(activePlaylist(playlist));
+        if (activePlaylistState !== displayPlaylist) {
+            dispatch(setActivePlaylist(displayPlaylist));
         }
         if (currentTrack !== track) {
             dispatch(setIsPlay(true));
-            dispatch(setCurrentTrack(track));
+            const userState = getUserFromLocalStorage();
+            /* 
+                Костыль, потому что в API при получении лайкнутых треков,
+                в массиве треков у трека нет поля stared_user, 
+                из-за чего я не могу узнать лайкнутый это трек или нет
+            */
+            if (userState)
+                dispatch(
+                    setCurrentTrack({
+                        ...track,
+                        stared_user: [userState],
+                    })
+                );
 
             // добавляем трек в виртуальный плейлист
-            const newCurrentPlaylist: Track[] = [...currentPlaylist];
+            const newVirtualPlaylist: Track[] = [...virtualPlaylist];
 
             // проверяем есть ли этот трек в виртуальном массиве, если есть удалим
-            const indexFindTrack = newCurrentPlaylist.indexOf(track);
+            const indexFindTrack = newVirtualPlaylist.indexOf(track);
             if (indexFindTrack !== -1) {
-                newCurrentPlaylist.splice(indexFindTrack, 1);
+                newVirtualPlaylist.splice(indexFindTrack, 1);
             }
 
-            newCurrentPlaylist.push(track);
+            newVirtualPlaylist.push(track);
 
-            dispatch(setCurrentPlaylist(newCurrentPlaylist));
+            dispatch(setVirtualPlaylist(newVirtualPlaylist));
         } else {
             dispatch(setIsPlay(!isPlay));
         }
@@ -148,8 +258,8 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, refPlaylist }) => {
         }
     }, [currentTrack, refPlaylist]);
 
-    if (playlist) {
-        return playlist.map((song) => {
+    if (displayPlaylist) {
+        return displayPlaylist.map((song) => {
             return (
                 <S.playlistItem key={song.id}>
                     <S.track

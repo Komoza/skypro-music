@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { Track } from '../cosntant';
-import { getUserTokenFromLocalStorage } from '../helper';
+import { SelectionsProps, Track } from '../cosntant';
 import { FullTagDescription } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
+import { getAccessUserTokenFromLocalStorage } from '../helper';
 
 const DATA_TAG: FullTagDescription<never> = {
     type: null as never,
@@ -24,7 +24,7 @@ export const tracksApi = createApi({
                 url: 'track/favorite/all/',
                 method: 'GET',
                 headers: {
-                    Authorization: `Bearer ${getUserTokenFromLocalStorage()}`,
+                    Authorization: `Bearer ${getAccessUserTokenFromLocalStorage()}`,
                 },
             }),
             providesTags: [DATA_TAG],
@@ -35,7 +35,7 @@ export const tracksApi = createApi({
                 url: `track/${id}/favorite/`,
                 method: 'POST',
                 headers: {
-                    Authorization: `Bearer ${getUserTokenFromLocalStorage()}`,
+                    Authorization: `Bearer ${getAccessUserTokenFromLocalStorage()}`,
                 },
             }),
             invalidatesTags: [DATA_TAG],
@@ -45,10 +45,17 @@ export const tracksApi = createApi({
                 url: `track/${id}/favorite/`,
                 method: 'DELETE',
                 headers: {
-                    Authorization: `Bearer ${getUserTokenFromLocalStorage()}`,
+                    Authorization: `Bearer ${getAccessUserTokenFromLocalStorage()}`,
                 },
             }),
             invalidatesTags: [DATA_TAG],
+        }),
+        getSelectionTracks: builder.query<SelectionsProps, number>({
+            query: (id) => ({
+                url: `selection/${id}/`,
+                method: 'GET',
+            }),
+            providesTags: [DATA_TAG],
         }),
     }),
 });
@@ -58,4 +65,5 @@ export const {
     useGetAllFavoriteTracksQuery,
     useAddTrackToFavoriteMutation,
     useDeleteTrackFromFavoriteMutation,
+    useGetSelectionTracksQuery,
 } = tracksApi;

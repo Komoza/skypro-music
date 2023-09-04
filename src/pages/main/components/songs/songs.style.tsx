@@ -201,19 +201,26 @@ export const trackAlbumLink = styled.a`
 
 export const trackTime = styled.div``;
 
-export const trackTimeSvg = styled.svg`
+const likeSvg = `
     width: 14px;
     height: 12px;
     margin-right: 17px;
+    cursor: pointer;
+    transition: all .3s;
+
+    &:hover {
+        transform: scale(1.5);
+    }
+`;
+export const trackTimeSvg = styled.svg`
+    ${likeSvg}
     fill: transparent;
     stroke: #696969;
 `;
 export const trackTimeSvgLike = styled.svg`
-    width: 14px;
-    height: 12px;
-    margin-right: 17px;
-    fill: transparent;
-    stroke: red;
+    ${likeSvg}
+    fill: #b672ff;
+    stroke: #b672ff;
 `;
 
 export const trackTimeText = styled.span`

@@ -11,7 +11,7 @@ const DATA_TAG: FullTagDescription<never> = {
 export const tracksApi = createApi({
     reducerPath: 'tracksApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: 'https://painassasin.online/catalog/',
+        baseUrl: 'https://skypro-music-api.skyeng.tech/catalog/',
     }),
     endpoints: (builder) => ({
         getAllTracks: builder.query<Track[], void>({

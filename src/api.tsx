@@ -1,6 +1,6 @@
 import { UpdateToken } from './cosntant';
 
-const host = 'https://painassasin.online/';
+const host = 'https://skypro-music-api.skyeng.tech/';
 let url = '';
 
 export const getAccessToken = async (email: string, password: string) => {
